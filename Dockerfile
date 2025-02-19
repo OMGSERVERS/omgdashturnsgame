@@ -21,7 +21,7 @@ FROM --platform=linux/amd64 ubuntu:latest
 
 WORKDIR /game
 
-COPY --from=builder /project/build/default/omgdefoldsdk .
+COPY --from=builder /project/build/default/omgdashturnsgame .
 RUN ls -lah .
 
-CMD ["./omgdefoldsdk.x86_64"]
+CMD ["./omgdashturnsgame.x86_64"]
