@@ -1,0 +1,16 @@
+[bootstrap]
+main_collection = /server/server.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 640
+height = 480
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = omgdefoldsdk
+

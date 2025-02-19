@@ -1,0 +1,19 @@
+{
+  "modes": [
+    {
+      "name": "game",
+      "min_players": 1,
+      "max_players": 32,
+      "groups": [
+        {
+          "name": "players",
+          "min_players": 1,
+          "max_players": 32
+        }
+      ]
+    }
+  ],
+  "user_data": {
+    "project": "omgdefoldsdk"
+  }
+}
