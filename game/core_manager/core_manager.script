@@ -38,8 +38,7 @@ local function auth_screen_created(self, collection_id)
 
 	auth_screen:set_state(self.screen_collection_id, "Signing up")
 
-	-- Sign up
-	client_manager:sign_up(CLIENT_MANAGER)
+	client_manager:reset(CLIENT_MANAGER)
 end
 
 local function signed_up(self, user_id, password)
@@ -138,7 +137,6 @@ end
 
 local function reset_requested(self)
 	print(os.date() .. " [CORE_MANAGER] Reset was requested at " .. os.date())
-	omgplayer:reset()
 	core_state:reset()
 	game_started(self)
 end

@@ -4,8 +4,10 @@ local omgplayer = require("omgservers.omgplayer.omgplayer")
 
 local CORE_MANAGER = "core_manager#core_manager"
 
-local function sign_up(self)
-	print(os.date() .. " [CLIENT] Signing up")
+local function reset(self)
+	print(os.date() .. " [CLIENT] Reset")
+	self.omginstance:reset()
+	self.omginstance:ping()
 	self.omginstance:sign_up()
 end
 
@@ -119,8 +121,6 @@ function init(self)
 		self.omginstance = omginstance
 
 		omginstance:init(options)
-		omginstance:ping()
-		omginstance:sign_up()
 	else
 		error("[CLIENT] Only localtesting is supported")
 	end
@@ -131,8 +131,8 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(client_manager.SIGN_UP) then
-		sign_up(self)
+	if message_id == hash(client_manager.RESET) then
+		reset(self)
 
 	elseif message_id == hash(client_manager.SIGN_IN) then
 		local user_id = message.user_id

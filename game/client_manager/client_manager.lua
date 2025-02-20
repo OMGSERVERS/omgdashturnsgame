@@ -1,13 +1,13 @@
 local client_manager
 client_manager = {
-	SIGN_UP = "sign_up",
+	RESET = "reset",
 	SIGN_IN = "sign_in",
 	SEND_COMMAND = "send_command",
 	SEND_MESSAGE = "send_message",
 	RECONNECT = "reconnect",
 	-- Methods
-	sign_up = function(self, receiver)
-		msg.post(receiver, client_manager.SIGN_UP, {
+	reset = function(self, receiver)
+		msg.post(receiver, client_manager.RESET, {
 		})
 	end,
 	sign_in = function(self, receiver, user_id, password)
