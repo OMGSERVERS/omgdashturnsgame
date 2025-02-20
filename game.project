@@ -16,6 +16,7 @@ title = omgdashturnsgame
 dependencies#0 = https://github.com/defold/extension-crypt/archive/refs/tags/1.1.0.zip
 dependencies#1 = https://github.com/defold/extension-websocket/archive/refs/tags/4.0.0.zip
 dependencies#2 = https://github.com/Insality/druid/archive/refs/tags/1.0.zip
+dependencies#3 = https://github.com/OMGSERVERS/omgdefoldsdk/archive/refs/heads/main.zip
 
 [library]
 include_dirs = omgservers
