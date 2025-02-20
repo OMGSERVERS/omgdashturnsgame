@@ -11,7 +11,7 @@ simulation_service = {
 		local simulation_step = match_settings.constants.SIMULATION_STEP
 		local simulation_depth = players_container:get_simulation_depth(simulation_step)
 
-		print(socket.gettime() .. " [SIMULATOR] Simulation started, simulation_depth=" .. simulation_depth)
+		print(os.date() .. " [SIMULATOR] Simulation started, simulation_depth=" .. simulation_depth)
 
 		-- simulate movements by steps
 		for step_index = match_settings.constants.SIMULATION_OFFSET, simulation_depth do
@@ -80,7 +80,7 @@ simulation_service = {
 
 					if winner_1_type_1 or winner_1_type_2 or winner_1_type_3 then
 						-- Player 1 is winner
-						print(socket.gettime() .. " [SIMULATOR] Player1 kills player2, step_index=" .. step_index .. ", client_1=" .. client_1 .. ", client_2=" .. client_2)
+						print(os.date() .. " [SIMULATOR] Player1 kills player2, step_index=" .. step_index .. ", client_1=" .. client_1 .. ", client_2=" .. client_2)
 						killers[client_1] = true
 						-- hit player_2 by player_1
 						player_1:increase_score()
@@ -90,7 +90,7 @@ simulation_service = {
 						
 					elseif winner_2_type_1 or winner_2_type_2 or winner_2_type_3 then
 						-- Player 2 is winner
-						print(socket.gettime() .. " [SIMULATOR] Player2 kills player1, step_index=" .. step_index .. ", client_1=" .. client_1 .. ", client_2=" .. client_2)
+						print(os.date() .. " [SIMULATOR] Player2 kills player1, step_index=" .. step_index .. ", client_1=" .. client_1 .. ", client_2=" .. client_2)
 						killers[client_2] = true
 						-- hit player_1 by player_2
 						player_1:kill_player()

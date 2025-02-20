@@ -28,10 +28,10 @@ function on_message(self, message_id, message, sender)
 		sprite.play_flipbook(ICON_SPRITE, hash("pointer_2"))
 		place_pointer(self, x, y)
 
-		print(socket.gettime() .. " [POINTER] Pointer was enabled, x=" .. x .. ", y=" .. y)
+		print(os.date() .. " [POINTER] Pointer was enabled, x=" .. x .. ", y=" .. y)
 
 	elseif message_id == hash(match_pointer.DISABLE_POINTER) then
-		print(socket.gettime() .. " [POINTER] Pointer was disabled")
+		print(os.date() .. " [POINTER] Pointer was disabled")
 		msg.post(ICON_SPRITE, "disable")
 		
 	elseif message_id == hash(match_pointer.SWITCH_POINTER) then

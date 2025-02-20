@@ -36,7 +36,7 @@ function init(self)
 	}
 	disable_spawn_countdown(self)
 	
-	print(socket.gettime() .. " [MATCH_GUI] Initialized")
+	print(os.date() .. " [MATCH_GUI] Initialized")
 end
 
 function final(self)

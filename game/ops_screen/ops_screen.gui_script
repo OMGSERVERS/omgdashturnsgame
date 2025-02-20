@@ -22,7 +22,7 @@ function init(self)
 	self.druid = druid.new(self)
 	self.reset_button = self.druid:new_button("reset_button", reset_button)
 
-	print(socket.gettime() .. " [OPS_SCREEN] Initialized")
+	print(os.date() .. " [OPS_SCREEN] Initialized")
 end
 
 function final(self)

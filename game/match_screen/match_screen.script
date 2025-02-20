@@ -23,7 +23,7 @@ local function create_client(self, client_id, nickname, score)
 		score = score,
 	}
 
-	print(socket.gettime() .. " [MATCH_SCREEN] Client was created, client_id=" .. client_id .. ", nickname=" .. nickname)
+	print(os.date() .. " [MATCH_SCREEN] Client was created, client_id=" .. client_id .. ", nickname=" .. nickname)
 
 	match_top:add_player(MATCH_TOP, client_id, nickname, score)
 	
@@ -42,7 +42,7 @@ local function spawn_player(self, client_id, x, y)
 		local collection_ids = collectionfactory.create(PLAYER_SPAWNER, position)
 		pprint(collection_ids)
 
-		print(socket.gettime() .. " [MATCH_SCREEN] Player was spawned, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y .. ", z=" .. z)
+		print(os.date() .. " [MATCH_SCREEN] Player was spawned, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y .. ", z=" .. z)
 
 		local player_id = collection_ids[hash("/match_player")]
 		self.players[client_id] = player_id
@@ -52,12 +52,12 @@ local function spawn_player(self, client_id, x, y)
 		match_player:set_state(player_id, controllable, nickname)
 
 		if controllable then
-			print(socket.gettime() .. " [MATCH_SCREEN] Set camera, target=" .. player_id)
+			print(os.date() .. " [MATCH_SCREEN] Set camera, target=" .. player_id)
 
 			match_gui:disable_spawn_countdown(MATCH_GUI)
 		end
 	else
-		print(socket.gettime() .. " [MATCH_SCREEN] Client was not found to spawn player, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_SCREEN] Client was not found to spawn player, client_id=" .. client_id)
 	end
 end
 
@@ -74,15 +74,15 @@ local function kill_player(self, client_id)
 		
 		self.players[client_id] = nil
 
-		print(socket.gettime() .. " [MATCH_SCREEN] Player was killed, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_SCREEN] Player was killed, client_id=" .. client_id)
 	else
-		print(socket.gettime() .. " [MATCH_SCREEN] Player was not found to kill, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_SCREEN] Player was not found to kill, client_id=" .. client_id)
 	end
 end
 
 local function delete_player(self, client_id)
 	self.clients[client_id] = nil
-	print(socket.gettime() .. " [MATCH_SCREEN] Client was deleted, client_id=" .. client_id)
+	print(os.date() .. " [MATCH_SCREEN] Client was deleted, client_id=" .. client_id)
 
 	local player_id = self.players[client_id]
 	if player_id then
@@ -102,12 +102,12 @@ local function move_player(self, client_id, x, y)
 			match_pointer:disable_pointer(MATCH_POINTER)
 		end
 	else
-		print(socket.gettime() .. " [MATCH_SCREEN] Player was not found to move, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_SCREEN] Player was not found to move, client_id=" .. client_id)
 	end
 end
 
 local function set_state(self, settings, dangling_players, spawned_players)
-	print(socket.gettime() .. " [MATCH_SCREEN] Set match state, settings=" .. json.encode(settings) .. ", dangling_players=" .. json.encode(dangling_players) .. ", spawned_players=" .. json.encode(spawned_players))
+	print(os.date() .. " [MATCH_SCREEN] Set match state, settings=" .. json.encode(settings) .. ", dangling_players=" .. json.encode(dangling_players) .. ", spawned_players=" .. json.encode(spawned_players))
 
 	self.settings = settings
 	
@@ -128,7 +128,7 @@ local function set_state(self, settings, dangling_players, spawned_players)
 end
 
 local function apply_events(self, events)
-	print(socket.gettime() .. " [MATCH_SCREEN] Apply events")
+	print(os.date() .. " [MATCH_SCREEN] Apply events")
 	pprint(events)
 
 	for _, event in ipairs(events) do
@@ -181,7 +181,7 @@ local function apply_events(self, events)
 end
 
 local function set_spawn_countdown(self, time_to_spawn)
-	print(socket.gettime() .. " [MATCH_SCREEN] Set spawn countdown, time_to_spawn=" .. time_to_spawn)
+	print(os.date() .. " [MATCH_SCREEN] Set spawn countdown, time_to_spawn=" .. time_to_spawn)
 	
 	match_gui:enable_spawn_countdown(MATCH_GUI, math.max(0, time_to_spawn))
 end
@@ -219,13 +219,13 @@ local function pointed(self, pointed_x, pointed_y)
 		
 		match_pointer:enable_pointer(MATCH_POINTER, bounded_x, bounded_y)
 
-		print(socket.gettime() .. " [MATCH_SCREEN] Move player, x=" .. bounded_x .. ", y=" .. bounded_y)
+		print(os.date() .. " [MATCH_SCREEN] Move player, x=" .. bounded_x .. ", y=" .. bounded_y)
 
 		-- Move player
 		local game_message = game_messages:move_player(bounded_x, bounded_y)
 		client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
 	else
-		print(socket.gettime() .. " [MATCH_SCREEN] Player was not found to point, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_SCREEN] Player was not found to point, client_id=" .. client_id)
 	end
 end
 
@@ -233,16 +233,16 @@ function init(self)
 	self.players = {}
 	self.clients = {}
 	
-	print(socket.gettime() .. " [MATCH_SCREEN] Initialized")
+	print(os.date() .. " [MATCH_SCREEN] Initialized")
 end
 
 function final(self)
 	for client_id, player_id in pairs(self.players) do
 		go.delete(player_id)
-		print(socket.gettime() .. " [MATCH_SCREEN] Player was deleted, id=" .. player_id)
+		print(os.date() .. " [MATCH_SCREEN] Player was deleted, id=" .. player_id)
 	end
 
-	print(socket.gettime() .. " [MATCH_SCREEN] Finalized")
+	print(os.date() .. " [MATCH_SCREEN] Finalized")
 end
 
 function update(self, dt)

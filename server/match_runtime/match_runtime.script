@@ -35,13 +35,13 @@ local function delete_client(self, client_id)
 			local match_event = match_events:player_deleted(client_id)
 			events_container:add_event(match_event)
 
-			print(socket.gettime() .. " [MATCH_RUNTIME] Player was deleted, client_id=" .. client_id)
+			print(os.date() .. " [MATCH_RUNTIME] Player was deleted, client_id=" .. client_id)
 		end
 	end
 end
 
 local function request_state(self, client_id)
-	print(socket.gettime() .. " [MATCH_RUNTIME] State was requested, client_id=" .. client_id)
+	print(os.date() .. " [MATCH_RUNTIME] State was requested, client_id=" .. client_id)
 
 	if not self.simulated_state then
 		self.simulated_state = players_container:get_state()
@@ -57,7 +57,7 @@ local function request_state(self, client_id)
 			if players_container:add_player(client_id, new_player) then
 				local match_event = match_events:player_created(client_id, nickname)
 				events_container:add_event(match_event)
-				print(socket.gettime() .. " [MATCH_RUNTIME] Player was created, client_id=" .. client_id)
+				print(os.date() .. " [MATCH_RUNTIME] Player was created, client_id=" .. client_id)
 
 				local state = self.simulated_state
 
@@ -72,10 +72,10 @@ local function request_state(self, client_id)
 				omgruntime:respond_text_message(client_id, json.encode(server_message))
 			end
 		else
-			print(socket.gettime() .. " [MATCH_RUNTIME] Player profile was not found to create a new player, client_id=" .. client_id)
+			print(os.date() .. " [MATCH_RUNTIME] Player profile was not found to create a new player, client_id=" .. client_id)
 		end
 	else
-		print(socket.gettime() .. " [MATCH_RUNTIME] Player was already created to get match state, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_RUNTIME] Player was already created to get match state, client_id=" .. client_id)
 	end
 end
 
@@ -88,18 +88,18 @@ local function request_spawn(self, client_id)
 		local total_delay = step_delay + spawn_steps * simulation_interval
 		
 		self.spawn_requests[client_id] = self.match_timer + total_delay
-		print(socket.gettime() .. " [MATCH_RUNTIME] Spawn request was set, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_RUNTIME] Spawn request was set, client_id=" .. client_id)
 
 		local server_message = server_messages:set_spawn_countdown(total_delay)
 		omgruntime:respond_text_message(client_id, json.encode(server_message))
 	else
-		print(socket.gettime() .. " [MATCH_RUNTIME] Spawn request was already received, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_RUNTIME] Spawn request was already received, client_id=" .. client_id)
 	end
 end
 
 local function request_leave(self, client_id)
 	omgruntime:kick_client(client_id)
-	print(socket.gettime() .. " [MATCH_RUNTIME] The client was requested to be kicked, client_id=" .. client_id)
+	print(os.date() .. " [MATCH_RUNTIME] The client was requested to be kicked, client_id=" .. client_id)
 end
 
 local function move_player(self, client_id, x, y)
@@ -111,19 +111,19 @@ local function move_player(self, client_id, x, y)
 			local target_position = vector_factory:create(x, y)
 			player_instance:set_movement(target_position)
 
-			print(socket.gettime() .. " [MATCH_RUNTIME] Movement was created, client_id=" .. client_id .. ", x=" .. math.floor(x) .. ", y=" .. math.floor(y))
+			print(os.date() .. " [MATCH_RUNTIME] Movement was created, client_id=" .. client_id .. ", x=" .. math.floor(x) .. ", y=" .. math.floor(y))
 		else
-			print(socket.gettime() .. " [MATCH_RUNTIME] Player was not spawn or was already killed to move, client_id=" .. client_id)
+			print(os.date() .. " [MATCH_RUNTIME] Player was not spawn or was already killed to move, client_id=" .. client_id)
 		end
 	else
-		print(socket.gettime() .. " [MATCH_RUNTIME] Player was not found to move, client_id=" .. client_id)
+		print(os.date() .. " [MATCH_RUNTIME] Player was not found to move, client_id=" .. client_id)
 	end
 end
 
 local function simulate(self)
 	self.match_step = self.match_step + 1
 	
-	print(socket.gettime() .. " [MATCH_RUNTIME] Simulated, step=" .. self.match_step .. ", timer=" .. self.match_timer)
+	print(os.date() .. " [MATCH_RUNTIME] Simulated, step=" .. self.match_step .. ", timer=" .. self.match_timer)
 
 	simulation_service:simulate()
 	
@@ -140,9 +140,9 @@ local function simulate(self)
 				local match_event = match_events:player_spawned(client_id, spawn_position.x, spawn_position.y)
 				events_container:add_event(match_event)
 
-				print(socket.gettime() .. " [MATCH_RUNTIME] Player was spawned, client_id=" .. client_id .. ", x=" .. spawn_position.x .. ", y=" .. spawn_position.y)
+				print(os.date() .. " [MATCH_RUNTIME] Player was spawned, client_id=" .. client_id .. ", x=" .. spawn_position.x .. ", y=" .. spawn_position.y)
 			else
-				print(socket.gettime() .. " [MATCH_RUNTIME] Player was not found to spawn, client_id=" .. client_id)
+				print(os.date() .. " [MATCH_RUNTIME] Player was not found to spawn, client_id=" .. client_id)
 			end
 
 			self.spawn_requests[client_id] = nil
@@ -177,7 +177,7 @@ function update(self, dt)
 			if not self.stopping then
 				omgruntime:stop_matchmaking()
 				self.stopping = true
-				print(socket.gettime() .. " [MATCH_RUNTIME] The matchmaking was requested to be stopped, timer=" .. self.match_timer)
+				print(os.date() .. " [MATCH_RUNTIME] The matchmaking was requested to be stopped, timer=" .. self.match_timer)
 			end
 		end
 
@@ -227,7 +227,7 @@ function on_message(self, message_id, message, sender)
 			local y = game_message.y
 			move_player(self, client_id, x, y)
 		else
-			print(socket.gettime() .. " [MATCH_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
+			print(os.date() .. " [MATCH_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 		end
 	end
 end

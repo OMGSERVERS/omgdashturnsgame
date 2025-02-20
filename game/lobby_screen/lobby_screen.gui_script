@@ -40,7 +40,7 @@ function init(self)
 
 	self.join_button = self.druid:new_button("join_button", join_button)
 
-	print(socket.gettime() .. " [LOBBY_SCREEN] Initialized")
+	print(os.date() .. " [LOBBY_SCREEN] Initialized")
 end
 
 function final(self)

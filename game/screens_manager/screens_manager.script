@@ -24,7 +24,7 @@ local function remove_current_screen(self)
 end
 
 local function create_game_screen(self, factory_id, collection_id, screen_id)
-	print(socket.gettime() .. " [SCREENS_MANAGER] Creating " .. screen_id)
+	print(os.date() .. " [SCREENS_MANAGER] Creating " .. screen_id)
 
 	remove_current_screen(self)
 

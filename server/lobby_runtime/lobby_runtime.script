@@ -15,7 +15,7 @@ local function command_received(self, message)
 	-- Init runtime
 	if command_qualifier == omgruntime.constants.INIT_RUNTIME then
 		self.version_config = command_body.runtime_config.version_config
-		print(socket.gettime() .. " [LOBBY_RUNTIME] Runtime was initialized")
+		print(os.date() .. " [LOBBY_RUNTIME] Runtime was initialized")
 		pprint(self.version_config)
 		
 	-- Add client
@@ -55,7 +55,7 @@ local function command_received(self, message)
 				local server_message = server_messages:set_profile(wrapped_profile.profile)
 				omgruntime:respond_client(client_id, json.encode(server_message))
 			else
-				print(socket.gettime() .. " [LOBBY_RUNTIME] Profile was not found while handling request_profile message, client_id=" .. client_id)
+				print(os.date() .. " [LOBBY_RUNTIME] Profile was not found while handling request_profile message, client_id=" .. client_id)
 			end
 
 		-- Request matchmaking
@@ -78,7 +78,7 @@ local function command_received(self, message)
 
 			omgruntime:request_matchmaking(client_id, DEFAULT_GAME_MODE)
 		else
-			print(socket.gettime() .. " [LOBBY_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
+			print(os.date() .. " [LOBBY_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 		end
 	end
 end

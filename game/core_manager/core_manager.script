@@ -16,7 +16,7 @@ local CLIENT_MANAGER = "client_manager#client_manager"
 local function game_started(self)
 	self.started_at = socket.gettime()
 	
-	print(socket.gettime() .. " [CORE_MANAGER] Game started at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Game started at " .. os.date())
 	core_state:change_game_state(core_state.IN_AUTH)
 
 	-- Show auth screen
@@ -24,7 +24,7 @@ local function game_started(self)
 end
 
 local function game_failed(self, reason)
-	print(socket.gettime() .. " [CORE_MANAGER] Game failed at " .. os.date() .. ", reason=" ..reason)
+	print(os.date() .. " [CORE_MANAGER] Game failed at " .. os.date() .. ", reason=" ..reason)
 	core_state:change_game_state(core_state.GAME_FAILED)
 
 	-- Show ops screen
@@ -32,7 +32,7 @@ local function game_failed(self, reason)
 end
 
 local function auth_screen_created(self, collection_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Auth screen was created at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Auth screen was created at " .. os.date())
 	
 	self.screen_collection_id = collection_id
 
@@ -43,7 +43,7 @@ local function auth_screen_created(self, collection_id)
 end
 
 local function signed_up(self, user_id, password)
-	print(socket.gettime() .. " [CORE_MANAGER] User signed up at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] User signed up at " .. os.date())
 
 	auth_screen:set_state(self.screen_collection_id, "Signing in")
 
@@ -52,18 +52,18 @@ local function signed_up(self, user_id, password)
 end
 
 local function signed_in(self, client_id)
-	print(socket.gettime() .. " [CORE_MANAGER] User signed in at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] User signed in at " .. os.date())
 	core_state:set_client_id(client_id)
 end
 
 local function lobby_assigned(self, runtime_qualifier, runtime_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Lobby was assigned at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Lobby was assigned at " .. os.date())
 	-- Show lobby screen
 	screens_manager:create_lobby_screen(SCREENS_MANAGER, core_state.profile)
 end
 
 local function greeted(self, version_id, version_created)
-	print(socket.gettime() .. " [CORE_MANAGER] User greeted at " .. os.date() .. ", version_id=" .. version_id .. ", version_created=" .. version_created)
+	print(os.date() .. " [CORE_MANAGER] User greeted at " .. os.date() .. ", version_id=" .. version_id .. ", version_created=" .. version_created)
 
 	auth_screen:set_state(self.screen_collection_id, "Getting profile")
 
@@ -75,7 +75,7 @@ local function greeted(self, version_id, version_created)
 end
 
 local function set_profile(self, profile)
-	print(socket.gettime() .. " [CORE_MANAGER] Profile was received at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Profile was received at " .. os.date())
 	core_state:set_profile(profile)
 
 	if core_state.game_state == core_state.GETTING_PROFILE then
@@ -85,14 +85,14 @@ local function set_profile(self, profile)
 end
 
 local function lobby_screen_created(self, collection_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Lobby screen was created at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Lobby screen was created at " .. os.date())
 	
 	self.screen_collection_id = collection_id
 	core_state:change_game_state(core_state.IN_LOBBY)
 end
 
 local function joining_screen_created(self, collection_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Joining screen was created at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Joining screen was created at " .. os.date())
 
 	self.screen_collection_id = collection_id
 	core_state:change_game_state(core_state.JOINING)
@@ -106,7 +106,7 @@ local function joining_screen_created(self, collection_id)
 end
 
 local function joining_requested(self, nickname)
-	print(socket.gettime() .. " [CORE_MANAGER] Joining was requested at " .. os.date() .. ", nickname=" .. nickname)
+	print(os.date() .. " [CORE_MANAGER] Joining was requested at " .. os.date() .. ", nickname=" .. nickname)
 
 	core_state:change_nickname(nickname)
 	
@@ -115,11 +115,11 @@ local function joining_requested(self, nickname)
 end
 
 local function match_assigned(self, runtime_qualifier, runtime_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Match was assigned at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Match was assigned at " .. os.date())
 end
 
 local function connection_upgraded(self)
-	print(socket.gettime() .. " [CORE_MANAGER] Connection was upgraded at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Connection was upgraded at " .. os.date())
 	
 	core_state:change_game_state(core_state.GETTING_STATE)
 	
@@ -130,21 +130,21 @@ end
 
 
 local function leaving_requested(self)
-	print(socket.gettime() .. " [CORE_MANAGER] Leaving was requested at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Leaving was requested at " .. os.date())
 	
 	-- Show leaving screen
 	screens_manager:create_leaving_screen(SCREENS_MANAGER)
 end
 
 local function reset_requested(self)
-	print(socket.gettime() .. " [CORE_MANAGER] Reset was requested at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Reset was requested at " .. os.date())
 	omgplayer:reset()
 	core_state:reset()
 	game_started(self)
 end
 
 local function set_state(self, step, settings, dangling_players, spawned_players)
-	print(socket.gettime() .. " [CORE_MANAGER] State was received at " .. os.date() .. ", step=" .. step)
+	print(os.date() .. " [CORE_MANAGER] State was received at " .. os.date() .. ", step=" .. step)
 	
 	if core_state.game_state == core_state.GETTING_STATE then
 		-- Show match screen
@@ -154,16 +154,16 @@ end
 
 local function match_screen_created(self, collection_id)
 	local joining_time = socket.gettime() - self.started_at
-	print(socket.gettime() .. " [CORE_MANAGER] It takes " .. joining_time .. " seconds to join")
+	print(os.date() .. " [CORE_MANAGER] It takes " .. joining_time .. " seconds to join")
 	
-	print(socket.gettime() .. " [CORE_MANAGER] Match screen was created at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Match screen was created at " .. os.date())
 	
 	self.screen_collection_id = collection_id
 	core_state:change_game_state(core_state.IN_MATCH)
 end
 
 local function leaving_screen_created(self, collection_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Leaving screen was created at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Leaving screen was created at " .. os.date())
 
 	-- Leave request
 	local game_message = game_messages:request_leave()
@@ -176,7 +176,7 @@ local function leaving_screen_created(self, collection_id)
 end
 
 local function ops_screen_created(self, collection_id)
-	print(socket.gettime() .. " [CORE_MANAGER] Ops screen was created at " .. os.date())
+	print(os.date() .. " [CORE_MANAGER] Ops screen was created at " .. os.date())
 end
 
 local function apply_events(self, events)

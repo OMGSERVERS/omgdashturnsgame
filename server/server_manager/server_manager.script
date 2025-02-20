@@ -5,7 +5,7 @@ local LOBBY_RUNTIME = "lobby_runtime#lobby_runtime"
 local MATCH_RUNTIME = "match_runtime#match_runtime"
 
 local function server_started(self, runtime_qualifier)
-	print(socket.gettime() .. " [SERVER_MANAGER] Server was started, qualifier=" .. runtime_qualifier)
+	print(os.date() .. " [SERVER_MANAGER] Server was started, qualifier=" .. runtime_qualifier)
 	self.runtime_qualifier = runtime_qualifier
 end
 
@@ -26,7 +26,7 @@ end
 local function message_received(self, client_id, decoded_message)
 	local runtime_qualifier = self.runtime_qualifier
 
-	print(socket.gettime() .. " [SERVER_MANAGER] Message was received, client_id=" .. client_id .. ", message=" .. json.encode(decoded_message))
+	print(os.date() .. " [SERVER_MANAGER] Message was received, client_id=" .. client_id .. ", message=" .. json.encode(decoded_message))
 
 	local runtime_message = runtime_messages:message_received(client_id, decoded_message)
 
@@ -40,7 +40,7 @@ local function message_received(self, client_id, decoded_message)
 end
 
 local function handle_server_event(self, event)
-	print(socket.gettime() .. " [SERVER_MANAGER] Event was received, event=" .. json.encode(event))
+	print(os.date() .. " [SERVER_MANAGER] Event was received, event=" .. json.encode(event))
 
 	local event_qualifier = event.qualifier
 	local event_body = event.body

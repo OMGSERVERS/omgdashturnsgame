@@ -23,14 +23,14 @@ local function set_log_node(self, index, text)
 	gui.set_enabled(log_node.background, true)
 	gui.set_enabled(log_node.text, true)
 	gui.set_text(log_node.text, text)
-	print(socket.gettime() .. " [MATCH_LOG] Set log node, index=" .. index .. ", text=" .. text)
+	print(os.date() .. " [MATCH_LOG] Set log node, index=" .. index .. ", text=" .. text)
 end
 
 local function disable_log(self, index)
 	local log_node = get_log_node(self, index)
 	gui.set_enabled(log_node.background, false)
 	gui.set_enabled(log_node.text, false)
-	print(socket.gettime() .. " [MATCH_LOG] Disable log node, index=" .. index)
+	print(os.date() .. " [MATCH_LOG] Disable log node, index=" .. index)
 end
 
 local function disable_all_logs(self)
@@ -40,7 +40,7 @@ local function disable_all_logs(self)
 end
 
 local function scroll_down(self)
-	print(socket.gettime() .. " [MATCH_LOG] Scroll down")
+	print(os.date() .. " [MATCH_LOG] Scroll down")
 	
 	disable_log(self, 1)
 	
@@ -69,22 +69,22 @@ local function add_log(self, text)
 end
 
 local function player_joined(self, nickname)
-	print(socket.gettime() .. " [MATCH_LOG] Player joined, nickname=" .. nickname)
+	print(os.date() .. " [MATCH_LOG] Player joined, nickname=" .. nickname)
 	add_log(self, nickname .. " joined")
 end
 
 local function player_spawned(self, nickname)
-	print(socket.gettime() .. " [MATCH_LOG] Player spawned, nickname=" .. nickname)
+	print(os.date() .. " [MATCH_LOG] Player spawned, nickname=" .. nickname)
 	add_log(self, nickname .. " spawned")
 end
 
 local function player_leaved(self, nickname)
-	print(socket.gettime() .. " [MATCH_LOG] Player leaved, nickname=" .. nickname)
+	print(os.date() .. " [MATCH_LOG] Player leaved, nickname=" .. nickname)
 	add_log(self, nickname .. " leaved")
 end
 
 local function player_killed(self, killed, killer)
-	print(socket.gettime() .. " [MATCH_LOG] Player " .. killed .. " was killed by " .. killer)
+	print(os.date() .. " [MATCH_LOG] Player " .. killed .. " was killed by " .. killer)
 	add_log(self, killer .. " killed " .. killed)
 end
 
@@ -93,7 +93,7 @@ function init(self)
 	disable_all_logs(self)
 	self.empty_log_index = 1
 	self.timer = 0
-	print(socket.gettime() .. " [MATCH_LOG] Initialized")
+	print(os.date() .. " [MATCH_LOG] Initialized")
 end
 
 function update(self, dt)
