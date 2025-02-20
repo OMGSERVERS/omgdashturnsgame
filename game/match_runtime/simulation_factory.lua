@@ -1,5 +1,5 @@
-local collision_factory = require("server.match_runtime.collision_factory")
-local match_settings = require("server.match_runtime.match_settings")
+local collision_factory = require("game.match_runtime.collision_factory")
+local match_settings = require("game.match_runtime.match_settings")
 
 local simulation_factory
 simulation_factory = {

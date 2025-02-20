@@ -1,5 +1,5 @@
-local runtime_messages = require("server.runtime_utils.runtime_messages")
-local omgruntime = require("omgservers.omgruntime.omgruntime")
+local server_manager = require("game.server_manager.server_manager")
+local runtime_messages = require("game.runtime_utils.runtime_messages")
 
 local LOBBY_RUNTIME = "lobby_runtime#lobby_runtime"
 local MATCH_RUNTIME = "match_runtime#match_runtime"
@@ -14,9 +14,9 @@ local function command_received(self, command_qualifier, command_body)
 
 	local runtime_message = runtime_messages:command_received(command_qualifier, command_body)
 
-	if runtime_qualifier == omgruntime.constants.LOBBY then
+	if runtime_qualifier == self.omgruntime.constants.LOBBY then
 		msg.post(LOBBY_RUNTIME, runtime_messages.COMMAND_RECEIVED, runtime_message)
-	elseif runtime_qualifier == omgruntime.constants.MATCH then
+	elseif runtime_qualifier == self.omgruntime.constants.MATCH then
 		msg.post(MATCH_RUNTIME, runtime_messages.COMMAND_RECEIVED, runtime_message)
 	else
 		error("[SERVER_MANAGER] Unknown runtime qualifier was received, runtime_qualifier=" .. tostring(runtime_qualifier))
@@ -30,9 +30,9 @@ local function message_received(self, client_id, decoded_message)
 
 	local runtime_message = runtime_messages:message_received(client_id, decoded_message)
 
-	if runtime_qualifier == omgruntime.constants.LOBBY then
+	if runtime_qualifier == self.omgruntime.constants.LOBBY then
 		msg.post(LOBBY_RUNTIME, runtime_messages.MESSAGE_RECEIVED, runtime_message)
-	elseif runtime_qualifier == omgruntime.constants.MATCH then
+	elseif runtime_qualifier == self.omgruntime.constants.MATCH then
 		msg.post(MATCH_RUNTIME, runtime_messages.MESSAGE_RECEIVED, runtime_message)
 	else
 		error("[SERVER_MANAGER] Unknown runtime qualifier was received, runtime_qualifier=" .. tostring(runtime_qualifier))
@@ -45,16 +45,16 @@ local function handle_server_event(self, event)
 	local event_qualifier = event.qualifier
 	local event_body = event.body
 
-	if event_qualifier == omgruntime.constants.SERVER_STARTED then
+	if event_qualifier == self.omgruntime.constants.SERVER_STARTED then
 		local runtime_qualifier = event_body.runtime_qualifier
 		server_started(self, runtime_qualifier)
 		
-	elseif event_qualifier == omgruntime.constants.COMMAND_RECEIVED then
+	elseif event_qualifier == self.omgruntime.constants.COMMAND_RECEIVED then
 		local command_qualifier = event_body.qualifier
 		local command_body = event_body.body
 		command_received(self, command_qualifier, command_body)
 		
-	elseif event_qualifier == omgruntime.constants.MESSAGE_RECEIVED then
+	elseif event_qualifier == self.omgruntime.constants.MESSAGE_RECEIVED then
 		local client_id = event_body.client_id
 		local decoded_message = json.decode(event_body.message)
 		message_received(self, client_id, decoded_message)
@@ -62,16 +62,25 @@ local function handle_server_event(self, event)
 	end
 end
 
-function init(self)
+local function start(self)
 	local options = {
 		event_handler = function(event) handle_server_event(self, event) end,
 		debug_logging = true,
 		trace_logging = false,
 	}
-	omgruntime:init(options)
-	omgruntime:start()
+	self.omgruntime = require("omgservers.omgruntime.omgruntime")
+	self.omgruntime:init(options)
+	self.omgruntime:start()
 end
 
 function update(self, dt)
-	omgruntime:update(dt)
+	if self.omgruntime then
+		self.omgruntime:update(dt)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(server_manager.START) then
+		start(self)
+	end
 end

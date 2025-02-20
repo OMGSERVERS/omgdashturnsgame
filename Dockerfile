@@ -21,6 +21,8 @@ FROM --platform=linux/amd64 ubuntu:latest
 
 WORKDIR /game
 
+ENV SERVER_ENVIRONMENT=true
+
 COPY --from=builder /project/build/default/omgdashturnsgame .
 RUN ls -lah .
 

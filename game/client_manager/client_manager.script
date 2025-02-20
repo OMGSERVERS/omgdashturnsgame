@@ -4,13 +4,6 @@ local omgplayer = require("omgservers.omgplayer.omgplayer")
 
 local CORE_MANAGER = "core_manager#core_manager"
 
-local function reset(self)
-	print(os.date() .. " [CLIENT] Reset")
-	self.omginstance:reset()
-	self.omginstance:ping()
-	self.omginstance:sign_up()
-end
-
 local function signed_up(self, user_id, password)
 	print(os.date() .. " [CLIENT] Signed up, user_id=" .. user_id)
 	core_manager:signed_up(CORE_MANAGER, user_id, password)
@@ -102,32 +95,45 @@ local function handle_client_event(self, event)
 	end
 end
 
-function init(self)
-	if sys.get_engine_info().is_debug then
-		local configuration = require("game.localtesting")
-		print(os.date() .. " [CLIENT] Using localtesting configuration, " .. json.encode(configuration))
-
-		local options = {
-			tenant = configuration.tenant,
-			project = configuration.project,
-			stage = configuration.stage,
-			event_handler = function(event) handle_client_event(self, event) end,
-			service_url = configuration.url,
-			debug_logging = true,
-			trace_logging = false,
-		}
-
-		local omginstance = omgplayer:create()
-		self.omginstance = omginstance
-
-		omginstance:init(options)
+local function reset(self)
+	if self.omginstance then
+		print(os.date() .. " [CLIENT] Resetting already created client")
+		
+		self.omginstance:reset()
 	else
-		error("[CLIENT] Only localtesting is supported")
+		print(os.date() .. " [CLIENT] Creating a new client")
+		
+		if sys.get_engine_info().is_debug then
+			local configuration = require("game.client_manager.connections.localtesting")
+			print(os.date() .. " [CLIENT] Using localtesting configuration, " .. json.encode(configuration))
+
+			local options = {
+				tenant = configuration.tenant,
+				project = configuration.project,
+				stage = configuration.stage,
+				event_handler = function(event) handle_client_event(self, event) end,
+				service_url = configuration.url,
+				debug_logging = true,
+				trace_logging = false,
+			}
+
+			local omginstance = omgplayer:create()
+			self.omginstance = omginstance
+
+			omginstance:init(options)
+		else
+			error("[CLIENT] Only localtesting is supported")
+		end
 	end
+
+	self.omginstance:ping()
+	self.omginstance:sign_up()
 end
 
 function update(self, dt)
-	self.omginstance:update(dt)	
+	if self.omginstance then
+		self.omginstance:update(dt)
+	end
 end
 
 function on_message(self, message_id, message, sender)

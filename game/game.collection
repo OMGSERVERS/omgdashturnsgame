@@ -15,4 +15,16 @@ instances {
   id: "game_entrypoint"
   prototype: "/game/game_entrypoint/game_entrypoint.go"
 }
+instances {
+  id: "lobby_runtime"
+  prototype: "/game/lobby_runtime/lobby_runtime.go"
+}
+instances {
+  id: "match_runtime"
+  prototype: "/game/match_runtime/match_runtime.go"
+}
+instances {
+  id: "server_manager"
+  prototype: "/game/server_manager/server_manager.go"
+}
 scale_along_z: 0

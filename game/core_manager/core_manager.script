@@ -1,5 +1,6 @@
 local screens_manager = require("game.screens_manager.screens_manager")
 local client_manager = require("game.client_manager.client_manager")
+local server_manager = require("game.server_manager.server_manager")
 local leaving_screen = require("game.leaving_screen.leaving_screen")
 local joining_screen = require("game.joining_screen.joining_screen")
 local match_screen = require("game.match_screen.match_screen")
@@ -15,12 +16,16 @@ local CLIENT_MANAGER = "client_manager#client_manager"
 
 local function game_started(self)
 	self.started_at = socket.gettime()
-	
 	print(os.date() .. " [CORE_MANAGER] Game started at " .. os.date())
-	core_state:change_game_state(core_state.IN_AUTH)
 
-	-- Show auth screen
-	screens_manager:create_auth_screen(SCREENS_MANAGER)
+	if os.getenv("SERVER_ENVIRONMENT") then
+		server_manager:start()
+	else
+		core_state:change_game_state(core_state.IN_AUTH)
+
+		-- Show auth screen
+		screens_manager:create_auth_screen(SCREENS_MANAGER)
+	end
 end
 
 local function game_failed(self, reason)
@@ -126,7 +131,6 @@ local function connection_upgraded(self)
 	local game_message = game_messages:request_state()
 	client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
 end
-
 
 local function leaving_requested(self)
 	print(os.date() .. " [CORE_MANAGER] Leaving was requested at " .. os.date())

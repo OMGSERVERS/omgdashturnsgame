@@ -1,4 +1,4 @@
-local events_container = require("server.match_runtime.events_container")
+local events_container = require("game.match_runtime.events_container")
 local match_events = require("common.match_events")
 
 local players_container

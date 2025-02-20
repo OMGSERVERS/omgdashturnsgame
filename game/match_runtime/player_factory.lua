@@ -1,4 +1,4 @@
-local movement_factory = require("server.match_runtime.movement_factory")
+local movement_factory = require("game.match_runtime.movement_factory")
 
 local player
 player = {

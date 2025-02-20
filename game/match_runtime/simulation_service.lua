@@ -1,7 +1,7 @@
-local simulation_factory = require("server.match_runtime.simulation_factory")
-local players_container = require("server.match_runtime.players_container")
-local events_container = require("server.match_runtime.events_container")
-local match_settings = require("server.match_runtime.match_settings")
+local simulation_factory = require("game.match_runtime.simulation_factory")
+local players_container = require("game.match_runtime.players_container")
+local events_container = require("game.match_runtime.events_container")
+local match_settings = require("game.match_runtime.match_settings")
 local match_events = require("common.match_events")
 
 local simulation_service
