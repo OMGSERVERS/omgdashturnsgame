@@ -1,7 +1,7 @@
 local match_pointer = require("game.match_pointer.match_pointer")
 local match_messages = require("game.match_screen.match_screen")
 local match_player = require("game.match_player.match_player")
-local core_manager = require("game.core_manager.core_manager")
+local client_manager = require("game.client_manager.client_manager")
 local match_gui = require("game.match_gui.match_gui")
 local match_log = require("game.match_log.match_log")
 local match_top = require("game.match_top.match_top")
@@ -25,9 +25,9 @@ local function create_client(self, client_id, nickname, score)
 
 	match_top:add_player(MATCH_TOP, client_id, nickname, score)
 	
-	if client_id == core_manager:get_client_id() then
+	if client_id == client_manager:get_client_id() then
 		-- Send initial spawn request
-		core_manager:spawn()
+		client_manager:spawn()
 	end
 end
 
@@ -44,7 +44,7 @@ local function spawn_player(self, client_id, x, y)
 		local player_id = collection_ids[hash("/match_player")]
 		self.players[client_id] = player_id
 
-		local controllable = client_id == core_manager:get_client_id()
+		local controllable = client_id == client_manager:get_client_id()
 		local nickname = client.nickname
 		match_player:set_state(player_id, controllable, nickname)
 
@@ -63,7 +63,7 @@ local function kill_player(self, client_id)
 	if player_id then
 		
 		-- If it's controllable player -> disable pointer before killing
-		if client_id == core_manager:get_client_id() then
+		if client_id == client_manager:get_client_id() then
 			match_pointer:disable_pointer(MATCH_POINTER)
 		end
 		
@@ -95,7 +95,7 @@ local function move_player(self, client_id, x, y)
 	if player_id then
 		match_player:move_to(player_id, x, y)
 
-		if client_id == core_manager:get_client_id() then
+		if client_id == client_manager:get_client_id() then
 			match_pointer:disable_pointer(MATCH_POINTER)
 		end
 	else
@@ -160,11 +160,11 @@ local function apply_events(self, events)
 			local by_client_id = event.by_client_id
 
 			timer.delay(0.5, false, function()
-				if killed_client_id == core_manager:get_client_id() then
+				if killed_client_id == client_manager:get_client_id() then
 					-- camera.unfollow(nil)
 					
 					-- Send spawn request
-					core_manager:spawn()
+					client_manager:spawn()
 				end
 
 				kill_player(self, killed_client_id)
@@ -207,7 +207,7 @@ end
 local function pointed(self, pointed_x, pointed_y)
 	local x, y = screen_to_world(pointed_x, pointed_y, 0)
 	
-	local client_id = core_manager:get_client_id()
+	local client_id = client_manager:get_client_id()
 	local player_id = self.players[client_id]
 	if player_id then
 		local bounded_x = math.max(24, math.min(256 - 24, x))
@@ -218,7 +218,7 @@ local function pointed(self, pointed_x, pointed_y)
 		print(os.date() .. " [MATCH_SCREEN] Move player, x=" .. bounded_x .. ", y=" .. bounded_y)
 
 		-- Move player
-		core_manager:move(bounded_x, bounded_y)
+		client_manager:move(bounded_x, bounded_y)
 	else
 		print(os.date() .. " [MATCH_SCREEN] Player was not found to point, client_id=" .. client_id)
 	end
@@ -241,7 +241,7 @@ function final(self)
 end
 
 function update(self, dt)
-	local client_id = core_manager:get_client_id()
+	local client_id = client_manager:get_client_id()
 	local player_id = self.players[client_id]
 	if player_id then
 		local player_position = go.get_position(player_id)

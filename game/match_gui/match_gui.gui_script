@@ -1,12 +1,12 @@
 local match_screen = require("game.match_screen.match_screen")
-local core_manager = require("game.core_manager.core_manager")
+local client_manager = require("game.client_manager.client_manager")
 local match_gui = require("game.match_gui.match_gui")
 local druid = require("druid.druid")
 
 local MATCH_SCREEN = "match_screen"
 
 local function leave_button(self)
-	core_manager:leaving_requested()
+	client_manager:leaving_requested()
 end
 
 local function update_spawn_countdown(self, time_to_spawn)

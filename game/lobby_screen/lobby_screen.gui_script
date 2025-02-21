@@ -1,4 +1,4 @@
-local core_manager = require("game.core_manager.core_manager")
+local client_manager = require("game.client_manager.client_manager")
 local lobby_screen = require("game.lobby_screen.lobby_screen")
 local input = require("druid.extended.input")
 local druid = require("druid.druid")
@@ -9,7 +9,7 @@ local function request_joining(self)
 	if nickname_input_text == "" then
 		self.nickname_input:set_text(self.profile.data.nickname)
 	else
-		core_manager:joining_requested(nickname_input_text)
+		client_manager:joining_requested(nickname_input_text)
 	end
 end
 

@@ -2,20 +2,20 @@ local screens_manager = require("game.screens_manager.screens_manager")
 local leaving_screen = require("game.leaving_screen.leaving_screen")
 local joining_screen = require("game.joining_screen.joining_screen")
 local match_screen = require("game.match_screen.match_screen")
-local core_manager = require("game.core_manager.core_manager")
+local client_manager = require("game.client_manager.client_manager")
 local auth_screen = require("game.auth_screen.auth_screen")
 local omgplayer = require("omgservers.omgplayer.omgplayer")
-local core_state = require("game.core_manager.core_state")
+local client_state = require("game.client_manager.client_state")
 local server_messages = require("common.server_messages")
 local game_messages = require("common.game_messages")
 
 local function sign_in(self, user_id, password)
-	print(os.date() .. " [CORE_MANAGER] Signing in, user_id=" .. user_id)
+	print(os.date() .. " [CLIENT_MANAGER] Signing in, user_id=" .. user_id)
 	self.omginstance:sign_in(user_id, password)
 end
 
 local function signed_up(self, user_id, password)
-	print(os.date() .. " [CORE_MANAGER] Signed up, user_id=" .. user_id)
+	print(os.date() .. " [CLIENT_MANAGER] Signed up, user_id=" .. user_id)
 
 	auth_screen:set_state(self.screen_collection_id, "Signing in")
 
@@ -23,32 +23,32 @@ local function signed_up(self, user_id, password)
 end
 
 local function signed_in(self, client_id)
-	print(os.date() .. " [CORE_MANAGER] Signed in, client_id=" .. client_id)
-	core_state:set_client_id(client_id)
+	print(os.date() .. " [CLIENT_MANAGER] Signed in, client_id=" .. client_id)
+	client_state:set_client_id(client_id)
 end
 
 local function greeted(self, version_id, version_created)
 	print(os.date() .. " [CLIENT] Greeted, version_id=" .. version_id .. ", version_created=" .. version_created)
-	core_manager:user_greeted(version_id, version_created)
+	client_manager:user_greeted(version_id, version_created)
 end
 
 local function assigned(self, runtime_qualifier, runtime_id)
 	print(os.date() .. " [CLIENT] Assigned, runtime_qualifier=" .. runtime_qualifier .. ", runtime_id=" .. runtime_id)
-	core_manager:runtime_assigned(runtime_qualifier, runtime_id)
+	client_manager:runtime_assigned(runtime_qualifier, runtime_id)
 end
 
 local function message_received(self, decoded_message)
-	core_manager:message_received(decoded_message)
+	client_manager:message_received(decoded_message)
 end
 
 local function connection_dispatched(self)
 	print(os.date() .. " [CLIENT] Connection was dispatched")
-	core_manager:connection_upgraded()
+	client_manager:connection_upgraded()
 end
 
 local function failed(self, reason)
 	print(os.date() .. " [CLIENT] Client failed, reason=" .. reason)
-	core_manager:game_failed(reason)
+	client_manager:game_failed(reason)
 end
 
 local function send_command(self, message)
@@ -139,24 +139,24 @@ end
 
 local function game_started(self)
 	self.started_at = socket.gettime()
-	print(os.date() .. " [CORE_MANAGER] Game started at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Game started at " .. os.date())
 
-	core_state:change_game_state(core_state.IN_AUTH)
+	client_state:change_game_state(client_state.IN_AUTH)
 
 	-- Show auth screen
 	screens_manager:create_auth_screen()
 end
 
 local function game_failed(self, reason)
-	print(os.date() .. " [CORE_MANAGER] Game failed at " .. os.date() .. ", reason=" ..reason)
-	core_state:change_game_state(core_state.GAME_FAILED)
+	print(os.date() .. " [CLIENT_MANAGER] Game failed at " .. os.date() .. ", reason=" ..reason)
+	client_state:change_game_state(client_state.GAME_FAILED)
 
 	-- Show ops screen
 	screens_manager:create_ops_screen(reason)
 end
 
 local function auth_screen_created(self, collection_id)
-	print(os.date() .. " [CORE_MANAGER] Auth screen was created at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Auth screen was created at " .. os.date())
 	
 	self.screen_collection_id = collection_id
 
@@ -166,13 +166,13 @@ local function auth_screen_created(self, collection_id)
 end
 
 local function lobby_assigned(self, runtime_qualifier, runtime_id)
-	print(os.date() .. " [CORE_MANAGER] Lobby was assigned at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Lobby was assigned at " .. os.date())
 	-- Show lobby screen
-	screens_manager:create_lobby_screen(core_state.profile)
+	screens_manager:create_lobby_screen(client_state.profile)
 end
 
 local function greeted(self, version_id, version_created)
-	print(os.date() .. " [CORE_MANAGER] User greeted at " .. os.date() .. ", version_id=" .. version_id .. ", version_created=" .. version_created)
+	print(os.date() .. " [CLIENT_MANAGER] User greeted at " .. os.date() .. ", version_id=" .. version_id .. ", version_created=" .. version_created)
 
 	auth_screen:set_state(self.screen_collection_id, "Getting profile")
 
@@ -180,57 +180,57 @@ local function greeted(self, version_id, version_created)
 	local game_message = game_messages:request_profile()
 	send_command(self, json.encode(game_message))
 
-	core_state:change_game_state(core_state.GETTING_PROFILE)
+	client_state:change_game_state(client_state.GETTING_PROFILE)
 end
 
 local function set_profile(self, profile)
-	print(os.date() .. " [CORE_MANAGER] Profile was received at " .. os.date())
-	core_state:set_profile(profile)
+	print(os.date() .. " [CLIENT_MANAGER] Profile was received at " .. os.date())
+	client_state:set_profile(profile)
 
-	if core_state.game_state == core_state.GETTING_PROFILE then
+	if client_state.game_state == client_state.GETTING_PROFILE then
 		-- Show lobby screen
-		screens_manager:create_lobby_screen(core_state.profile)
+		screens_manager:create_lobby_screen(client_state.profile)
 	end
 end
 
 local function lobby_screen_created(self, collection_id)
-	print(os.date() .. " [CORE_MANAGER] Lobby screen was created at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Lobby screen was created at " .. os.date())
 	
 	self.screen_collection_id = collection_id
-	core_state:change_game_state(core_state.IN_LOBBY)
+	client_state:change_game_state(client_state.IN_LOBBY)
 end
 
 local function joining_screen_created(self, collection_id)
-	print(os.date() .. " [CORE_MANAGER] Joining screen was created at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Joining screen was created at " .. os.date())
 
 	self.screen_collection_id = collection_id
-	core_state:change_game_state(core_state.JOINING)
+	client_state:change_game_state(client_state.JOINING)
 
 	joining_screen:set_state(self.screen_collection_id, "Matchmaking")
 
 	-- Request matchmaking
-	local nickname = core_state:get_nickname()
+	local nickname = client_state:get_nickname()
 	local game_message = game_messages:request_matchmaking(nickname)
 	send_command(self, json.encode(game_message))
 end
 
 local function joining_requested(self, nickname)
-	print(os.date() .. " [CORE_MANAGER] Joining was requested at " .. os.date() .. ", nickname=" .. nickname)
+	print(os.date() .. " [CLIENT_MANAGER] Joining was requested at " .. os.date() .. ", nickname=" .. nickname)
 
-	core_state:change_nickname(nickname)
+	client_state:change_nickname(nickname)
 	
 	-- Show joining screen
 	screens_manager:create_joining_screen()
 end
 
 local function match_assigned(self, runtime_qualifier, runtime_id)
-	print(os.date() .. " [CORE_MANAGER] Match was assigned at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Match was assigned at " .. os.date())
 end
 
 local function connection_upgraded(self)
-	print(os.date() .. " [CORE_MANAGER] Connection was upgraded at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Connection was upgraded at " .. os.date())
 	
-	core_state:change_game_state(core_state.GETTING_STATE)
+	client_state:change_game_state(client_state.GETTING_STATE)
 	
 	-- Request match state
 	local game_message = game_messages:request_state()
@@ -238,15 +238,15 @@ local function connection_upgraded(self)
 end
 
 local function leaving_requested(self)
-	print(os.date() .. " [CORE_MANAGER] Leaving was requested at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Leaving was requested at " .. os.date())
 	
 	-- Show leaving screen
 	screens_manager:create_leaving_screen()
 end
 
 local function reset_requested(self)
-	print(os.date() .. " [CORE_MANAGER] Reset was requested at " .. os.date())
-	core_state:reset()
+	print(os.date() .. " [CLIENT_MANAGER] Reset was requested at " .. os.date())
+	client_state:reset()
 	game_started(self)
 end
 
@@ -261,9 +261,9 @@ local function move_requested(self, x, y)
 end
 
 local function set_state(self, step, settings, dangling_players, spawned_players)
-	print(os.date() .. " [CORE_MANAGER] State was received at " .. os.date() .. ", step=" .. step)
+	print(os.date() .. " [CLIENT_MANAGER] State was received at " .. os.date() .. ", step=" .. step)
 	
-	if core_state.game_state == core_state.GETTING_STATE then
+	if client_state.game_state == client_state.GETTING_STATE then
 		-- Show match screen
 		screens_manager:create_match_screen(settings, dangling_players, spawned_players)
 	end
@@ -271,29 +271,29 @@ end
 
 local function match_screen_created(self, collection_id)
 	local joining_time = socket.gettime() - self.started_at
-	print(os.date() .. " [CORE_MANAGER] It takes " .. joining_time .. " seconds to join")
+	print(os.date() .. " [CLIENT_MANAGER] It takes " .. joining_time .. " seconds to join")
 	
-	print(os.date() .. " [CORE_MANAGER] Match screen was created at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Match screen was created at " .. os.date())
 	
 	self.screen_collection_id = collection_id
-	core_state:change_game_state(core_state.IN_MATCH)
+	client_state:change_game_state(client_state.IN_MATCH)
 end
 
 local function leaving_screen_created(self, collection_id)
-	print(os.date() .. " [CORE_MANAGER] Leaving screen was created at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Leaving screen was created at " .. os.date())
 
 	-- Leave request
 	local game_message = game_messages:request_leave()
 	send_message(self, json.encode(game_message))
 	
 	self.screen_collection_id = collection_id
-	core_state:change_game_state(core_state.LEAVING)
+	client_state:change_game_state(client_state.LEAVING)
 
 	leaving_screen:set_state(self.screen_collection_id, "Leaving")
 end
 
 local function ops_screen_created(self, collection_id)
-	print(os.date() .. " [CORE_MANAGER] Ops screen was created at " .. os.date())
+	print(os.date() .. " [CLIENT_MANAGER] Ops screen was created at " .. os.date())
 end
 
 local function apply_events(self, events)
@@ -311,48 +311,48 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(core_manager.GAME_STARTED) then
+	if message_id == hash(client_manager.GAME_STARTED) then
 		game_started(self)
 		
-	elseif message_id == hash(core_manager.GAME_FAILED) then
+	elseif message_id == hash(client_manager.GAME_FAILED) then
 		local reason = message.reason
 		game_failed(self, reason)
 		
-	elseif message_id == hash(core_manager.SCREEN_CREATED) then
+	elseif message_id == hash(client_manager.SCREEN_CREATED) then
 		local screen_qualifier = message.screen_qualifier
 		local collection_id = message.collection_id
 		
-		if screen_qualifier == core_manager.AUTH_SCREEN then
+		if screen_qualifier == client_manager.AUTH_SCREEN then
 			auth_screen_created(self, collection_id)
-		elseif screen_qualifier == core_manager.LOBBY_SCREEN then
+		elseif screen_qualifier == client_manager.LOBBY_SCREEN then
 			lobby_screen_created(self, collection_id)
-		elseif screen_qualifier == core_manager.JOINING_SCREEN then
+		elseif screen_qualifier == client_manager.JOINING_SCREEN then
 			joining_screen_created(self, collection_id)
-		elseif screen_qualifier == core_manager.MATCH_SCREEN then
+		elseif screen_qualifier == client_manager.MATCH_SCREEN then
 			match_screen_created(self, collection_id)
-		elseif screen_qualifier == core_manager.LEAVING_SCREEN then
+		elseif screen_qualifier == client_manager.LEAVING_SCREEN then
 			leaving_screen_created(self, collection_id)
-		elseif screen_qualifier == core_manager.OPS_SCREEN then
+		elseif screen_qualifier == client_manager.OPS_SCREEN then
 			ops_screen_created(self, collection_id)
 		else
-			error("[CORE_MANAGER] Unknown screen qualifier was received, screen_qualifier=" .. tostring(screen_qualifier))
+			error("[CLIENT_MANAGER] Unknown screen qualifier was received, screen_qualifier=" .. tostring(screen_qualifier))
 		end
 
-	elseif message_id == hash(core_manager.SIGNED_UP) then
+	elseif message_id == hash(client_manager.SIGNED_UP) then
 		local user_id = message.user_id
 		local password = message.password
 		signed_up(self, user_id, password)
 		
-	elseif message_id == hash(core_manager.SIGNED_IN) then
+	elseif message_id == hash(client_manager.SIGNED_IN) then
 		local client_id = message.client_id
 		signed_in(self, client_id)
 		
-	elseif message_id == hash(core_manager.USER_GREETED) then
+	elseif message_id == hash(client_manager.USER_GREETED) then
 		local version_id = message.version_created
 		local version_created = message.version_created
 		greeted(self, version_id, version_created)
 		
-	elseif message_id == hash(core_manager.RUNTIME_ASSIGNED) then
+	elseif message_id == hash(client_manager.RUNTIME_ASSIGNED) then
 		local runtime_qualifier = message.runtime_qualifier
 		local runtime_id = message.runtime_id
 		if runtime_qualifier == omgplayer.constants.LOBBY then
@@ -360,10 +360,10 @@ function on_message(self, message_id, message, sender)
 		elseif runtime_qualifier == omgplayer.constants.MATCH then
 			match_assigned(self, runtime_qualifier, runtime_id)
 		else
-			error("[CORE_MANAGER] Unknown runtime qualifier was received, runtime_qualifier=" .. tostring(runtime_qualifier))
+			error("[CLIENT_MANAGER] Unknown runtime qualifier was received, runtime_qualifier=" .. tostring(runtime_qualifier))
 		end
 		
-	elseif message_id == hash(core_manager.MESSAGE_RECEIVED) then
+	elseif message_id == hash(client_manager.MESSAGE_RECEIVED) then
 		local message_qualifier = message.qualifier
 		if message_qualifier == server_messages.SET_PROFILE then
 			local profile = message.profile
@@ -385,26 +385,26 @@ function on_message(self, message_id, message, sender)
 			set_spawn_countdown(self, time_to_spawn)
 			
 		else
-			error("[CORE_MANAGER] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
+			error("[CLIENT_MANAGER] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 		end
 		
-	elseif message_id == hash(core_manager.CONNECTION_UPGRADED) then
+	elseif message_id == hash(client_manager.CONNECTION_UPGRADED) then
 		connection_upgraded(self)
 
-	elseif message_id == hash(core_manager.JOINING_REQUESTED) then
+	elseif message_id == hash(client_manager.JOINING_REQUESTED) then
 		local nickname = message.nickname
 		joining_requested(self, nickname)
 		
-	elseif message_id == hash(core_manager.LEAVING_REQUESTED) then
+	elseif message_id == hash(client_manager.LEAVING_REQUESTED) then
 		leaving_requested(self)
 
-	elseif message_id == hash(core_manager.RESET_REQUESTED) then
+	elseif message_id == hash(client_manager.RESET_REQUESTED) then
 		reset_requested(self)
 
-	elseif message_id == hash(core_manager.SPAWN) then
+	elseif message_id == hash(client_manager.SPAWN) then
 		spawn_requested(self)
 
-	elseif message_id == hash(core_manager.MOVE) then
+	elseif message_id == hash(client_manager.MOVE) then
 		local x = message.x
 		local y = message.y
 		move_requested(self, x, y)
