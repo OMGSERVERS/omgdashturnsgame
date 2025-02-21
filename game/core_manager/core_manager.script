@@ -1,6 +1,4 @@
 local screens_manager = require("game.screens_manager.screens_manager")
-local client_manager = require("game.client_manager.client_manager")
-local server_manager = require("game.server_manager.server_manager")
 local leaving_screen = require("game.leaving_screen.leaving_screen")
 local joining_screen = require("game.joining_screen.joining_screen")
 local match_screen = require("game.match_screen.match_screen")
@@ -10,6 +8,134 @@ local omgplayer = require("omgservers.omgplayer.omgplayer")
 local core_state = require("game.core_manager.core_state")
 local server_messages = require("common.server_messages")
 local game_messages = require("common.game_messages")
+
+local function sign_in(self, user_id, password)
+	print(os.date() .. " [CORE_MANAGER] Signing in, user_id=" .. user_id)
+	self.omginstance:sign_in(user_id, password)
+end
+
+local function signed_up(self, user_id, password)
+	print(os.date() .. " [CORE_MANAGER] Signed up, user_id=" .. user_id)
+
+	auth_screen:set_state(self.screen_collection_id, "Signing in")
+
+	sign_in(self, user_id, password)
+end
+
+local function signed_in(self, client_id)
+	print(os.date() .. " [CORE_MANAGER] Signed in, client_id=" .. client_id)
+	core_state:set_client_id(client_id)
+end
+
+local function greeted(self, version_id, version_created)
+	print(os.date() .. " [CLIENT] Greeted, version_id=" .. version_id .. ", version_created=" .. version_created)
+	core_manager:user_greeted(version_id, version_created)
+end
+
+local function assigned(self, runtime_qualifier, runtime_id)
+	print(os.date() .. " [CLIENT] Assigned, runtime_qualifier=" .. runtime_qualifier .. ", runtime_id=" .. runtime_id)
+	core_manager:runtime_assigned(runtime_qualifier, runtime_id)
+end
+
+local function message_received(self, decoded_message)
+	core_manager:message_received(decoded_message)
+end
+
+local function connection_dispatched(self)
+	print(os.date() .. " [CLIENT] Connection was dispatched")
+	core_manager:connection_upgraded()
+end
+
+local function failed(self, reason)
+	print(os.date() .. " [CLIENT] Client failed, reason=" .. reason)
+	core_manager:game_failed(reason)
+end
+
+local function send_command(self, message)
+	self.omginstance:send_service_message(message)
+end
+
+local function send_message(self, message)
+	self.omginstance:send_text_message(message)
+end
+
+local function reconnect(self, message)
+	print(os.date() .. " [CLIENT] Reconnectining")
+end
+
+local function handle_client_event(self, event)
+	print(os.date() .. " [CLIENT] Client event was received, event=" .. json.encode(event))
+
+	local event_qualifier = event.qualifier
+	local event_body = event.body
+
+	if event_qualifier == omgplayer.constants.SIGNED_UP then
+		local user_id = event_body.user_id 
+		local password = event_body.password
+		signed_up(self, user_id, password)
+
+	elseif event_qualifier == omgplayer.constants.SIGNED_IN then
+		local client_id = event_body.client_id
+		signed_in(self, client_id)
+
+	elseif event_qualifier == omgplayer.constants.GREETED then
+		local version_id = event_body.version_id
+		local version_created = event_body.version_created
+		greeted(self, version_id, version_created)
+
+	elseif event_qualifier == omgplayer.constants.ASSIGNED then
+		local runtime_qualifier = event_body.runtime_qualifier
+		local runtime_id = event_body.runtime_id
+		assigned(self, runtime_qualifier, runtime_id)
+
+	elseif event_qualifier == omgplayer.constants.MESSAGE_RECEIVED then
+		local decoded_message = json.decode(event_body.message)
+		message_received(self, decoded_message)
+
+	elseif event_qualifier == omgplayer.constants.CONNECTION_DISPATCHED then
+		connection_dispatched(self)
+
+	elseif event_qualifier == omgplayer.constants.PLAYER_FAILED then
+		local reason = event_body.reason
+		failed(self, reason)
+
+	end
+end
+
+local function reset_client(self)
+	if self.omginstance then
+		print(os.date() .. " [CLIENT] Resetting already created client")
+
+		self.omginstance:reset()
+	else
+		print(os.date() .. " [CLIENT] Creating a new client")
+
+		if sys.get_engine_info().is_debug then
+			local configuration = require("game.server_connections.local_server")
+			print(os.date() .. " [CLIENT] Using local server configuration, " .. json.encode(configuration))
+
+			local options = {
+				tenant = configuration.tenant,
+				project = configuration.project,
+				stage = configuration.stage,
+				event_handler = function(event) handle_client_event(self, event) end,
+				service_url = configuration.url,
+				debug_logging = true,
+				trace_logging = false,
+			}
+
+			local omginstance = omgplayer:create()
+			self.omginstance = omginstance
+
+			omginstance:init(options)
+		else
+			error("[CLIENT] Only local server is supported")
+		end
+	end
+
+	self.omginstance:ping()
+	self.omginstance:sign_up()
+end
 
 local function game_started(self)
 	self.started_at = socket.gettime()
@@ -36,21 +162,7 @@ local function auth_screen_created(self, collection_id)
 
 	auth_screen:set_state(self.screen_collection_id, "Signing up")
 
-	client_manager:reset()
-end
-
-local function signed_up(self, user_id, password)
-	print(os.date() .. " [CORE_MANAGER] User signed up at " .. os.date())
-
-	auth_screen:set_state(self.screen_collection_id, "Signing in")
-
-	-- Sign in
-	client_manager:sign_in(user_id, password)
-end
-
-local function signed_in(self, client_id)
-	print(os.date() .. " [CORE_MANAGER] User signed in at " .. os.date())
-	core_state:set_client_id(client_id)
+	reset_client(self)
 end
 
 local function lobby_assigned(self, runtime_qualifier, runtime_id)
@@ -66,7 +178,7 @@ local function greeted(self, version_id, version_created)
 
 	-- Request profile
 	local game_message = game_messages:request_profile()
-	client_manager:send_command(json.encode(game_message))
+	send_command(self, json.encode(game_message))
 
 	core_state:change_game_state(core_state.GETTING_PROFILE)
 end
@@ -99,7 +211,7 @@ local function joining_screen_created(self, collection_id)
 	-- Request matchmaking
 	local nickname = core_state:get_nickname()
 	local game_message = game_messages:request_matchmaking(nickname)
-	client_manager:send_command(json.encode(game_message))
+	send_command(self, json.encode(game_message))
 end
 
 local function joining_requested(self, nickname)
@@ -122,7 +234,7 @@ local function connection_upgraded(self)
 	
 	-- Request match state
 	local game_message = game_messages:request_state()
-	client_manager:send_message(json.encode(game_message))
+	send_message(self, json.encode(game_message))
 end
 
 local function leaving_requested(self)
@@ -136,6 +248,16 @@ local function reset_requested(self)
 	print(os.date() .. " [CORE_MANAGER] Reset was requested at " .. os.date())
 	core_state:reset()
 	game_started(self)
+end
+
+local function spawn_requested(self)
+	local game_message = game_messages:request_spawn()
+	send_message(self, json.encode(game_message))
+end
+
+local function move_requested(self, x, y)
+	local game_message = game_messages:move_player(x, y)
+	send_message(self, json.encode(game_message))
 end
 
 local function set_state(self, step, settings, dangling_players, spawned_players)
@@ -162,7 +284,7 @@ local function leaving_screen_created(self, collection_id)
 
 	-- Leave request
 	local game_message = game_messages:request_leave()
-	client_manager:send_message(json.encode(game_message))
+	send_message(self, json.encode(game_message))
 	
 	self.screen_collection_id = collection_id
 	core_state:change_game_state(core_state.LEAVING)
@@ -180,6 +302,12 @@ end
 
 local function set_spawn_countdown(self, time_to_spawn)
 	match_screen:set_spawn_countdown(self.screen_collection_id, time_to_spawn)
+end
+
+function update(self, dt)
+	if self.omginstance then
+		self.omginstance:update(dt)
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -272,6 +400,13 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash(core_manager.RESET_REQUESTED) then
 		reset_requested(self)
-		
+
+	elseif message_id == hash(core_manager.SPAWN) then
+		spawn_requested(self)
+
+	elseif message_id == hash(core_manager.MOVE) then
+		local x = message.x
+		local y = message.y
+		move_requested(self, x, y)
 	end
 end

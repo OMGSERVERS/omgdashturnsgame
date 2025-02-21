@@ -16,6 +16,8 @@ core_manager = {
 	JOINING_REQUESTED = "joining_requested",
 	LEAVING_REQUESTED = "leaving_requested",
 	RESET_REQUESTED = "reset_requested",
+	SPAWN = "spawn",
+	MOVE = "move",
 	-- Screen qualifiers
 	AUTH_SCREEN = "auth_screen",
 	LOBBY_SCREEN = "lobby_screen",
@@ -84,6 +86,16 @@ core_manager = {
 	game_failed = function(self, reason)
 		msg.post(self.RECEIVER, core_manager.GAME_FAILED, {
 			reason = reason
+		})
+	end,
+	spawn = function(self)
+		msg.post(self.RECEIVER, core_manager.SPAWN, {
+		})
+	end,
+	move = function(self, x, y)
+		msg.post(self.RECEIVER, core_manager.MOVE, {
+			x = x,
+			y = y,
 		})
 	end,
 }

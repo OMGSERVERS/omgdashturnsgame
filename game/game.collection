@@ -8,10 +8,6 @@ instances {
   prototype: "/game/screens_manager/screens_manager.go"
 }
 instances {
-  id: "client_manager"
-  prototype: "/game/client_manager/client_manager.go"
-}
-instances {
   id: "game_entrypoint"
   prototype: "/game/game_entrypoint/game_entrypoint.go"
 }
