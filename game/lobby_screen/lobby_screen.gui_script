@@ -9,7 +9,7 @@ local function request_joining(self)
 	if nickname_input_text == "" then
 		self.nickname_input:set_text(self.profile.data.nickname)
 	else
-		client_manager:joining_requested(nickname_input_text)
+		client_manager:join(nickname_input_text)
 	end
 end
 

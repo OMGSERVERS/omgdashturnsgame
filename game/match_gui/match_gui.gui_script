@@ -6,7 +6,7 @@ local druid = require("druid.druid")
 local MATCH_SCREEN = "match_screen"
 
 local function leave_button(self)
-	client_manager:leaving_requested()
+	client_manager:leave()
 end
 
 local function update_spawn_countdown(self, time_to_spawn)

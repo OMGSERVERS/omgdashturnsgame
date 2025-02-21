@@ -3,7 +3,7 @@ local ops_screen = require("game.ops_screen.ops_screen")
 local druid = require("druid.druid")
 
 local function reset_button(self)
-	client_manager:reset_requested()
+	client_manager:reset()
 end
 
 local function set_state_text(text)

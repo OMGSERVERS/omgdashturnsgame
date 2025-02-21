@@ -6,8 +6,8 @@ function init(self)
 	pprint(sys.get_engine_info())
 
 	if os.getenv("SERVER_ENVIRONMENT") then
-		server_manager:server_started()
+		server_manager:start()
 	else
-		client_manager:game_started()
+		client_manager:start()
 	end
 end
