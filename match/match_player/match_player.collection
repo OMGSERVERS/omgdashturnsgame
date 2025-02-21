@@ -5,7 +5,7 @@ embedded_instances {
   children: "skin"
   data: "components {\n"
   "  id: \"script\"\n"
-  "  component: \"/game/match_player/match_player.script\"\n"
+  "  component: \"/match/match_player/match_player.script\"\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"nickname\"\n"

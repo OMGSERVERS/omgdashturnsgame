@@ -1,4 +1,4 @@
-local match_player = require("game.match_player.match_player")
+local match_player = require("match.match_player.match_player")
 
 local NICKNAME = "#nickname"
 

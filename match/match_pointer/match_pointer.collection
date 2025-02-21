@@ -5,7 +5,7 @@ embedded_instances {
   children: "icon"
   data: "components {\n"
   "  id: \"pointer\"\n"
-  "  component: \"/game/match_pointer/match_pointer.script\"\n"
+  "  component: \"/match/match_pointer/match_pointer.script\"\n"
   "}\n"
   ""
 }

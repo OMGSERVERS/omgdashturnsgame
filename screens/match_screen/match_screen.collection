@@ -1,15 +1,15 @@
 name: "arena"
 instances {
   id: "match_spawner"
-  prototype: "/game/match_spawner/match_spawner.go"
+  prototype: "/match/match_spawner/match_spawner.go"
 }
 instances {
   id: "match_gui"
-  prototype: "/game/match_gui/match_gui.go"
+  prototype: "/screens/match_screen/match_gui/match_gui.go"
 }
 instances {
   id: "match_camera"
-  prototype: "/game/match_camera/match_camera.go"
+  prototype: "/match/match_camera/match_camera.go"
   position {
     x: 128.0
     y: 128.0
@@ -18,22 +18,22 @@ instances {
 }
 instances {
   id: "match_log"
-  prototype: "/game/match_log/match_log.go"
+  prototype: "/screens/match_screen/match_log/match_log.go"
 }
 instances {
   id: "match_top"
-  prototype: "/game/match_top/match_top.go"
+  prototype: "/screens/match_screen/match_top/match_top.go"
 }
 collection_instances {
   id: "match_background"
-  collection: "/game/match_background/match_background.collection"
+  collection: "/match/match_background/match_background.collection"
   position {
     z: -1024.0
   }
 }
 collection_instances {
   id: "match_pointer"
-  collection: "/game/match_pointer/match_pointer.collection"
+  collection: "/match/match_pointer/match_pointer.collection"
   position {
     x: 208.0
     y: 247.0

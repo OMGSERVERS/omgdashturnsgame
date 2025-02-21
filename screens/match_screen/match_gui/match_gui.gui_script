@@ -1,6 +1,6 @@
-local match_screen = require("screens.match_screen.match_screen")
+local match_gui = require("screens.match_screen.match_gui.match_gui")
 local client_manager = require("game.client_manager.client_manager")
-local match_gui = require("game.match_gui.match_gui")
+local match_screen = require("screens.match_screen.match_screen")
 local druid = require("druid.druid")
 
 local MATCH_SCREEN = "match_screen"

@@ -1,11 +1,10 @@
-local match_pointer = require("game.match_pointer.match_pointer")
+local match_pointer = require("match.match_pointer.match_pointer")
 local match_messages = require("screens.match_screen.match_screen")
-local match_player = require("game.match_player.match_player")
+local match_player = require("match.match_player.match_player")
 local client_manager = require("game.client_manager.client_manager")
-local match_gui = require("game.match_gui.match_gui")
-local match_log = require("game.match_log.match_log")
-local match_top = require("game.match_top.match_top")
-local game_messages = require("common.game_messages")
+local match_gui = require("screens.match_screen.match_gui.match_gui")
+local match_log = require("screens.match_screen.match_log.match_log")
+local match_top = require("screens.match_screen.match_top.match_top")
 local match_events = require("common.match_events")
 
 local PLAYER_SPAWNER = "match_spawner#player_factory"

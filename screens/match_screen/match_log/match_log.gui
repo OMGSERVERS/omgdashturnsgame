@@ -1,4 +1,4 @@
-script: "/game/match_log/match_log.gui_script"
+script: "/screens/match_screen/match_log/match_log.gui_script"
 fonts {
   name: "font_x2"
   font: "/game/game_assets/font_x2.font"

@@ -1,6 +1,6 @@
 components {
   id: "match_camera"
-  component: "/game/match_camera/match_camera.script"
+  component: "/match/match_camera/match_camera.script"
 }
 embedded_components {
   id: "camera"
