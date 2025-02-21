@@ -1,4 +1,4 @@
-script: "/game/joining_screen/joining_screen.gui_script"
+script: "/screens/auth_screen/auth_screen.gui_script"
 fonts {
   name: "default"
   font: "/game/game_assets/font.font"
@@ -44,7 +44,7 @@ nodes {
     y: 40.0
   }
   type: TYPE_BOX
-  id: "joining_state"
+  id: "auth_state"
   parent: "root"
   alpha: 0.0
   size_mode: SIZE_MODE_AUTO
@@ -55,10 +55,10 @@ nodes {
     y: 40.0
   }
   type: TYPE_TEXT
-  text: "Joining screen"
+  text: "Auth screen"
   font: "font_x2"
-  id: "joining_state_text"
-  parent: "joining_state"
+  id: "auth_state_text"
+  parent: "auth_state"
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

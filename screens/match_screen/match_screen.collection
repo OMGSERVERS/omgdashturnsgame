@@ -44,7 +44,7 @@ embedded_instances {
   id: "match_screen"
   data: "components {\n"
   "  id: \"match_screen\"\n"
-  "  component: \"/game/match_screen/match_screen.script\"\n"
+  "  component: \"/screens/match_screen/match_screen.script\"\n"
   "}\n"
   ""
 }

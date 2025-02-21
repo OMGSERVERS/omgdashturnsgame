@@ -1,7 +1,7 @@
 local screens_messages = require("game.screens_manager.screens_manager")
-local match_screen = require("game.match_screen.match_screen")
-local lobby_screen = require("game.lobby_screen.lobby_screen")
-local ops_screen = require("game.ops_screen.ops_screen")
+local match_screen = require("screens.match_screen.match_screen")
+local lobby_screen = require("screens.lobby_screen.lobby_screen")
+local ops_screen = require("screens.ops_screen.ops_screen")
 local client_manager = require("game.client_manager.client_manager")
 
 local AUTH_FACTORY = "#auth_factory"

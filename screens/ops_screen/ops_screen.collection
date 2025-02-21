@@ -4,7 +4,7 @@ embedded_instances {
   id: "ops_screen"
   data: "components {\n"
   "  id: \"ops_screen\"\n"
-  "  component: \"/game/ops_screen/ops_screen.gui\"\n"
+  "  component: \"/screens/ops_screen/ops_screen.gui\"\n"
   "}\n"
   ""
 }

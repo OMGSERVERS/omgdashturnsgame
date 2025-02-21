@@ -4,7 +4,7 @@ embedded_instances {
   id: "lobby_screen"
   data: "components {\n"
   "  id: \"lobby_screen\"\n"
-  "  component: \"/game/lobby_screen/lobby_screen.gui\"\n"
+  "  component: \"/screens/lobby_screen/lobby_screen.gui\"\n"
   "}\n"
   ""
 }

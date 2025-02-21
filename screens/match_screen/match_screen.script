@@ -1,5 +1,5 @@
 local match_pointer = require("game.match_pointer.match_pointer")
-local match_messages = require("game.match_screen.match_screen")
+local match_messages = require("screens.match_screen.match_screen")
 local match_player = require("game.match_player.match_player")
 local client_manager = require("game.client_manager.client_manager")
 local match_gui = require("game.match_gui.match_gui")

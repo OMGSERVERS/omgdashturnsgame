@@ -4,7 +4,7 @@ embedded_instances {
   id: "joining_screen"
   data: "components {\n"
   "  id: \"joining_screen\"\n"
-  "  component: \"/game/joining_screen/joining_screen.gui\"\n"
+  "  component: \"/screens/joining_screen/joining_screen.gui\"\n"
   "}\n"
   ""
 }

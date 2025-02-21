@@ -1,4 +1,4 @@
-script: "/game/leaving_screen/leaving_screen.gui_script"
+script: "/screens/joining_screen/joining_screen.gui_script"
 fonts {
   name: "default"
   font: "/game/game_assets/font.font"
@@ -44,7 +44,7 @@ nodes {
     y: 40.0
   }
   type: TYPE_BOX
-  id: "leaving_state"
+  id: "joining_state"
   parent: "root"
   alpha: 0.0
   size_mode: SIZE_MODE_AUTO
@@ -55,10 +55,10 @@ nodes {
     y: 40.0
   }
   type: TYPE_TEXT
-  text: "Leaving screen"
+  text: "Joining screen"
   font: "font_x2"
-  id: "leaving_state_text"
-  parent: "leaving_state"
+  id: "joining_state_text"
+  parent: "joining_state"
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

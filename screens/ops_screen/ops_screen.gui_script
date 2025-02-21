@@ -1,5 +1,5 @@
 local client_manager = require("game.client_manager.client_manager")
-local ops_screen = require("game.ops_screen.ops_screen")
+local ops_screen = require("screens.ops_screen.ops_screen")
 local druid = require("druid.druid")
 
 local function reset_button(self)
