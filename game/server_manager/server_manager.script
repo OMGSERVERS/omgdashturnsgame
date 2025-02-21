@@ -62,7 +62,7 @@ local function handle_server_event(self, event)
 	end
 end
 
-local function start(self)
+local function server_start(self)
 	local options = {
 		event_handler = function(event) handle_server_event(self, event) end,
 		debug_logging = true,
@@ -80,7 +80,7 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(server_manager.START) then
-		start(self)
+	if message_id == hash(server_manager.SERVER_STARTED) then
+		server_start(self)
 	end
 end

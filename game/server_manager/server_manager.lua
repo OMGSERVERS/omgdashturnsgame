@@ -1,11 +1,11 @@
 local server_manager
 server_manager = {
 	RECEIVER = "/server_manager#server_manager",
-	-- Requests
-	START = "start",
+	-- Events
+	SERVER_STARTED = "server_started",
 	-- Methods
-	start = function(self)
-		msg.post(server_manager.RECEIVER, server_manager.START, {
+	server_started = function(self)
+		msg.post(self.RECEIVER, self.SERVER_STARTED, {
 		})
 	end,
 }

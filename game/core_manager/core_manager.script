@@ -11,19 +11,14 @@ local core_state = require("game.core_manager.core_state")
 local server_messages = require("common.server_messages")
 local game_messages = require("common.game_messages")
 
-
 local function game_started(self)
 	self.started_at = socket.gettime()
 	print(os.date() .. " [CORE_MANAGER] Game started at " .. os.date())
 
-	if os.getenv("SERVER_ENVIRONMENT") then
-		server_manager:start()
-	else
-		core_state:change_game_state(core_state.IN_AUTH)
+	core_state:change_game_state(core_state.IN_AUTH)
 
-		-- Show auth screen
-		screens_manager:create_auth_screen()
-	end
+	-- Show auth screen
+	screens_manager:create_auth_screen()
 end
 
 local function game_failed(self, reason)
