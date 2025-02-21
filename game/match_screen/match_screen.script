@@ -9,7 +9,6 @@ local match_top = require("game.match_top.match_top")
 local game_messages = require("common.game_messages")
 local match_events = require("common.match_events")
 
-local CLIENT_MANAGER = "/client_manager#client_manager"
 local PLAYER_SPAWNER = "match_spawner#player_factory"
 local MATCH_POINTER = "match_pointer/container"
 local MATCH_CAMERA = "match_camera"
@@ -30,7 +29,7 @@ local function create_client(self, client_id, nickname, score)
 	if client_id == core_manager:get_client_id() then
 		-- Send initial spawn request
 		local game_message = game_messages:request_spawn()
-		client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
+		client_manager:send_message(json.encode(game_message))
 	end
 end
 
@@ -168,7 +167,7 @@ local function apply_events(self, events)
 					
 					-- Send spawn request
 					local game_message = game_messages:request_spawn()
-					client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
+					client_manager:send_message(json.encode(game_message))
 				end
 
 				kill_player(self, killed_client_id)
@@ -223,7 +222,7 @@ local function pointed(self, pointed_x, pointed_y)
 
 		-- Move player
 		local game_message = game_messages:move_player(bounded_x, bounded_y)
-		client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
+		client_manager:send_message(json.encode(game_message))
 	else
 		print(os.date() .. " [MATCH_SCREEN] Player was not found to point, client_id=" .. client_id)
 	end

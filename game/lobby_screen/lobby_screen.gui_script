@@ -4,14 +4,12 @@ local input = require("druid.extended.input")
 local druid = require("druid.druid")
 druid.register("input", input)
 
-local CORE_MANAGER = "/core_manager#core_manager"
-
 local function request_joining(self)
 	local nickname_input_text = self.nickname_input:get_text()
 	if nickname_input_text == "" then
 		self.nickname_input:set_text(self.profile.data.nickname)
 	else
-		core_manager:joining_requested(CORE_MANAGER, nickname_input_text)
+		core_manager:joining_requested(nickname_input_text)
 	end
 end
 

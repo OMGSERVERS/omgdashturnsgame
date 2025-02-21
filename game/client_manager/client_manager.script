@@ -2,11 +2,9 @@ local client_manager = require("game.client_manager.client_manager")
 local core_manager = require("game.core_manager.core_manager")
 local omgplayer = require("omgservers.omgplayer.omgplayer")
 
-local CORE_MANAGER = "core_manager#core_manager"
-
 local function signed_up(self, user_id, password)
 	print(os.date() .. " [CLIENT] Signed up, user_id=" .. user_id)
-	core_manager:signed_up(CORE_MANAGER, user_id, password)
+	core_manager:signed_up(user_id, password)
 end
 
 local function sign_in(self, user_id, password)
@@ -16,31 +14,31 @@ end
 
 local function signed_in(self, client_id)
 	print(os.date() .. " [CLIENT] Signed in, client_id=" .. client_id)
-	core_manager:signed_in(CORE_MANAGER, client_id)
+	core_manager:signed_in(client_id)
 end
 
 local function greeted(self, version_id, version_created)
 	print(os.date() .. " [CLIENT] Greeted, version_id=" .. version_id .. ", version_created=" .. version_created)
-	core_manager:user_greeted(CORE_MANAGER, version_id, version_created)
+	core_manager:user_greeted(version_id, version_created)
 end
 
 local function assigned(self, runtime_qualifier, runtime_id)
 	print(os.date() .. " [CLIENT] Assigned, runtime_qualifier=" .. runtime_qualifier .. ", runtime_id=" .. runtime_id)
-	core_manager:runtime_assigned(CORE_MANAGER, runtime_qualifier, runtime_id)
+	core_manager:runtime_assigned(runtime_qualifier, runtime_id)
 end
 
 local function message_received(self, decoded_message)
-	core_manager:message_received(CORE_MANAGER, decoded_message)
+	core_manager:message_received(decoded_message)
 end
 
 local function connection_dispatched(self)
 	print(os.date() .. " [CLIENT] Connection was dispatched")
-	core_manager:connection_upgraded(CORE_MANAGER)
+	core_manager:connection_upgraded()
 end
 
 local function failed(self, reason)
 	print(os.date() .. " [CLIENT] Client failed, reason=" .. reason)
-	core_manager:game_failed(CORE_MANAGER, reason)
+	core_manager:game_failed(reason)
 end
 
 local function send_command(self, message)

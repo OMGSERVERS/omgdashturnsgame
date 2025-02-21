@@ -11,8 +11,6 @@ local core_state = require("game.core_manager.core_state")
 local server_messages = require("common.server_messages")
 local game_messages = require("common.game_messages")
 
-local SCREENS_MANAGER = "screens_manager#screens_manager"
-local CLIENT_MANAGER = "client_manager#client_manager"
 
 local function game_started(self)
 	self.started_at = socket.gettime()
@@ -24,7 +22,7 @@ local function game_started(self)
 		core_state:change_game_state(core_state.IN_AUTH)
 
 		-- Show auth screen
-		screens_manager:create_auth_screen(SCREENS_MANAGER)
+		screens_manager:create_auth_screen()
 	end
 end
 
@@ -33,7 +31,7 @@ local function game_failed(self, reason)
 	core_state:change_game_state(core_state.GAME_FAILED)
 
 	-- Show ops screen
-	screens_manager:create_ops_screen(SCREENS_MANAGER, reason)
+	screens_manager:create_ops_screen(reason)
 end
 
 local function auth_screen_created(self, collection_id)
@@ -43,7 +41,7 @@ local function auth_screen_created(self, collection_id)
 
 	auth_screen:set_state(self.screen_collection_id, "Signing up")
 
-	client_manager:reset(CLIENT_MANAGER)
+	client_manager:reset()
 end
 
 local function signed_up(self, user_id, password)
@@ -52,7 +50,7 @@ local function signed_up(self, user_id, password)
 	auth_screen:set_state(self.screen_collection_id, "Signing in")
 
 	-- Sign in
-	client_manager:sign_in(CLIENT_MANAGER, user_id, password)
+	client_manager:sign_in(user_id, password)
 end
 
 local function signed_in(self, client_id)
@@ -63,7 +61,7 @@ end
 local function lobby_assigned(self, runtime_qualifier, runtime_id)
 	print(os.date() .. " [CORE_MANAGER] Lobby was assigned at " .. os.date())
 	-- Show lobby screen
-	screens_manager:create_lobby_screen(SCREENS_MANAGER, core_state.profile)
+	screens_manager:create_lobby_screen(core_state.profile)
 end
 
 local function greeted(self, version_id, version_created)
@@ -73,7 +71,7 @@ local function greeted(self, version_id, version_created)
 
 	-- Request profile
 	local game_message = game_messages:request_profile()
-	client_manager:send_command(CLIENT_MANAGER, json.encode(game_message))
+	client_manager:send_command(json.encode(game_message))
 
 	core_state:change_game_state(core_state.GETTING_PROFILE)
 end
@@ -84,7 +82,7 @@ local function set_profile(self, profile)
 
 	if core_state.game_state == core_state.GETTING_PROFILE then
 		-- Show lobby screen
-		screens_manager:create_lobby_screen(SCREENS_MANAGER, core_state.profile)
+		screens_manager:create_lobby_screen(core_state.profile)
 	end
 end
 
@@ -106,7 +104,7 @@ local function joining_screen_created(self, collection_id)
 	-- Request matchmaking
 	local nickname = core_state:get_nickname()
 	local game_message = game_messages:request_matchmaking(nickname)
-	client_manager:send_command(CLIENT_MANAGER, json.encode(game_message))
+	client_manager:send_command(json.encode(game_message))
 end
 
 local function joining_requested(self, nickname)
@@ -115,7 +113,7 @@ local function joining_requested(self, nickname)
 	core_state:change_nickname(nickname)
 	
 	-- Show joining screen
-	screens_manager:create_joining_screen(SCREENS_MANAGER)
+	screens_manager:create_joining_screen()
 end
 
 local function match_assigned(self, runtime_qualifier, runtime_id)
@@ -129,14 +127,14 @@ local function connection_upgraded(self)
 	
 	-- Request match state
 	local game_message = game_messages:request_state()
-	client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
+	client_manager:send_message(json.encode(game_message))
 end
 
 local function leaving_requested(self)
 	print(os.date() .. " [CORE_MANAGER] Leaving was requested at " .. os.date())
 	
 	-- Show leaving screen
-	screens_manager:create_leaving_screen(SCREENS_MANAGER)
+	screens_manager:create_leaving_screen()
 end
 
 local function reset_requested(self)
@@ -150,7 +148,7 @@ local function set_state(self, step, settings, dangling_players, spawned_players
 	
 	if core_state.game_state == core_state.GETTING_STATE then
 		-- Show match screen
-		screens_manager:create_match_screen(SCREENS_MANAGER, settings, dangling_players, spawned_players)
+		screens_manager:create_match_screen(settings, dangling_players, spawned_players)
 	end
 end
 
@@ -169,7 +167,7 @@ local function leaving_screen_created(self, collection_id)
 
 	-- Leave request
 	local game_message = game_messages:request_leave()
-	client_manager:send_message(CLIENT_MANAGER, json.encode(game_message))
+	client_manager:send_message(json.encode(game_message))
 	
 	self.screen_collection_id = collection_id
 	core_state:change_game_state(core_state.LEAVING)

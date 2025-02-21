@@ -11,8 +11,6 @@ local JOINING_FACTORY = "#joining_factory"
 local LEAVING_FACTORY = "#leaving_factory"
 local OPS_FACTORY = "#ops_factory"
 
-local CORE_MANAGER = "core_manager#core_manager"
-
 local function remove_current_screen(self)
 	if self.current_screen_ids then
 		for key, go_id in pairs(self.current_screen_ids) do
@@ -34,7 +32,7 @@ local function create_game_screen(self, factory_id, collection_id, screen_id)
 	self.current_screen_ids = collection_ids
 
 	local new_instance_id = collection_ids[collection_id]
-	core_manager:screen_created(CORE_MANAGER, screen_id, new_instance_id)
+	core_manager:screen_created(screen_id, new_instance_id)
 	return new_instance_id
 end
 

@@ -2,10 +2,8 @@ local core_manager = require("game.core_manager.core_manager")
 local ops_screen = require("game.ops_screen.ops_screen")
 local druid = require("druid.druid")
 
-local CORE_MANAGER = "/core_manager#core_manager"
-
 local function reset_button(self)
-	core_manager:reset_requested(CORE_MANAGER)
+	core_manager:reset_requested()
 end
 
 local function set_state_text(text)
