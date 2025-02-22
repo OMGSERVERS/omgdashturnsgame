@@ -1,7 +1,7 @@
 local profiles_container = require("game.runtime_utils.profiles_container")
-local runtime_messages = require("game.runtime_utils.runtime_messages")
 local profile_wrapper = require("game.runtime_utils.profile_wrapper")
 local global_counter = require("game.lobby_runtime.global_counter")
+local lobby_runtime = require("game.lobby_runtime.lobby_runtime")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
 local server_messages = require("common.server_messages")
 local game_messages = require("common.game_messages")
@@ -84,7 +84,7 @@ local function command_received(self, message)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(runtime_messages.COMMAND_RECEIVED) then
+	if message_id == hash(lobby_runtime.COMMAND_RECEIVED) then
 		command_received(self, message)
 	end
 end

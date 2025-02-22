@@ -1,5 +1,7 @@
-local runtime_messages
-runtime_messages = {
+local match_runtime
+match_runtime = {
+	RECEIVER = "/match_runtime#match_runtime",
+	-- Events
 	COMMAND_RECEIVED = "command_received",
 	MESSAGE_RECEIVED = "message_received",
 	-- Methods
@@ -17,4 +19,4 @@ runtime_messages = {
 	end,
 }
 
-return runtime_messages
+return match_runtime

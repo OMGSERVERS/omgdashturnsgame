@@ -2,11 +2,11 @@ local profiles_container = require("game.runtime_utils.profiles_container")
 local simulation_service = require("game.match_runtime.simulation_service")
 local players_container = require("game.match_runtime.players_container")
 local events_container = require("game.match_runtime.events_container")
-local runtime_messages = require("game.runtime_utils.runtime_messages")
 local profile_wrapper = require("game.runtime_utils.profile_wrapper")
 local match_settings = require("game.match_runtime.match_settings")
 local vector_factory = require("game.runtime_utils.vector_factory")
 local player_factory = require("game.match_runtime.player_factory")
+local match_runtime = require("game.match_runtime.match_runtime")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
 local server_messages = require("common.server_messages")
 local game_messages = require("common.game_messages")
@@ -190,7 +190,7 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(runtime_messages.COMMAND_RECEIVED) then
+	if message_id == hash(match_runtime.COMMAND_RECEIVED) then
 		local command_qualifier = message.command_qualifier
 		local command_body = message.command_body
 		
@@ -208,7 +208,7 @@ function on_message(self, message_id, message, sender)
 			delete_client(self, client_id)
 		end
 		
-	elseif message_id == hash(runtime_messages.MESSAGE_RECEIVED) then
+	elseif message_id == hash(match_runtime.MESSAGE_RECEIVED) then
 		local client_id = message.client_id
 		local game_message = message.message
 		local message_qualifier = game_message.qualifier
