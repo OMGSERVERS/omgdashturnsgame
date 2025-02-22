@@ -1,9 +1,9 @@
-local screens_manager = require("game.screens_manager.screens_manager")
 local leaving_screen = require("screens.leaving_screen.leaving_screen")
 local joining_screen = require("screens.joining_screen.joining_screen")
 local client_manager = require("game.client_manager.client_manager")
-local client_state = require("game.client_manager.client_state")
+local screen_factory = require("game.screen_factory.screen_factory")
 local match_screen = require("screens.match_screen.match_screen")
+local client_state = require("game.client_manager.client_state")
 local auth_screen = require("screens.auth_screen.auth_screen")
 local omgplayer = require("omgservers.omgplayer.omgplayer")
 local server_messages = require("common.server_messages")
@@ -24,7 +24,7 @@ local function start(self)
 	client_state:change_game_state(client_state.IN_AUTH)
 
 	-- Show auth screen
-	screens_manager:create_auth_screen()
+	screen_factory:create_auth_screen()
 end
 
 local function sign_in(self, user_id, password)
@@ -38,7 +38,7 @@ local function join(self, nickname)
 	client_state:change_nickname(nickname)
 
 	-- Show joining screen
-	screens_manager:create_joining_screen()
+	screen_factory:create_joining_screen()
 end
 
 local function set_profile(self, profile)
@@ -47,7 +47,7 @@ local function set_profile(self, profile)
 
 	if client_state.game_state == client_state.GETTING_PROFILE then
 		-- Show lobby screen
-		screens_manager:create_lobby_screen(client_state.profile)
+		screen_factory:create_lobby_screen(client_state.profile)
 	end
 end
 
@@ -56,7 +56,7 @@ local function set_state(self, step, settings, dangling_players, spawned_players
 
 	if client_state.game_state == client_state.GETTING_STATE then
 		-- Show match screen
-		screens_manager:create_match_screen(settings, dangling_players, spawned_players)
+		screen_factory:create_match_screen(settings, dangling_players, spawned_players)
 	end
 end
 
@@ -82,7 +82,7 @@ local function leave(self)
 	print(os.date() .. " [CLIENT_MANAGER] Leaving was requested at " .. os.date())
 
 	-- Show leaving screen
-	screens_manager:create_leaving_screen()
+	screen_factory:create_leaving_screen()
 end
 
 local function reset(self)
@@ -122,7 +122,7 @@ local function assigned(self, runtime_qualifier, runtime_id)
 	if runtime_qualifier == omgplayer.constants.LOBBY then
 		print(os.date() .. " [CLIENT_MANAGER] Lobby was assigned at " .. os.date())
 		-- Show lobby screen
-		screens_manager:create_lobby_screen(client_state.profile)
+		screen_factory:create_lobby_screen(client_state.profile)
 		
 	elseif runtime_qualifier == omgplayer.constants.MATCH then
 		print(os.date() .. " [CLIENT_MANAGER] Match was assigned at " .. os.date())
@@ -172,7 +172,7 @@ local function failed(self, reason)
 	client_state:change_game_state(client_state.GAME_FAILED)
 
 	-- Show ops screen
-	screens_manager:create_ops_screen(reason)
+	screen_factory:create_ops_screen(reason)
 end
 
 local function handle_client_event(self, event)

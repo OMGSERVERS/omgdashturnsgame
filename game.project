@@ -28,3 +28,6 @@ socket_timeout = 10000000
 [input]
 game_binding = /builtins/input/all.input_bindingc
 
+[graphics]
+default_texture_min_filter = nearest
+

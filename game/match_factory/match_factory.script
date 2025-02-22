@@ -1,0 +1,43 @@
+local game_entrypoint = require("game.game_entrypoint.game_entrypoint")
+local match_factory = require("game.match_factory.match_factory")
+local death_match = require("match.death_match.death_match")
+
+local DEATH_MATCH_FACTORY = "#death_match_factory"
+
+local function remove_current_match(self)
+	if self.current_match_ids then
+		for key, go_id in pairs(self.current_match_ids) do
+			go.delete(go_id)
+		end
+
+		self.current_match_ids = nil
+	end
+end
+
+local function create_match(self, factory_id, collection_id, match_qualifier)
+	print(os.date() .. " [MATCH_FACTORY] Creating " .. match_qualifier)
+
+	remove_current_match(self)
+
+	local collection_ids = collectionfactory.create(factory_id)
+	pprint(collection_ids)
+
+	self.current_match_ids = collection_ids
+
+	local new_instance_id = collection_ids[collection_id]
+	game_entrypoint:match_created(match_qualifier, new_instance_id)
+	return new_instance_id
+end
+
+local function create_death_match(self, level)
+	local new_instance_id = create_match(self, DEATH_MATCH_FACTORY, "/death_match", match_factory.AUTH_SCREEN)
+	death_match:set_level(new_instance_id, level)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(match_factory.CREATE_DEATH_MATCH) then
+		local level = message.level
+		create_death_match(self, level)
+		
+	end
+end

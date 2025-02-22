@@ -12,6 +12,7 @@ client_manager = {
 	RESET = "reset",
 	-- Events
 	SCREEN_CREATED = "screen_created",
+	MATCH_CREATED = "match_created",
 	-- Screen qualifiers
 	AUTH_SCREEN = "auth_screen",
 	LOBBY_SCREEN = "lobby_screen",
@@ -55,6 +56,9 @@ client_manager = {
 			screen_qualifier = screen_qualifier,
 			collection_id = collection_id,
 		})
+	end,
+	match_created = function(self, message)
+		msg.post(self.RECEIVER, self.MATCH_CREATED, message)
 	end,
 }
 

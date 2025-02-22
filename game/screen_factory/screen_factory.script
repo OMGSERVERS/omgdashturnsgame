@@ -1,4 +1,4 @@
-local screens_messages = require("game.screens_manager.screens_manager")
+local screen_factory = require("game.screen_factory.screen_factory")
 local match_screen = require("screens.match_screen.match_screen")
 local lobby_screen = require("screens.lobby_screen.lobby_screen")
 local ops_screen = require("screens.ops_screen.ops_screen")
@@ -22,7 +22,7 @@ local function remove_current_screen(self)
 end
 
 local function create_game_screen(self, factory_id, collection_id, screen_id)
-	print(os.date() .. " [SCREENS_MANAGER] Creating " .. screen_id)
+	print(os.date() .. " [SCREEN_FACTORY] Creating " .. screen_id)
 
 	remove_current_screen(self)
 
@@ -64,26 +64,26 @@ local function create_ops_screen(self, reason)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(screens_messages.CREATE_AUTH_SCREEN) then
+	if message_id == hash(screen_factory.CREATE_AUTH_SCREEN) then
 		create_auth_screen(self)
 		
-	elseif message_id == hash(screens_messages.CREATE_LOBBY_SCREEN) then
+	elseif message_id == hash(screen_factory.CREATE_LOBBY_SCREEN) then
 		local profile = message.profile
 		create_lobby_screen(self, profile)
 		
-	elseif message_id == hash(screens_messages.CREATE_MATCH_SCREEN) then
+	elseif message_id == hash(screen_factory.CREATE_MATCH_SCREEN) then
 		local settings = message.settings
 		local dangling_players = message.dangling_players
 		local spawned_players = message.spawned_players
 		create_match_screen(self, settings, dangling_players, spawned_players)
 
-	elseif message_id == hash(screens_messages.CREATE_JOINING_SCREEN) then
+	elseif message_id == hash(screen_factory.CREATE_JOINING_SCREEN) then
 		create_joining_screen(self)
 		
-	elseif message_id == hash(screens_messages.CREATE_LEAVING_SCREEN) then
+	elseif message_id == hash(screen_factory.CREATE_LEAVING_SCREEN) then
 		create_leaving_screen(self)
 
-	elseif message_id == hash(screens_messages.CREATE_OPS_SCREEN) then
+	elseif message_id == hash(screen_factory.CREATE_OPS_SCREEN) then
 		local reason = message.reason
 		create_ops_screen(self, reason)
 		
