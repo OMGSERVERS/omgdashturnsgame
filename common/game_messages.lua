@@ -1,11 +1,12 @@
 local game_messages
 game_messages = {
+	-- Qualifiers
 	REQUEST_PROFILE = "request_profile",
 	REQUEST_MATCHMAKING = "request_matchmaking",
 	REQUEST_STATE = "request_state",
 	REQUEST_SPAWN = "request_spawn",
 	REQUEST_LEAVE = "request_leave",
-	MOVE_PLAYER = "move_player",
+	REQUEST_MOVE = "request_move",
 	-- Methods
 	request_profile = function(self)
 		return {
@@ -28,9 +29,9 @@ game_messages = {
 			qualifier = game_messages.REQUEST_SPAWN,
 		}
 	end,
-	move_player = function(self, x, y)
+	request_move = function(self, x, y)
 		return {
-			qualifier = game_messages.MOVE_PLAYER,
+			qualifier = game_messages.REQUEST_MOVE,
 			x = x,
 			y = y,
 		}

@@ -5,6 +5,10 @@ local match_runtime = require("game.match_runtime.match_runtime")
 local function server_started(self, runtime_qualifier)
 	print(os.date() .. " [SERVER_MANAGER] Server was started, qualifier=" .. runtime_qualifier)
 	self.runtime_qualifier = runtime_qualifier
+
+	if runtime_qualifier == self.omgruntime.constants.MATCH then
+		match_runtime:setup_runtime()
+	end
 end
 
 local function command_received(self, command_qualifier, command_body)
@@ -52,7 +56,9 @@ local function handle_server_event(self, event)
 		local client_id = event_body.client_id
 		local decoded_message = json.decode(event_body.message)
 		message_received(self, client_id, decoded_message)
-		
+
+	else
+		error("[SERVER_MANAGER] Unknown server event was received, event_qualifier=" .. tostring(event_qualifier))
 	end
 end
 

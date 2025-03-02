@@ -1,15 +1,15 @@
 local screen_factory = require("game.screen_factory.screen_factory")
-local match_screen = require("screens.match_screen.match_screen")
-local lobby_screen = require("screens.lobby_screen.lobby_screen")
-local ops_screen = require("screens.ops_screen.ops_screen")
+local match_screen = require("game.match_screen.match_screen")
+local lobby_screen = require("game.lobby_screen.lobby_screen")
+local ops_screen = require("game.ops_screen.ops_screen")
 local client_manager = require("game.client_manager.client_manager")
 
-local AUTH_FACTORY = "#auth_factory"
-local LOBBY_FACTORY = "#lobby_factory"
-local MATCH_FACTORY = "#match_factory"
-local JOINING_FACTORY = "#joining_factory"
-local LEAVING_FACTORY = "#leaving_factory"
-local OPS_FACTORY = "#ops_factory"
+local AUTH_SCREEN_FACTORY = "#auth_screen_factory"
+local LOBBY_SCREEN_FACTORY = "#lobby_screen_factory"
+local MATCH_SCREEN_FACTORY = "#match_screen_factory"
+local JOINING_SCREEN_FACTORY = "#joining_screen_factory"
+local LEAVING_SCREEN_FACTORY = "#leaving_screen_factory"
+local OPS_SCREEN_FACTORY = "#ops_screen_factory"
 
 local function remove_current_screen(self)
 	if self.current_screen_ids then
@@ -21,8 +21,8 @@ local function remove_current_screen(self)
 	end
 end
 
-local function create_game_screen(self, factory_id, collection_id, screen_id)
-	print(os.date() .. " [SCREEN_FACTORY] Creating " .. screen_id)
+local function create_game_screen(self, factory_id, screen_collection_url, screen_qualifier)
+	print(os.date() .. " [SCREEN_FACTORY] Create screen, screen_qualifier=" .. screen_qualifier)
 
 	remove_current_screen(self)
 
@@ -31,36 +31,36 @@ local function create_game_screen(self, factory_id, collection_id, screen_id)
 
 	self.current_screen_ids = collection_ids
 
-	local new_instance_id = collection_ids[collection_id]
-	client_manager:screen_created(screen_id, new_instance_id)
-	return new_instance_id
+	local screen_manager_url = collection_ids[screen_collection_url]
+	client_manager:screen_created(screen_qualifier, screen_manager_url)
+	return screen_manager_url
 end
 
 local function create_auth_screen(self)
-	create_game_screen(self, AUTH_FACTORY, "/auth_screen", client_manager.AUTH_SCREEN)
+	create_game_screen(self, AUTH_SCREEN_FACTORY, "/auth_screen", screen_factory.AUTH_SCREEN)
 end
 
 local function create_lobby_screen(self, profile)
-	local new_instance_id = create_game_screen(self, LOBBY_FACTORY, "/lobby_screen", client_manager.LOBBY_SCREEN)
-	lobby_screen:set_profile(new_instance_id, profile)
+	local screen_manager_url = create_game_screen(self, LOBBY_SCREEN_FACTORY, "/lobby_screen", screen_factory.LOBBY_SCREEN)
+	lobby_screen:setup_screen(screen_manager_url, profile)
 end
 
-local function create_match_screen(self, settings, dangling_players, spawned_players)
-	local new_instance_id = create_game_screen(self, MATCH_FACTORY, "/match_screen", client_manager.MATCH_SCREEN)
-	match_screen:set_state(new_instance_id, settings, dangling_players, spawned_players)
+local function create_match_screen(self, game_manager_url, settings, match_state, step_index)
+	local screen_manager_url = create_game_screen(self, MATCH_SCREEN_FACTORY, "/match_screen", screen_factory.MATCH_SCREEN)
+	match_screen:setup_screen(screen_manager_url, game_manager_url, settings, match_state, step_index)
 end
 
 local function create_joining_screen(self)
-	create_game_screen(self, JOINING_FACTORY, "/joining_screen", client_manager.JOINING_SCREEN)
+	create_game_screen(self, JOINING_SCREEN_FACTORY, "/joining_screen", screen_factory.JOINING_SCREEN)
 end
 
 local function create_leaving_screen(self)
-	create_game_screen(self, LEAVING_FACTORY, "/leaving_screen", client_manager.LEAVING_SCREEN)
+	create_game_screen(self, LEAVING_SCREEN_FACTORY, "/leaving_screen", screen_factory.LEAVING_SCREEN)
 end
 
 local function create_ops_screen(self, reason)
-	local new_instance_id = create_game_screen(self, OPS_FACTORY, "/ops_screen", client_manager.OPS_SCREEN)
-	ops_screen:set_state(new_instance_id, reason)
+	local screen_manager_url = create_game_screen(self, OPS_SCREEN_FACTORY, "/ops_screen", screen_factory.OPS_SCREEN)
+	ops_screen:setup_screen(screen_manager_url, reason)
 end
 
 function on_message(self, message_id, message, sender)
@@ -72,10 +72,11 @@ function on_message(self, message_id, message, sender)
 		create_lobby_screen(self, profile)
 		
 	elseif message_id == hash(screen_factory.CREATE_MATCH_SCREEN) then
+		local game_manager_url = message.game_manager_url
 		local settings = message.settings
-		local dangling_players = message.dangling_players
-		local spawned_players = message.spawned_players
-		create_match_screen(self, settings, dangling_players, spawned_players)
+		local match_state = message.match_state
+		local step_index = message.step_index
+		create_match_screen(self, game_manager_url, settings, match_state, step_index)
 
 	elseif message_id == hash(screen_factory.CREATE_JOINING_SCREEN) then
 		create_joining_screen(self)

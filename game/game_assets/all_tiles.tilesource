@@ -4,27 +4,17 @@ tile_height: 16
 tile_spacing: 1
 animations {
   id: "player"
-  start_tile: 7
-  end_tile: 7
+  start_tile: 197
+  end_tile: 197
 }
 animations {
-  id: "pointer_1"
-  start_tile: 1
-  end_tile: 1
-}
-animations {
-  id: "pointer_2"
-  start_tile: 2
-  end_tile: 2
-}
-animations {
-  id: "shadow"
-  start_tile: 6
-  end_tile: 6
+  id: "pointer"
+  start_tile: 128
+  end_tile: 128
 }
 animations {
   id: "weapon"
-  start_tile: 11
-  end_tile: 11
+  start_tile: 207
+  end_tile: 207
 }
 extrude_borders: 1

@@ -1,211 +1,113 @@
-local profiles_container = require("game.runtime_utils.profiles_container")
-local simulation_service = require("game.match_runtime.simulation_service")
-local players_container = require("game.match_runtime.players_container")
-local events_container = require("game.match_runtime.events_container")
-local profile_wrapper = require("game.runtime_utils.profile_wrapper")
-local match_settings = require("game.match_runtime.match_settings")
-local vector_factory = require("game.runtime_utils.vector_factory")
-local player_factory = require("game.match_runtime.player_factory")
+local match_factory = require("game.match_factory.match_factory")
 local match_runtime = require("game.match_runtime.match_runtime")
+local match_manager = require("game.match_manager.match_manager")
+local game_manager = require("game.game_manager.game_manager")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
 local server_messages = require("common.server_messages")
+local match_requests = require("common.match_requests")
 local game_messages = require("common.game_messages")
-local match_events = require("common.match_events")
 
-local NIL_STATE = "nil"
-local SIMULATION_STATE = "simulation"
-
-local function init_runtime(self, version_config)
-	self.version_config = version_config
-	self.spawn_requests = {}
-	self.match_state = SIMULATION_STATE
+local function setup_runtime(self)
+	self.simulator_enabled = true
 end
 
-local function add_match_client(self, client_id, profile)
-	-- Makes client to use websockets
-	omgruntime:upgrade_connection(client_id)
+local function simulate_step(self)
+	local step_index = self.step_index + 1
+	self.step_index = step_index
+	print(os.date() .. " [MATCH_RUNTIME] Simulate step, step=" .. step_index)
 
-	local wrapped_profile = profile_wrapper:wrap(profile)
-	profiles_container:add_profile(client_id, wrapped_profile)
-end
-
-local function delete_client(self, client_id)
-	if profiles_container:delete_profile(client_id) then
-		if players_container:delete_player(client_id) then
-			local match_event = match_events:player_deleted(client_id)
-			events_container:add_event(match_event)
-
-			print(os.date() .. " [MATCH_RUNTIME] Player was deleted, client_id=" .. client_id)
-		end
-	end
-end
-
-local function request_state(self, client_id)
-	print(os.date() .. " [MATCH_RUNTIME] State was requested, client_id=" .. client_id)
-
-	if not self.simulated_state then
-		self.simulated_state = players_container:get_state()
-	end
+	match_manager:simulate_step(self.match_manager_url, self.simulator_requests)
 	
-	local player_instance = players_container:get_player(client_id)
-	-- State requesting is allowed only for non created players
-	if not player_instance then
-		local wrapped_profile = profiles_container:get_profile(client_id)
-		if wrapped_profile then
-			local nickname = wrapped_profile.profile.data.nickname
-			local new_player = player_factory:create(client_id, nickname)
-			if players_container:add_player(client_id, new_player) then
-				local match_event = match_events:player_created(client_id, nickname)
-				events_container:add_event(match_event)
-				print(os.date() .. " [MATCH_RUNTIME] Player was created, client_id=" .. client_id)
-
-				local state = self.simulated_state
-
-				-- Send match data
-				local step = self.match_step
-				local settings = {
-					simulation_interval = match_settings.constants.SIMULATION_INTERVAL,
-				}
-				local dangling_players = state.dangling_players
-				local spawned_players = state.spawned_players
-				local server_message = server_messages:set_state(step, settings, dangling_players, spawned_players)
-				omgruntime:respond_text_message(client_id, json.encode(server_message))
-			end
-		else
-			print(os.date() .. " [MATCH_RUNTIME] Player profile was not found to create a new player, client_id=" .. client_id)
-		end
-	else
-		print(os.date() .. " [MATCH_RUNTIME] Player was already created to get match state, client_id=" .. client_id)
-	end
+	self.simulator_requests = {}
 end
 
-local function request_spawn(self, client_id)
-	if not self.spawn_requests[client_id] then
-		local spawn_steps = match_settings.constants.SPAWN_STEPS
-		local simulation_interval = match_settings.constants.SIMULATION_INTERVAL
-		-- time to finish current step
-		local step_delay = math.max(0, simulation_interval - self.step_timer)
-		local total_delay = step_delay + spawn_steps * simulation_interval
-		
-		self.spawn_requests[client_id] = self.match_timer + total_delay
-		print(os.date() .. " [MATCH_RUNTIME] Spawn request was set, client_id=" .. client_id)
-
-		local server_message = server_messages:set_spawn_countdown(total_delay)
-		omgruntime:respond_text_message(client_id, json.encode(server_message))
-	else
-		print(os.date() .. " [MATCH_RUNTIME] Spawn request was already received, client_id=" .. client_id)
-	end
-end
-
-local function request_leave(self, client_id)
-	omgruntime:kick_client(client_id)
-	print(os.date() .. " [MATCH_RUNTIME] The client was requested to be kicked, client_id=" .. client_id)
-end
-
-local function move_player(self, client_id, x, y)
-	local player_instance = players_container:get_player(client_id)
-	if player_instance then
-		-- Was spawned and still alive
-		if player_instance.position and not player_instance.was_killed then
-
-			local target_position = vector_factory:create(x, y)
-			player_instance:set_movement(target_position)
-
-			print(os.date() .. " [MATCH_RUNTIME] Movement was created, client_id=" .. client_id .. ", x=" .. math.floor(x) .. ", y=" .. math.floor(y))
-		else
-			print(os.date() .. " [MATCH_RUNTIME] Player was not spawn or was already killed to move, client_id=" .. client_id)
-		end
-	else
-		print(os.date() .. " [MATCH_RUNTIME] Player was not found to move, client_id=" .. client_id)
-	end
-end
-
-local function simulate(self)
-	self.match_step = self.match_step + 1
+local function match_simulated(self, match_state, step_events)
+	print(os.date() .. " [MATCH_RUNTIME] Match was simulated, step=" .. self.step_index)
 	
-	print(os.date() .. " [MATCH_RUNTIME] Simulated, step=" .. self.match_step .. ", timer=" .. self.match_timer)
+	self.match_state = match_state
+	self.step_events = step_events
 
-	simulation_service:simulate()
-	
-	-- Handle spawn requests
-	for client_id, spawn_time in pairs(self.spawn_requests) do
-		if self.match_timer >= spawn_time then
-			local player_instance = players_container:get_player(client_id)
-			if player_instance then
-				local spawn_x = math.random(match_settings.constants.MATCH_BORDER, match_settings.constants.MATCH_WIDTH - match_settings.constants.MATCH_BORDER)
-				local spawn_y = math.random(match_settings.constants.MATCH_BORDER, match_settings.constants.MATCH_HEIGHT - match_settings.constants.MATCH_BORDER)
-				local spawn_position = vector_factory:create(spawn_x, spawn_y)
-				player_instance:spawn_player(spawn_position)
-
-				local match_event = match_events:player_spawned(client_id, spawn_position.x, spawn_position.y)
-				events_container:add_event(match_event)
-
-				print(os.date() .. " [MATCH_RUNTIME] Player was spawned, client_id=" .. client_id .. ", x=" .. spawn_position.x .. ", y=" .. spawn_position.y)
-			else
-				print(os.date() .. " [MATCH_RUNTIME] Player was not found to spawn, client_id=" .. client_id)
-			end
-
-			self.spawn_requests[client_id] = nil
-		end
-	end
-
-	local all_events = events_container:pull_events()
-	local client_ids = players_container:get_client_ids()
-	if #client_ids > 0 then
-		local server_message = server_messages:apply_events(all_events)
-		omgruntime:multicast_text_message(client_ids, json.encode(server_message))
-	end
-	
-	-- Store current state to multicast over new players
-	self.simulated_state = players_container:get_state()
+	local server_message = server_messages:play_events(step_events)
+	omgruntime:broadcast_binary_message(json.encode(server_message))
 end
 
 function init(self)
-	self.match_state = NIL_STATE
-	self.match_step = 0
-	self.match_timer = 0
-	self.stopping = false
+	self.simulator_enabled = false
+	self.simulator_requests = {}
+	self.simulator_events = {}
+	self.match_module = nil
+	self.match_manager_url = nil
+	self.match_timer = 0;
+	self.match_state = nil
+	self.match_finished = false
+	self.step_index = 0
 	self.step_timer = 0
+	self.step_events = nil
 end
 
 function update(self, dt)
-	if self.match_state == NIL_STATE then
-		-- Match runtime was not initialized yet
-	else
-		self.match_timer = self.match_timer + dt
-		if self.match_timer >= match_settings.constants.MATCH_LIFETIME then
-			if not self.stopping then
-				omgruntime:stop_matchmaking()
-				self.stopping = true
-				print(os.date() .. " [MATCH_RUNTIME] The matchmaking was requested to be stopped, timer=" .. self.match_timer)
-			end
+	if not self.simulator_enabled then
+		return
+	end
+	
+	self.match_timer = self.match_timer + dt
+	if self.match_timer > match_runtime.MATCH_LIFEIMTE then
+		if not self.match_finished then
+			self.match_finished = true
+			print(os.date() .. " [MATCH_RUNTIME] Match was finished")
+			omgruntime:stop_matchmaking()
 		end
+	end
 
-		self.step_timer = self.step_timer + dt
-		if self.step_timer >= match_settings.constants.SIMULATION_INTERVAL then
-			simulate(self)
-			self.step_timer = 0
-		end
+	self.step_timer = self.step_timer + dt
+	if self.step_timer > match_runtime.STEP_INTERVAL then
+		self.step_timer = 0
+
+		simulate_step(self)
 	end
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash(match_runtime.COMMAND_RECEIVED) then
+	if message_id == hash(match_runtime.SETUP_RUNTIME) then
+		setup_runtime(self)
+	elseif message_id == hash(match_runtime.COMMAND_RECEIVED) then
 		local command_qualifier = message.command_qualifier
 		local command_body = message.command_body
 		
 		if command_qualifier == omgruntime.constants.INIT_RUNTIME then
 			local version_config = command_body.runtime_config.version_config
-			init_runtime(self, version_config)
+
+			print(os.date() .. " [MATCH_RUNTIME] Init runtime")
+			pprint(version_config)
+			self.version_config = version_config
+
+			local game_manager_url = msg.url()
+			match_factory:create_death_match(game_manager_url, {}, nil, 0)
 			
 		elseif command_qualifier == omgruntime.constants.ADD_MATCH_CLIENT then
 			local client_id = command_body.client_id
 			local profile = command_body.profile
-			add_match_client(self, client_id, profile)
+
+			print(os.date() .. " [MATCH_RUNTIME] Add match client, client_id=" .. client_id)
+			pprint(profile)
+
+			-- Makes client to use websockets
+			omgruntime:upgrade_connection(client_id)
+
+			local request = match_requests:add_client(client_id, profile.data.nickname, 0)
+			self.simulator_requests[#self.simulator_requests + 1] = request
 			
 		elseif command_qualifier == omgruntime.constants.DELETE_CLIENT then
 			local client_id = command_body.client_id
-			delete_client(self, client_id)
+			
+			print(os.date() .. " [MATCH_RUNTIME] Delete client, client_id=" .. client_id)
+
+			local request = match_requests:delete_client(client_id)
+			self.simulator_requests[#self.simulator_requests + 1] = request
+			
+		else
+			print(os.date() .. " [MATCH_RUNTIME] Unknown command qualifier was received, command_qualifier=" .. tostring(command_qualifier))
+			
 		end
 		
 	elseif message_id == hash(match_runtime.MESSAGE_RECEIVED) then
@@ -214,20 +116,48 @@ function on_message(self, message_id, message, sender)
 		local message_qualifier = game_message.qualifier
 
 		if message_qualifier == game_messages.REQUEST_STATE then
-			request_state(self, client_id)
-			
-		elseif message_qualifier == game_messages.REQUEST_SPAWN then
-			request_spawn(self, client_id)
+			print(os.date() .. " [MATCH_RUNTIME] Request state, client_id=" .. client_id)
+
+			local server_message = server_messages:set_state({}, self.match_state, self.step_index)
+			omgruntime:respond_binary_message(client_id, json.encode(server_message))
 
 		elseif message_qualifier == game_messages.REQUEST_LEAVE then
-			request_leave(self, client_id)
+			print(os.date() .. " [MATCH_RUNTIME] Request leave, client_id=" .. client_id)
+			omgruntime:kick_client(client_id)
+			
+		elseif message_qualifier == game_messages.REQUEST_SPAWN then
+			print(os.date() .. " [MATCH_RUNTIME] Request spawn, client_id=" .. client_id)
 
-		elseif message_qualifier == game_messages.MOVE_PLAYER then
+			local request = match_requests:spawn_player(client_id)
+			self.simulator_requests[#self.simulator_requests + 1] = request
+
+		elseif message_qualifier == game_messages.REQUEST_MOVE then
 			local x = game_message.x
 			local y = game_message.y
-			move_player(self, client_id, x, y)
+			
+			print(os.date() .. " [MATCH_RUNTIME] Request move, client_id=" .. client_id)
+			local request = match_requests:move_player(client_id, x, y)
+			self.simulator_requests[#self.simulator_requests + 1] = request
+			
 		else
 			print(os.date() .. " [MATCH_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
+			
 		end
+	end
+		
+	if message_id == hash(game_manager.MATCH_CREATED) then
+		local match_qualifier = message.match_qualifier
+		local match_manager_url = message.match_manager_url
+
+		print(os.date() .. " [MATCH_RUNTIME] Match was created, match_qualifier=" .. match_qualifier)
+		self.match_qualifier = match_qualifier
+		self.match_manager_url = match_manager_url
+
+		simulate_step(self)
+	elseif message_id == hash(game_manager.MATCH_SIMULATED) then
+		local match_state = message.match_state
+		local step_events = message.step_events
+
+		match_simulated(self, match_state, step_events)
 	end
 end

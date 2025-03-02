@@ -1,5 +1,5 @@
-local profiles_container = require("game.runtime_utils.profiles_container")
-local profile_wrapper = require("game.runtime_utils.profile_wrapper")
+local profiles_container = require("game.game_utils.profiles_container")
+local profile_wrapper = require("game.game_utils.profile_wrapper")
 local global_counter = require("game.lobby_runtime.global_counter")
 local lobby_runtime = require("game.lobby_runtime.lobby_runtime")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
@@ -8,8 +8,10 @@ local game_messages = require("common.game_messages")
 
 local DEFAULT_GAME_MODE = "death-match"
 
-local function command_received(self, message)
+local function command_received(self, message)	
 	local command_qualifier = message.command_qualifier
+	print(os.date() .. " [LOBBY_RUNTIME] Command was received, command_qualifier=" .. command_qualifier)
+	
 	local command_body = message.command_body
 
 	-- Init runtime

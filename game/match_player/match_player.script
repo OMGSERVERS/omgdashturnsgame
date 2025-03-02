@@ -1,0 +1,109 @@
+local match_manager = require("game.match_manager.match_manager")
+local match_player = require("game.match_player.match_player")
+
+local NICKNAME = "#nickname"
+
+local WEAPON_LEFT_HAND = "weapon_left_hand"
+local WEAPON_RIGHT_HAND = "weapon_right_hand"
+
+local SKIN = "skin"
+local SKIN_SPRITE = "skin#sprite"
+
+local function disable_weapons(self)
+	msg.post(WEAPON_LEFT_HAND, "disable")
+	msg.post(WEAPON_RIGHT_HAND, "disable")
+end
+
+local function set_left_hand_weapon(self, angle_rad)
+	msg.post(WEAPON_LEFT_HAND, "enable")
+end
+
+local function set_right_hand_weapon(self, angle_rad)
+	msg.post(WEAPON_RIGHT_HAND, "enable")
+end
+
+local function setup_weapons(self, flip)
+	disable_weapons(self)
+
+	if flip then
+		set_left_hand_weapon(self)
+	else
+		set_right_hand_weapon(self)
+	end
+end
+
+local function set_flip(self, flip)
+	sprite.set_hflip(SKIN, flip)
+	setup_weapons(self, flip)
+end
+
+local function play_death(self, callback)
+	disable_weapons(self)
+	go.animate(SKIN_SPRITE, "tint.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.5, 0, callback)
+	go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, go.get_position().y + 16, go.EASING_LINEAR, 0.5)
+end
+
+local function setup_player(self, match_manager_url, client_id, nickname)
+	print(os.date() .. " [MATCH_PLAYER] Setup player, client_id=" .. client_id .. ", nickname=" .. nickname)
+
+	self.match_manager_url = match_manager_url
+	self.client_id = client_id
+	self.nickname = nickname
+		
+	set_flip(self, false)
+	label.set_text(NICKNAME, nickname)
+
+	local position = go.get_position()
+	local x = position.x
+	local y = position.y
+	match_manager:player_created(match_manager_url, client_id, x, y)
+end
+
+local function move_player(self, x, y)
+	local z = y
+	local to_position = vmath.vector3(x, y, z)
+
+	local from_position = go.get_position(".")
+	local flip = x < from_position.x
+	set_flip(self, flip)
+
+	local movement_delta = to_position - from_position
+	local movement_distance = vmath.length(movement_delta)
+	-- t = S / v
+	local movement_time = movement_distance / 320
+	
+	go.animate(".", "position",  go.PLAYBACK_ONCE_FORWARD, to_position, go.EASING_INSINE, movement_time, 0, function()
+		match_manager:player_moved(self.match_manager_url, self.client_id, x, y)
+	end)
+end
+
+local function kill_player(self)
+	msg.post(NICKNAME, "disable")
+	
+	play_death(self, function()
+		go.delete(true)
+
+		match_manager:player_dead(self.match_manager_url, self.client_id)
+	end)
+end
+
+function final(self)
+	match_manager:player_deleted(self.match_manager_url, self.client_id)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(match_player.SETUP_PLAYER) then
+		local match_manager_url = message.match_manager_url
+		local client_id = message.client_id
+		local nickname = message.nickname
+		setup_player(self, match_manager_url, client_id, nickname)
+		
+	elseif message_id == hash(match_player.MOVE_PLAYER) then
+		local x = message.x
+		local y = message.y
+		move_player(self, x, y)
+		
+	elseif message_id == hash(match_player.KILL_PLAYER) then
+		kill_player(self)
+	end
+end

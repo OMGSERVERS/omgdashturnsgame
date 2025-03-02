@@ -1,6 +1,5 @@
-local game_entrypoint = require("game.game_entrypoint.game_entrypoint")
 local match_factory = require("game.match_factory.match_factory")
-local death_match = require("match.death_match.death_match")
+local death_match = require("game.death_match.death_match")
 
 local DEATH_MATCH_FACTORY = "#death_match_factory"
 
@@ -14,8 +13,8 @@ local function remove_current_match(self)
 	end
 end
 
-local function create_match(self, factory_id, collection_id, match_qualifier)
-	print(os.date() .. " [MATCH_FACTORY] Creating " .. match_qualifier)
+local function create_match(self, factory_id, match_collection_url, match_qualifier)
+	print(os.date() .. " [MATCH_FACTORY] Create match, match_qualifier=" .. match_qualifier)
 
 	remove_current_match(self)
 
@@ -24,20 +23,22 @@ local function create_match(self, factory_id, collection_id, match_qualifier)
 
 	self.current_match_ids = collection_ids
 
-	local new_instance_id = collection_ids[collection_id]
-	game_entrypoint:match_created(match_qualifier, new_instance_id)
-	return new_instance_id
+	local match_manager_url = collection_ids[match_collection_url]
+	
+	return match_manager_url
 end
 
-local function create_death_match(self, level)
-	local new_instance_id = create_match(self, DEATH_MATCH_FACTORY, "/death_match", match_factory.AUTH_SCREEN)
-	death_match:set_level(new_instance_id, level)
+local function create_death_match(self, game_manager_url, settings, match_state, step_index)
+	local match_manager_url = create_match(self, DEATH_MATCH_FACTORY, "/death_match", match_factory.DEATH_MATCH)
+	death_match:setup_match(match_manager_url, game_manager_url, settings, match_state, step_index)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash(match_factory.CREATE_DEATH_MATCH) then
-		local level = message.level
-		create_death_match(self, level)
-		
+		local game_manager_url = message.game_manager_url
+		local settings = message.settings
+		local match_state = message.match_state
+		local step_index = message.step_index
+		create_death_match(self, game_manager_url, settings, match_state, step_index)
 	end
 end

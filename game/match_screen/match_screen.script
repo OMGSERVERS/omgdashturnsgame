@@ -1,0 +1,164 @@
+local match_factory = require("game.match_factory.match_factory")
+local match_pointer = require("game.match_screen.match_pointer.match_pointer")
+local match_gui = require("game.match_screen.match_gui.match_gui")
+local match_log = require("game.match_screen.match_log.match_log")
+local match_top = require("game.match_screen.match_top.match_top")
+local client_manager = require("game.client_manager.client_manager")
+local match_screen = require("game.match_screen.match_screen")
+
+local MATCH_CAMERA = "match_camera"
+
+local function client_added(self, client_id, nickname, score)
+	print(os.date() .. " [CLIENT_MANAGER] Client was added, client_id=" .. client_id .. ", nickname=" .. nickname)
+	match_top:add_player(client_id, nickname, score)
+	match_log:player_joined(nickname)
+end
+
+local function player_created(self, client_id, x, y)
+	if client_id == client_manager:get_client_id() then
+		match_gui:disable_spawn_countdown()
+	end
+
+	match_log:player_spawned(self.clients[client_id].nickname)
+end
+
+local function player_killed(self, killed_client_id, by_client_id)
+	if killed_client_id == client_manager:get_client_id() then
+		match_pointer:disable_pointer()
+	end
+
+	match_log:player_killed(self.clients[killed_client_id].nickname, self.clients[by_client_id].nickname)
+	match_top:increase_score(by_client_id)
+end
+
+local function player_deleted(self, client_id)
+	match_top:delete_player(client_id)
+	match_log:player_leaved(self.clients[client_id].nickname)
+end
+
+local function client_deleted(self, client_id)
+	print(os.date() .. " [CLIENT_MANAGER] Client was deleted, client_id=" .. client_id)
+end
+
+local function setup_screen(self, game_manager_url, settings, match_state, step_index)
+	print(os.date() .. " [MATCH_SCREEN] Setup match screen")
+	match_factory:create_death_match(game_manager_url, settings, match_state, step_index)
+end
+
+local function set_countdown(self, time_to_spawn)
+	print(os.date() .. " [MATCH_SCREEN] Set countdown, time_to_spawn=" .. time_to_spawn)
+	
+	match_gui:enable_spawn_countdown(math.max(0, time_to_spawn))
+end
+
+local function screen_to_world(x, y, z)
+	local camera = "match_camera#camera"
+	local projection = go.get(camera, "projection")
+	local view = go.get(camera, "view")
+	local w, h = window.get_size()
+	-- The window.get_size() function will return the scaled window size,
+	-- ie taking into account display scaling (Retina screens on macOS for
+	-- instance). We need to adjust for display scaling in our calculation.
+	w = w / (w / 640)
+	h = h / (h / 480)
+
+	-- https://defold.com/manuals/camera/#converting-mouse-to-world-coordinates
+	local inv = vmath.inv(projection * view)
+	x = (2 * x / w) - 1
+	y = (2 * y / h) - 1
+	z = (2 * z) - 1
+	local x1 = x * inv.m00 + y * inv.m01 + z * inv.m02 + inv.m03
+	local y1 = x * inv.m10 + y * inv.m11 + z * inv.m12 + inv.m13
+	local z1 = x * inv.m20 + y * inv.m21 + z * inv.m22 + inv.m23
+	return x1, y1, z1
+end
+
+local function pointed(self, pointed_x, pointed_y)
+	local x, y = screen_to_world(pointed_x, pointed_y, 0)
+	
+	local client_id = client_manager:get_client_id()
+	local player_id = self.players[client_id]
+	if player_id then
+		local bounded_x = math.max(24, math.min(256 - 24, x))
+		local bounded_y = math.max(24, math.min(256 - 24, y))
+		
+		match_pointer:enable_pointer(bounded_x, bounded_y)
+
+		print(os.date() .. " [MATCH_SCREEN] Move player, x=" .. bounded_x .. ", y=" .. bounded_y)
+
+		-- Move player
+		client_manager:move(bounded_x, bounded_y)
+	else
+		print(os.date() .. " [MATCH_SCREEN] Player was not found to point, client_id=" .. client_id)
+	end
+end
+
+function init(self)
+	self.players = {}
+	self.clients = {}
+	
+	print(os.date() .. " [MATCH_SCREEN] Initialized")
+end
+
+function final(self)
+	for client_id, player_id in pairs(self.players) do
+		go.delete(player_id)
+		print(os.date() .. " [MATCH_SCREEN] Player was deleted, id=" .. player_id)
+	end
+
+	print(os.date() .. " [MATCH_SCREEN] Finalized")
+end
+
+function update(self, dt)
+	local client_id = client_manager:get_client_id()
+	local player_id = self.players[client_id]
+	if player_id then
+		local player_position = go.get_position(player_id)
+		local camera_x = player_position.x
+		local camera_y = player_position.y
+		local camera_position = vmath.vector3(camera_x, camera_y, 0)
+		
+		go.set_position(camera_position, MATCH_CAMERA)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(match_screen.SETUP_SCREEN) then
+		local game_manager_url = message.game_manager_url
+		local settings = message.settings
+		local match_state = message.match_state
+		local step_index = message.step_index
+		setup_screen(self, game_manager_url, settings, match_state, step_index)
+		
+	elseif message_id == hash(match_screen.SET_COUNTDOWN) then
+		local time_to_spawn = message.time_to_spawn
+		set_countdown(self, time_to_spawn)
+
+	elseif message_id == hash(match_screen.POINTED) then
+		local x = message.x
+		local y = message.y
+		pointed(self, x, y)
+
+	elseif message_id == hash(match_screen.CLIENT_ADDED) then
+		local client_id = message.client_id
+		local nickname = message.nickname
+		local score = message.score
+		client_added(client_id, nickname, score)
+
+	elseif message_id == hash(match_screen.PLAYER_CREATED) then
+		local client_id = message.client_id
+		local x = message.x
+		local y = message.y
+		player_created(client_id, x, y)
+
+	elseif message_id == hash(match_screen.PLAYER_KILLED) then
+		local client_id = message.client_id
+		local killer_id = message.killer_id
+		player_killed(client_id, client_id, killer_id)
+
+	elseif message_id == hash(match_screen.CLIENT_DELETED) then
+		local client_id = message.client_id
+		client_deleted(client_id, client_id)
+		
+	end
+end

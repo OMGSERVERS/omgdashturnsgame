@@ -1,0 +1,14 @@
+name: "death_match"
+instances {
+  id: "forest_level"
+  prototype: "/game/forest_level/forest_level.go"
+}
+instances {
+  id: "death_match"
+  prototype: "/game/death_match/death_match.go"
+}
+instances {
+  id: "player_factory"
+  prototype: "/game/player_factory/player_factory.go"
+}
+scale_along_z: 0

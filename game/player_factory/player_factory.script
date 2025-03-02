@@ -1,0 +1,59 @@
+local player_factory = require("game.player_factory.player_factory")
+local match_player = require("game.match_player.match_player")
+local match_manager = require("game.match_manager.match_manager")
+
+local MATCH_PLAYER_FACTORY = "#match_player_factory"
+
+local function setup_factory(self, match_manager_url)
+	self.match_manager_url = match_manager_url
+end
+
+local function create_player(self, client_id, position, nickname)
+	print(os.date() .. " [PLAYER_FACTORY] Create player, client_id=" .. client_id)
+
+	local collection_ids = collectionfactory.create(MATCH_PLAYER_FACTORY, position)
+	pprint(collection_ids)
+
+	self.players[client_id] = collection_ids
+
+	local player_go_url = collection_ids["/match_player"]
+	match_player:setup_player(player_go_url, self.match_manager_url, client_id, nickname)
+end
+
+local function delete_player(self, client_id)
+	local player = self.players[client_id]
+	if player then
+		print(os.date() .. " [PLAYER_FACTORY] Delete player, client_id=" .. client_id)
+		
+		for key, go_id in pairs(player) do
+			go.delete(go_id)
+		end
+
+		self.players[client_id] = nil
+	else
+		print(os.date() .. " [PLAYER_FACTORY] Player was not found to delete, client_id=" .. client_id)
+		match_manager:player_deleted(client_id)
+	end
+end
+
+function init(self)
+	self.players = {}
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(player_factory.SETUP_FACTORY) then
+		local match_manager_url = message.match_manager_url
+		setup_factory(self, match_manager_url)
+		
+	elseif message_id == hash(player_factory.CREATE_PLAYER) then
+		local client_id = message.client_id
+		local position = message.position
+		local nickname = message.nickname
+		create_player(self, client_id, position, nickname)
+		
+	elseif message_id == hash(player_factory.DELETE_PLAYER) then
+		local client_id = message.client_id
+		delete_player(self, client_id)
+		
+	end
+end

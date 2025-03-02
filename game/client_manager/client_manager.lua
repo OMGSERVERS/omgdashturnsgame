@@ -12,14 +12,6 @@ client_manager = {
 	RESET = "reset",
 	-- Events
 	SCREEN_CREATED = "screen_created",
-	MATCH_CREATED = "match_created",
-	-- Screen qualifiers
-	AUTH_SCREEN = "auth_screen",
-	LOBBY_SCREEN = "lobby_screen",
-	JOINING_SCREEN = "joining_screen",
-	MATCH_SCREEN = "match_screen",
-	LEAVING_SCREEN = "leaving_screen",
-	OPS_SCREEN = "ops_screen",
 	-- Methods
 	get_client_id = function(self)
 		return client_state.client_id
@@ -51,14 +43,11 @@ client_manager = {
 			y = y,
 		})
 	end,
-	screen_created = function(self, screen_qualifier, collection_id)
+	screen_created = function(self, screen_qualifier, screen_go_url)
 		msg.post(self.RECEIVER, self.SCREEN_CREATED, {
 			screen_qualifier = screen_qualifier,
-			collection_id = collection_id,
+			screen_go_url = screen_go_url,
 		})
-	end,
-	match_created = function(self, message)
-		msg.post(self.RECEIVER, self.MATCH_CREATED, message)
 	end,
 }
 
