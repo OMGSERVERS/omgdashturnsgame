@@ -1,4 +1,4 @@
-script: "/game/match_screen/match_log/match_log.gui_script"
+script: "/game/match_top/match_top.gui_script"
 fonts {
   name: "font_x2"
   font: "/game/game_assets/font_x2.font"
@@ -12,8 +12,11 @@ textures {
   texture: "/game/game_assets/game_gui.atlas"
 }
 nodes {
+  position {
+    y: 480.0
+  }
   size {
-    x: 256.0
+    x: 144.0
     y: 120.0
   }
   color {
@@ -23,14 +26,14 @@ nodes {
   }
   type: TYPE_BOX
   id: "root"
-  pivot: PIVOT_SW
+  pivot: PIVOT_NW
   adjust_mode: ADJUST_MODE_STRETCH
   alpha: 0.0
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
   size {
-    x: 256.0
+    x: 144.0
     y: 24.0
   }
   color {
@@ -39,33 +42,34 @@ nodes {
     z: 0.0
   }
   type: TYPE_BOX
-  id: "match_log_1"
-  pivot: PIVOT_SW
+  id: "match_top_1"
+  pivot: PIVOT_NW
   parent: "root"
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
   position {
     x: 8.0
-    y: 12.0
+    y: -12.0
   }
   size {
-    x: 248.0
+    x: 136.0
     y: 24.0
   }
   type: TYPE_TEXT
-  text: "Match log 1"
+  text: "Top player 1\n"
+  ""
   font: "font_x2"
-  id: "match_log_1_text"
+  id: "match_top_1_text"
   pivot: PIVOT_W
-  parent: "match_log_1"
+  parent: "match_top_1"
 }
 nodes {
   position {
-    y: 24.0
+    y: -24.0
   }
   size {
-    x: 256.0
+    x: 144.0
     y: 24.0
   }
   color {
@@ -74,33 +78,33 @@ nodes {
     z: 0.0
   }
   type: TYPE_BOX
-  id: "match_log_2"
-  pivot: PIVOT_SW
+  id: "match_top_2"
+  pivot: PIVOT_NW
   parent: "root"
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
   position {
     x: 8.0
-    y: 12.0
+    y: -12.0
   }
   size {
-    x: 248.0
+    x: 136.0
     y: 24.0
   }
   type: TYPE_TEXT
-  text: "Match log 2"
+  text: "Top player 2"
   font: "font_x2"
-  id: "match_log_2_text"
+  id: "match_top_2_text"
   pivot: PIVOT_W
-  parent: "match_log_2"
+  parent: "match_top_2"
 }
 nodes {
   position {
-    y: 48.0
+    y: -48.0
   }
   size {
-    x: 256.0
+    x: 144.0
     y: 24.0
   }
   color {
@@ -109,33 +113,33 @@ nodes {
     z: 0.0
   }
   type: TYPE_BOX
-  id: "match_log_3"
-  pivot: PIVOT_SW
+  id: "match_top_3"
+  pivot: PIVOT_NW
   parent: "root"
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
   position {
     x: 8.0
-    y: 12.0
+    y: -12.0
   }
   size {
-    x: 248.0
+    x: 136.0
     y: 24.0
   }
   type: TYPE_TEXT
-  text: "Match log 3"
+  text: "Top player 3"
   font: "font_x2"
-  id: "match_log_3_text"
+  id: "match_top_3_text"
   pivot: PIVOT_W
-  parent: "match_log_3"
+  parent: "match_top_3"
 }
 nodes {
   position {
-    y: 72.0
+    y: -72.0
   }
   size {
-    x: 256.0
+    x: 144.0
     y: 24.0
   }
   color {
@@ -144,33 +148,33 @@ nodes {
     z: 0.0
   }
   type: TYPE_BOX
-  id: "match_log_4"
-  pivot: PIVOT_SW
+  id: "match_top_4"
+  pivot: PIVOT_NW
   parent: "root"
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
   position {
     x: 8.0
-    y: 12.0
+    y: -12.0
   }
   size {
-    x: 248.0
+    x: 136.0
     y: 24.0
   }
   type: TYPE_TEXT
-  text: "Match log 4"
+  text: "Top player 4"
   font: "font_x2"
-  id: "match_log_4_text"
+  id: "match_top_4_text"
   pivot: PIVOT_W
-  parent: "match_log_4"
+  parent: "match_top_4"
 }
 nodes {
   position {
-    y: 96.0
+    y: -96.0
   }
   size {
-    x: 256.0
+    x: 144.0
     y: 24.0
   }
   color {
@@ -179,26 +183,26 @@ nodes {
     z: 0.0
   }
   type: TYPE_BOX
-  id: "match_log_5"
-  pivot: PIVOT_SW
+  id: "match_top_5"
+  pivot: PIVOT_NW
   parent: "root"
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
   position {
     x: 8.0
-    y: 12.0
+    y: -12.0
   }
   size {
-    x: 248.0
+    x: 136.0
     y: 24.0
   }
   type: TYPE_TEXT
-  text: "Match log 5"
+  text: "Top player 5"
   font: "font_x2"
-  id: "match_log_5_text"
+  id: "match_top_5_text"
   pivot: PIVOT_W
-  parent: "match_log_5"
+  parent: "match_top_5"
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

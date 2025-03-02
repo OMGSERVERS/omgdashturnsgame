@@ -1,4 +1,4 @@
-local match_top = require("game.match_screen.match_top.match_top")
+local match_top = require("game.match_top.match_top")
 
 local MAX_NODE_INDEX = 5
 
