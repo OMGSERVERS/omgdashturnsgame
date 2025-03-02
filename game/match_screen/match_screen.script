@@ -40,7 +40,7 @@ local function client_deleted(self, client_id)
 	print(os.date() .. " [CLIENT_MANAGER] Client was deleted, client_id=" .. client_id)
 end
 
-local function setup_screen(self, game_manager_url, settings, match_state, step_index)
+local function setup_screen(self, game_manager_url, settings, match_state, step_index, client_id)
 	print(os.date() .. " [MATCH_SCREEN] Setup match screen")
 	match_factory:create_death_match(game_manager_url, settings, match_state, step_index)
 end
@@ -49,6 +49,17 @@ local function set_countdown(self, time_to_spawn)
 	print(os.date() .. " [MATCH_SCREEN] Set countdown, time_to_spawn=" .. time_to_spawn)
 	
 	match_gui:enable_spawn_countdown(math.max(0, time_to_spawn))
+end
+
+local function move_camera(self, x, y)
+	print(os.date() .. " [MATCH_SCREEN] Move camera, x=" .. x .. ", y=" .. y)
+
+	local camera_position = go.get_position(MATCH_CAMERA)
+	local new_position = vmath.vector3(x, y, camera_position.z)
+	go.animate(MATCH_CAMERA, "position",  go.PLAYBACK_ONCE_FORWARD, new_position, go.EASING_INSINE, 1, 0, function()
+		print(os.date() .. " [MATCH_SCREEN] Camera was moved")
+	end)
+	
 end
 
 local function screen_to_world(x, y, z)
@@ -119,6 +130,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash(match_screen.SET_COUNTDOWN) then
 		local time_to_spawn = message.time_to_spawn
 		set_countdown(self, time_to_spawn)
+
+	elseif message_id == hash(match_screen.MOVE_CAMERA) then
+		local x = message.x
+		local y = message.y
+		move_camera(self, x, y)
 
 	elseif message_id == hash(match_screen.PLAYER_POINTED) then
 		local x = message.x
