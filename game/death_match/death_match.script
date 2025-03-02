@@ -4,8 +4,8 @@ local match_manager = require("game.match_manager.match_manager")
 local match_player = require("game.match_player.match_player")
 local game_manager = require("game.game_manager.game_manager")
 local death_match = require("game.death_match.death_match")
-local match_requests = require("common.match_requests")
-local match_events = require("common.match_events")
+local match_requests = require("game.match_requests.match_requests")
+local match_events = require("game.match_events.match_events")
 
 local PLAYER_FACTORY = "player_factory#player_factory"
 local FOREST_TILEMAP = "forest_level#forest_tilemap"

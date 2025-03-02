@@ -3,9 +3,9 @@ local match_runtime = require("game.match_runtime.match_runtime")
 local match_manager = require("game.match_manager.match_manager")
 local game_manager = require("game.game_manager.game_manager")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
-local server_messages = require("common.server_messages")
-local match_requests = require("common.match_requests")
-local game_messages = require("common.game_messages")
+local server_messages = require("game.server_messages.server_messages")
+local match_requests = require("game.match_requests.match_requests")
+local game_messages = require("game.game_messages.game_messages")
 
 local function setup_runtime(self)
 	self.simulator_enabled = true
