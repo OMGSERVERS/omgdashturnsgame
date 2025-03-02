@@ -16,8 +16,8 @@ local function create_player(self, client_id, position, nickname)
 
 	self.players[client_id] = collection_ids
 
-	local player_go_url = collection_ids["/match_player"]
-	match_player:setup_player(player_go_url, self.match_manager_url, client_id, nickname)
+	local match_player_url = collection_ids["/match_player"]
+	match_player:setup_player(match_player_url, self.match_manager_url, client_id, nickname)
 end
 
 local function delete_player(self, client_id)

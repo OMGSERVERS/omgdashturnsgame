@@ -73,24 +73,10 @@ local function screen_to_world(x, y, z)
 	return x1, y1, z1
 end
 
-local function pointed(self, pointed_x, pointed_y)
-	local x, y = screen_to_world(pointed_x, pointed_y, 0)
-	
-	local client_id = client_manager:get_client_id()
-	local player_id = self.players[client_id]
-	if player_id then
-		local bounded_x = math.max(24, math.min(256 - 24, x))
-		local bounded_y = math.max(24, math.min(256 - 24, y))
-		
-		match_pointer:enable_pointer(bounded_x, bounded_y)
-
-		print(os.date() .. " [MATCH_SCREEN] Move player, x=" .. bounded_x .. ", y=" .. bounded_y)
-
-		-- Move player
-		client_manager:move(bounded_x, bounded_y)
-	else
-		print(os.date() .. " [MATCH_SCREEN] Player was not found to point, client_id=" .. client_id)
-	end
+local function player_pointed(self, pointed_x, pointed_y)
+	local world_x, world_y = screen_to_world(pointed_x, pointed_y, 0)
+	match_pointer:enable_pointer(world_x, world_y)
+	client_manager:move(world_x, world_y)
 end
 
 function init(self)
@@ -134,10 +120,10 @@ function on_message(self, message_id, message, sender)
 		local time_to_spawn = message.time_to_spawn
 		set_countdown(self, time_to_spawn)
 
-	elseif message_id == hash(match_screen.POINTED) then
+	elseif message_id == hash(match_screen.PLAYER_POINTED) then
 		local x = message.x
 		local y = message.y
-		pointed(self, x, y)
+		player_pointed(self, x, y)
 
 	elseif message_id == hash(match_screen.CLIENT_ADDED) then
 		local client_id = message.client_id

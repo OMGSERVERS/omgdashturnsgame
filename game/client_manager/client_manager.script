@@ -65,7 +65,9 @@ local function set_state(self, settings, match_state, step_index)
 end
 
 local function move(self, x, y)
-	local game_message = game_messages:move_player(x, y)
+	print(os.date() .. " [CLIENT_MANAGER] Move, x=" .. tostring(x) .. ", y=" .. tostring(y))
+	
+	local game_message = game_messages:request_move(x, y)
 	send_message(self, game_message)
 end
 
@@ -317,9 +319,6 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash(client_manager.LEAVE) then
 		leave(self)
-
-	elseif message_id == hash(client_manager.SPAWN) then
-		spawn(self)
 
 	elseif message_id == hash(client_manager.MOVE) then
 		local x = message.x

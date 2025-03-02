@@ -7,7 +7,6 @@ client_manager = {
 	START = "start",
 	JOIN = "join",
 	LEAVE = "leave",
-	SPAWN = "spawn",
 	MOVE = "move",
 	RESET = "reset",
 	-- Events
@@ -31,10 +30,6 @@ client_manager = {
 	end,
 	reset = function(self)
 		msg.post(self.RECEIVER, self.RESET, {
-		})
-	end,
-	spawn = function(self)
-		msg.post(self.RECEIVER, client_manager.SPAWN, {
 		})
 	end,
 	move = function(self, x, y)

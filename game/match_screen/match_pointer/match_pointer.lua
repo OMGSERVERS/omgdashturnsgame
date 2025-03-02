@@ -1,6 +1,6 @@
 local match_pointer
 match_pointer = {
-	RECEIVER = "match_pointer#match_pointer",
+	RECEIVER = "match_pointer/match_pointer#match_pointer",
 	-- Requests
 	ENABLE_POINTER = "enable_pointer",
 	DISABLE_POINTER = "disable_pointer",

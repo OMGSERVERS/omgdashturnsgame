@@ -3,8 +3,8 @@ match_screen = {
 	-- Requests
 	SETUP_SCREEN = "setup_screen",
 	SET_COUNTDOWN = "set_countdown",
-	POINTED = "pointed",
 	-- Events
+	PLAYER_POINTED = "player_pointed",
 	MATCH_CREATED = "match_created",
 	CLIENT_ADDED = "client_added",
 	PLAYER_CREATED = "player_created",
@@ -24,8 +24,8 @@ match_screen = {
 			time_to_spawn = time_to_spawn,
 		})
 	end,
-	pointed = function(self, receiver, x, y)
-		msg.post(receiver, self.POINTED, {
+	player_pointed = function(self, receiver, x, y)
+		msg.post(receiver, self.PLAYER_POINTED, {
 			x = x,
 			y = y,
 		})

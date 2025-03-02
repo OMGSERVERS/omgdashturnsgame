@@ -3,7 +3,7 @@ local client_manager = require("game.client_manager.client_manager")
 local match_screen = require("game.match_screen.match_screen")
 local druid = require("druid.druid")
 
-local MATCH_SCREEN = "match_screen"
+local MATCH_SCREEN = "match_screen#match_screen"
 
 local function leave_button(self)
 	client_manager:leave()
@@ -66,9 +66,9 @@ end
 function on_input(self, action_id, action)
 	local result = self.druid:on_input(action_id, action)
 	if not result then
-		if action_id == hash("touch") then
+		if action_id == hash("mouse_button_left") then
 			if action.released then
-				match_screen:pointed(MATCH_SCREEN, action.x, action.y)
+				match_screen:player_pointed(MATCH_SCREEN, action.x, action.y)
 				return true
 			end
 		end

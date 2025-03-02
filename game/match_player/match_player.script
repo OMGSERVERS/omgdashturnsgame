@@ -54,9 +54,10 @@ local function setup_player(self, match_manager_url, client_id, nickname)
 	label.set_text(NICKNAME, nickname)
 
 	local position = go.get_position()
+	local match_player_url = msg.url()
 	local x = position.x
 	local y = position.y
-	match_manager:player_created(match_manager_url, client_id, x, y)
+	match_manager:player_created(match_manager_url, client_id, match_player_url, x, y)
 end
 
 local function move_player(self, x, y)

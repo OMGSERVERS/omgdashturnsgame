@@ -37,8 +37,8 @@ local function move_player(self, client_id, x, y)
 	if player then
 		print(os.date() .. " [MATCH_MANAGER] Move player, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y)
 
-		local player_go_url = player.url
-		match_player:move_player(player_go_url, x, y)
+		local match_player_url = player.url
+		match_player:move_player(match_player_url, x, y)
 	else
 		print(os.date() .. " [MATCH_MANAGER] Player was not found to move, client_id=" .. client_id)
 	end
@@ -230,11 +230,13 @@ function on_message(self, message_id, message, sender)
 		
 	elseif message_id == hash(match_manager.PLAYER_CREATED) then
 		local client_id = message.client_id
+		local match_player_url = message.match_player_url
 		local x = message.x
 		local y = message.y
 		print(os.date() .. " [DEATH_MATCH] Player was created, client_id=" .. client_id)
 
 		self.players[client_id] = {
+			url = match_player_url,
 			x = x,
 			y = y
 		}

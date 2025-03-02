@@ -28,9 +28,10 @@ match_manager = {
 			score = score,
 		})
 	end,
-	player_created = function(self, receiver, client_id, x, y)
+	player_created = function(self, receiver, client_id, match_player_url, x, y)
 		msg.post(receiver, self.PLAYER_CREATED, {
 			client_id = client_id,
+			match_player_url = match_player_url,
 			x = x,
 			y = y
 		})
