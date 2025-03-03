@@ -1,3 +1,4 @@
+local match_camera = require("game.match_camera.match_camera")
 local match_factory = require("game.match_factory.match_factory")
 local match_pointer = require("game.match_pointer.match_pointer")
 local match_gui = require("game.match_gui.match_gui")
@@ -51,15 +52,12 @@ local function set_countdown(self, time_to_spawn)
 	match_gui:enable_spawn_countdown(math.max(0, time_to_spawn))
 end
 
-local function move_camera(self, x, y)
-	print(os.date() .. " [MATCH_SCREEN] Move camera, x=" .. x .. ", y=" .. y)
+local function setup_camera(self, bounds)
+	match_camera:setup_camera(MATCH_CAMERA, bounds)
+end
 
-	local camera_position = go.get_position(MATCH_CAMERA)
-	local new_position = vmath.vector3(x, y, camera_position.z)
-	go.animate(MATCH_CAMERA, "position",  go.PLAYBACK_ONCE_FORWARD, new_position, go.EASING_INSINE, 1, 0, function()
-		print(os.date() .. " [MATCH_SCREEN] Camera was moved")
-	end)
-	
+local function move_camera(self, x, y)
+	match_camera:move_camera(MATCH_CAMERA, x, y)
 end
 
 local function screen_to_world(x, y, z)
@@ -131,6 +129,10 @@ function on_message(self, message_id, message, sender)
 		local time_to_spawn = message.time_to_spawn
 		set_countdown(self, time_to_spawn)
 
+	elseif message_id == hash(match_screen.SETUP_CAMERA) then
+		local bounds = message.bounds
+		setup_camera(self, bounds)
+		
 	elseif message_id == hash(match_screen.MOVE_CAMERA) then
 		local x = message.x
 		local y = message.y

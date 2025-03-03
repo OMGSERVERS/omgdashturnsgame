@@ -11,13 +11,15 @@ local PLAYER_FACTORY = "player_factory#player_factory"
 local FOREST_TILEMAP = "forest_level#forest_tilemap"
 
 local function add_client(self, client_id, nickname, score)
-	print(os.date() .. " [DEATH_MATCH] Add client, client_id=" .. tostring(client_id) .. ", nickname=" .. tostring(nickname))
+	print(os.date() .. " [DEATH_MATCH] Add client, client_id=" .. tostring(client_id) .. ", nickname=" .. tostring(nickname) .. ", score=" .. score)
+
 	self.clients[client_id] = {
 		nickname = nickname,
 		score = score,
 	}
-	
-	match_manager:client_added("#", client_id, nickname, score)
+
+	local event = match_events:client_added(client_id, nickname, score)
+	self.events[#self.events + 1] = event
 end
 
 local function create_player(self, client_id, x, y)
@@ -29,6 +31,8 @@ local function create_player(self, client_id, x, y)
 		local position = vmath.vector3(x, y, z)
 		local nickname = client.nickname
 		player_factory:create_player(PLAYER_FACTORY, client_id, position, nickname)
+
+		self.requests = self.requests + 1
 	end
 end
 
@@ -39,6 +43,8 @@ local function move_player(self, client_id, x, y)
 
 		local match_player_url = player.url
 		match_player:move_player(match_player_url, x, y)
+
+		self.requests = self.requests + 1
 	else
 		print(os.date() .. " [MATCH_MANAGER] Player was not found to move, client_id=" .. client_id)
 	end
@@ -46,12 +52,18 @@ end
 
 local function delete_player(self, client_id)
 	player_factory:delete_player(PLAYER_FACTORY, client_id)
+	self.requests = self.requests + 1
 end
 
 local function delete_client(self, client_id)
 	delete_player(self, client_id)
 
-	match_manager:client_deleted("#", client_id)
+	print(os.date() .. " [DEATH_MATCH] Delete client, client_id=" .. client_id)
+
+	self.clients[client_id] = nil
+	
+	local event = match_events:client_deleted(client_id)
+	self.events[#self.events + 1] = event
 end
 
 local function setup_match(self, game_manager_url, settings, match_state, step_index)
@@ -79,14 +91,22 @@ local function setup_match(self, game_manager_url, settings, match_state, step_i
 		end
 	end
 
+	local x, y, w, h = tilemap.get_bounds(FOREST_TILEMAP)
+	local bounds = {
+		x = x * death_match.TILE_W - death_match.TILE_W,
+		y = y * death_match.TILE_H - death_match.TILE_H,
+		w = w * death_match.TILE_W,
+		h = h * death_match.TILE_H,
+	}
+	
 	local match_qualifier = match_factory.DEATH_MATCH
-	game_manager:match_created(game_manager_url, match_qualifier, self.match_manager_url)
+	game_manager:match_created(game_manager_url, match_qualifier, self.match_manager_url, bounds)
 	
 	self.game_manager_url = game_manager_url
 end
 
 local function match_simulated(self)
-	print(os.date() .. " [DEATH_MATCH] Match simualted, produced " .. #self.events .. " events")
+	print(os.date() .. " [DEATH_MATCH] Match simulated, produced " .. #self.events .. " events")
 	local match_state = {
 		clients = self.clients,
 		players = self.players,
@@ -117,22 +137,16 @@ local function simulate_step(self, requests)
 			local spawn_x = math.random(0, w * 16) 
 			local spawn_y = math.random(0, h * 16)
 			create_player(self, client_id, spawn_x, spawn_y)
-
-			self.requests = self.requests + 1
 			
 		elseif qualifier == match_requests.MOVE_PLAYER then
 			local client_id = request.client_id
 			local x = request.x
 			local y = request.y
 			move_player(self, client_id, x, y)
-
-			self.requests = self.requests + 1
 			
 		elseif qualifier == match_requests.DELETE_PLAYER then
 			local client_id = request.client_id
 			delete_player(self, client_id)
-
-			self.requests = self.requests + 1
 			
 		elseif qualifier == match_requests.DELETE_CLIENT then
 			local client_id = request.client_id
@@ -217,18 +231,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	local callback = false
-	if message_id == hash(match_manager.CLIENT_ADDED) then
-		local client_id = message.client_id
-		local nickname = message.nickname
-		local score = message.score
-		print(os.date() .. " [DEATH_MATCH] Client was added, client_id=" .. client_id)
-		
-		local event = match_events:client_added(client_id, nickname, score)
-		self.events[#self.events + 1] = event
-
-		callback = true
-		
-	elseif message_id == hash(match_manager.PLAYER_CREATED) then
+	if message_id == hash(match_manager.PLAYER_CREATED) then
 		local client_id = message.client_id
 		local match_player_url = message.match_player_url
 		local x = message.x
@@ -275,17 +278,6 @@ function on_message(self, message_id, message, sender)
 		
 		self.players[client_id] = nil
 
-		callback = true
-
-	elseif message_id == hash(match_manager.CLIENT_DELETED) then
-		local client_id = message.client_id
-		print(os.date() .. " [DEATH_MATCH] Client was deleted, client_id=" .. client_id)
-
-		local event = match_events:client_deleted(client_id)
-		self.events[#self.events + 1] = event
-		
-		self.clients[client_id] = nil
-		
 		callback = true
 	end
 

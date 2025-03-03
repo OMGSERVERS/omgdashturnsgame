@@ -1,5 +1,8 @@
 local death_match
 death_match = {
+	-- Constants
+	TILE_W = 16,
+	TILE_H = 16,
 	-- Requests
 	SETUP_MATCH = "setup_match",
 	-- Methods

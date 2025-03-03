@@ -3,6 +3,7 @@ match_screen = {
 	-- Requests
 	SETUP_SCREEN = "setup_screen",
 	SET_COUNTDOWN = "set_countdown",
+	SETUP_CAMERA = "setup_camera",
 	MOVE_CAMERA = "move_camera",
 	-- Events
 	PLAYER_POINTED = "player_pointed",
@@ -23,6 +24,11 @@ match_screen = {
 	set_countdown = function(self, receiver, time_to_spawn)
 		msg.post(receiver, match_screen.SET_COUNTDOWN, {
 			time_to_spawn = time_to_spawn,
+		})
+	end,
+	setup_camera = function(self, receiver, bounds)
+		msg.post(receiver, match_screen.SETUP_CAMERA, {
+			bounds = bounds,
 		})
 	end,
 	move_camera = function(self, receiver, x, y)

@@ -4,12 +4,10 @@ match_manager = {
 	SIMULATE_STEP = "simulate_step",
 	PLAY_EVENTS = "play_events",
 	-- Events
-	CLIENT_ADDED = "client_added",
 	PLAYER_CREATED = "player_created",
 	PLAYER_MOVED = "player_moved",
 	PLAYER_DEAD = "player_dead",
 	PLAYER_DELETED = "player_deleted",
-	CLIENT_DELETED = "client_deleted",
 	-- Methods
 	simulate_step = function(self, receiver, requests)
 		msg.post(receiver, self.SIMULATE_STEP, {

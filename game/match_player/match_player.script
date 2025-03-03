@@ -73,7 +73,7 @@ local function move_player(self, x, y)
 	-- t = S / v
 	local movement_time = movement_distance / 320
 	
-	go.animate(".", "position",  go.PLAYBACK_ONCE_FORWARD, to_position, go.EASING_INSINE, movement_time, 0, function()
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, to_position, go.EASING_INSINE, movement_time, 0, function()
 		match_manager:player_moved(self.match_manager_url, self.client_id, x, y)
 	end)
 end

@@ -1,3 +1,53 @@
+local match_camera = require("game.match_camera.match_camera")
+
+local function setup_camera(self, bounds)
+	print(os.date() .. " [MATCH_CAMERA] Setup camera, bounds:")
+	pprint(bounds)
+	
+	self.bounds = bounds
+end
+
+local function move_camera(self, x, y)
+	print(os.date() .. " [MATCH_CAMERA] Move camera, x=" .. x .. ", y=" .. y)
+	
+	local projection = camera.get_projection("#camera")
+	local screen_width_half = 1 / projection.m00 
+	local screen_height_half = 1 / projection.m11
+
+	local camera_position = go.get_position()
+	local camera_z = camera_position.z
+	local min_x = self.bounds.x + screen_width_half
+	local min_y = self.bounds.y + screen_height_half
+	local min_position = vmath.vector3(min_x, min_y, camera_z)
+	local max_x = self.bounds.x + self.bounds.w - screen_width_half
+	local max_y = self.bounds.y + self.bounds.h - screen_height_half
+	local max_position = vmath.vector3(max_x, max_y, camera_z)
+	local new_position = vmath.vector3(x, y, camera_z)
+	local clamp_position = vmath.clamp(new_position, min_position, max_position)
+	
+	go.animate(".", "position",  go.PLAYBACK_ONCE_FORWARD, clamp_position, go.EASING_INSINE, 1, 0, function()
+		print(os.date() .. " [MATCH_SCREEN] Camera was moved")
+	end)
+end
+
 function init(self)
 	msg.post("@render:", "use_camera_projection")
+
+	self.display_w = sys.get_config("display.width")
+	self.display_h = sys.get_config("display.height")
+	
+	self.bounds = nil
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(match_camera.SETUP_CAMERA) then
+		local bounds = message.bounds
+		setup_camera(self, bounds)
+		
+	elseif message_id == hash(match_camera.MOVE_CAMERA) then
+		local x = message.x
+		local y = message.y
+
+		move_camera(self, x, y)
+	end
 end

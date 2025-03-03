@@ -375,10 +375,13 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash(game_manager.MATCH_CREATED) then
 		local match_qualifier = message.match_qualifier
 		local match_manager_url = message.match_manager_url
+		local bounds = message.bounds
 
 		print(os.date() .. " [CLIENT_MANAGER] Match was created, match_qualifier=" .. match_qualifier)
 		self.match_qualifier = match_qualifier
 		self.match_manager_url = match_manager_url
+
+		match_screen:setup_camera(self.screen_go_url, bounds)
 
 		local game_message = game_messages:request_spawn()
 		send_message(self, game_message)
