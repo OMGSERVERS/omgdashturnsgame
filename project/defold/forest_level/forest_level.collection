@@ -1,0 +1,18 @@
+name: "level"
+instances {
+  id: "player_factory"
+  prototype: "/project/defold/match_player/player_factory.go"
+}
+instances {
+  id: "level_tilemap"
+  prototype: "/project/defold/forest_level/forest_level/forest_level.go"
+}
+instances {
+  id: "camera_point"
+  prototype: "/project/defold/camera_point/camera_point.go"
+  position {
+    x: 260.0
+    y: 200.0
+  }
+}
+scale_along_z: 0

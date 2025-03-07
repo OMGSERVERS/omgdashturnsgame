@@ -1,0 +1,13 @@
+name: "match"
+instances {
+  id: "match_camera"
+  prototype: "/project/defold/match_camera/match_camera.go"
+  position {
+    z: 512.0
+  }
+}
+instances {
+  id: "level_factory"
+  prototype: "/project/defold/level_factory/level_factory.go"
+}
+scale_along_z: 0

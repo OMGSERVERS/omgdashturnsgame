@@ -1,0 +1,13 @@
+local events_manager
+events_manager = {
+	create = function(self)
+		return {
+			qualifier = "events_manager",
+			update = function(instance, dt, components)
+				components.game_events:erase_events()
+			end
+		}
+	end
+}
+
+return events_manager

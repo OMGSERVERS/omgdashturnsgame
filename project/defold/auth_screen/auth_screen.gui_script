@@ -1,0 +1,10 @@
+local auth_screen = require("project.defold.auth_screen.auth_screen")
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(auth_screen.CHANGE_SCREEN) then
+		local state_text = message.state_text
+		
+		local state_node = gui.get_node("auth_state_text")
+		gui.set_text(state_node, state_text)
+	end
+end

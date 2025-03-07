@@ -1,0 +1,14 @@
+name: "project"
+instances {
+  id: "game_project"
+  prototype: "/project/defold/game_project/game_project.go"
+}
+instances {
+  id: "screen_factory"
+  prototype: "/project/defold/screen_factory/screen_factory.go"
+}
+instances {
+  id: "level_factory"
+  prototype: "/project/defold/level_factory/level_factory.go"
+}
+scale_along_z: 0
