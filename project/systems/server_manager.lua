@@ -6,11 +6,14 @@ server_manager = {
 	create = function(self)
 		return {
 			qualifier = "server_manager",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local current_omgruntime = components.server_state:get_omgruntime()
 				if current_omgruntime then
 					current_omgruntime:update(dt)

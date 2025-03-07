@@ -48,11 +48,14 @@ death_match = {
 		
 		return {
 			qualifier = "death_match",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.match_state:is_death_match() then
 					return
 				end
-
+				
+				return true
+			end,
+			update = function(instance, dt, components)
 				if components.death_match:is_simulation_state() then
 					if #components.level_state:get_movements() == 0 then
 						local match_events = components.match_state:get_events()

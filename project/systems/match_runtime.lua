@@ -11,7 +11,7 @@ match_runtime = {
 		
 		return {
 			qualifier = "match_runtime",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
 				end
@@ -20,6 +20,9 @@ match_runtime = {
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local current_omgruntime = components.server_state:get_omgruntime()
 
 				local game_events = components.game_events:get_events()

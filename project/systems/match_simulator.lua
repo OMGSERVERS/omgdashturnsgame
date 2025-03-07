@@ -6,7 +6,7 @@ match_simulator = {
 		
 		return {
 			qualifier = "match_simulator",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
 				end
@@ -19,6 +19,9 @@ match_simulator = {
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local simulator = components.match_simulator
 
 				simulator:update_match_timer(dt)

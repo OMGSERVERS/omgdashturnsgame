@@ -16,7 +16,7 @@ lobby_runtime = {
 		
 		return {
 			qualifier = "lobby_runtime",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
 				end
@@ -24,7 +24,10 @@ lobby_runtime = {
 				if not components.server_state:is_lobby_runtime() then
 					return
 				end
-
+				
+				return true
+			end,
+			update = function(instance, dt, components)
 				local current_omgruntime = components.server_state:get_omgruntime()
 
 				local game_events = components.game_events:get_events()

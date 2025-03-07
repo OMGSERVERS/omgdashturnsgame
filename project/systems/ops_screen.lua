@@ -6,7 +6,7 @@ ops_screen = {
 	create = function(self)
 		return {
 			qualifier = "ops_screen",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
@@ -15,6 +15,9 @@ ops_screen = {
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local events = components.game_events:get_events()
 				for i = 1,#events do
 					local event = events[i]

@@ -37,6 +37,9 @@ level_manager = {
 		
 		return {
 			qualifier = "level_manager",
+			predicate = function(instance, components)
+				return true
+			end,
 			update = function(instance, dt, components)
 				local game_events = components.game_events:get_events()
 				for i = 1,#game_events do

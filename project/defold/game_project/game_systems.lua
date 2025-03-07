@@ -52,7 +52,9 @@ game_systems = {
 			update = function(instance, dt)
 				for i = 1,#systems do
 					local system = systems[i]
-					system:update(dt, components)
+					if system:predicate(components) then
+						system:update(dt, components)
+					end
 				end
 			end,
 		}

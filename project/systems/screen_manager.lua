@@ -42,11 +42,14 @@ screen_manager = {
 		
 		return {
 			qualifier = "screen_manager",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
-
+				
+				return true
+			end,
+			update = function(instance, dt, components)
 				local game_events = components.game_events:get_events()
 				for i = 1,#game_events do
 					local game_event = game_events[i]

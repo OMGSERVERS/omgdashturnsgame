@@ -5,7 +5,7 @@ auth_screen = {
 	create = function(self)
 		return {
 			qualifier = "auth_screen",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
@@ -14,6 +14,9 @@ auth_screen = {
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local state_text = components.auth_screen:get_state_text()
 				local auth_screen_url = components.screen_state:get_auth_screen_url()
 				if state_text then

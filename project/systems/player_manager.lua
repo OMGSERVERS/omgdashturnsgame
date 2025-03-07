@@ -3,6 +3,9 @@ player_manager = {
 	create = function(self)
 		return {
 			qualifier = "player_manager",
+			predicate = function(instance, components)
+				return true
+			end,
 			update = function(instance, dt, components)
 
 				local movements_to_delete = {}

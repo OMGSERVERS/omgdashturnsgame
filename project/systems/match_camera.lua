@@ -28,7 +28,7 @@ match_camera = {
 		
 		return {
 			qualifier = "match_camera",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
@@ -36,7 +36,10 @@ match_camera = {
 				if not components.screen_state:is_match_screen() then
 					return
 				end
-
+				
+				return true
+			end,
+			update = function(instance, dt, components)
 				local client_id = components.client_state:get_client_id()
 				if client_id then
 					local match_camera_url = components.screen_state:get_match_camera_url()

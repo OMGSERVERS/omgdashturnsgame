@@ -5,7 +5,7 @@ joining_screen = {
 	create = function(self)
 		return {
 			qualifier = "joining_screen",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
@@ -14,6 +14,9 @@ joining_screen = {
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local state_text = components.joining_screen:get_state_text()
 				local joining_screen_url = components.screen_state:get_joining_screen_url()
 				if state_text then

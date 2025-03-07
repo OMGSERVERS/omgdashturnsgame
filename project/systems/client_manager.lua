@@ -18,11 +18,14 @@ client_manager = {
 		
 		return {
 			qualifier = "client_manager",
-			update = function(instance, dt, components)
+			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
 
+				return true
+			end,
+			update = function(instance, dt, components)
 				local current_omginstance = components.client_state:get_omginstance()
 				if current_omginstance then
 					current_omginstance:update(dt)
