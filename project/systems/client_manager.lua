@@ -1,7 +1,7 @@
 local omginstance_factory = require("project.utils.omginstance_factory")
 local server_messages = require("project.messages.server_messages")
 local game_messages = require("project.messages.game_messages")
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 
 local client_manager
 client_manager = {
@@ -32,16 +32,16 @@ client_manager = {
 				end
 				
 				-- Handle game events
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
 
-					if game_event_id == client_events.CLIENT_STARTED then
+					if game_event_id == game_events.CLIENT_STARTED then
 						print(os.date() .. " [CLIENT_MANAGER] Client started")
 						components.client_state:set_in_auth_state()
 
-					elseif game_event_id == client_events.AUTH_SCREEN_CREATED then
+					elseif game_event_id == game_events.AUTH_SCREEN_CREATED then
 						print(os.date() .. " [CLIENT_MANAGER] Auth screen created")
 
 						components.auth_screen:set_state_text("Signing up")
@@ -69,7 +69,7 @@ client_manager = {
 						current_omginstance:ping()
 						current_omginstance:sign_up()
 
-					elseif game_event_id == client_events.SIGNED_UP then
+					elseif game_event_id == game_events.SIGNED_UP then
 						
 						local user_id = game_event.user_id
 						local password = game_event.password
@@ -79,12 +79,12 @@ client_manager = {
 						components.auth_screen:set_state_text("Signing in")
 						current_omginstance:sign_in(user_id, password)
 					
-					elseif game_event_id == client_events.SIGNED_IN then
+					elseif game_event_id == game_events.SIGNED_IN then
 						local client_id = game_event.client_id
 						print(os.date() .. " [CLIENT_MANAGER] Signed in, client_id=" .. tostring(client_id))
 						components.client_state:set_client_id(client_id)
 
-					elseif game_event_id == client_events.GREETED then
+					elseif game_event_id == game_events.GREETED then
 						local version_id = game_event.version_id
 						local version_created = game_event.version_created
 						print(os.date() .. " [CLIENT_MANAGER] Greeted, version_id=" .. tostring(version_id) .. ", version_created=" .. tostring(version_created))
@@ -95,7 +95,7 @@ client_manager = {
 						local game_message = game_messages:request_profile()
 						send_service_message(current_omginstance, game_message)
 
-					elseif game_event_id == client_events.MESSAGE_RECEIVED then
+					elseif game_event_id == game_events.CLIENT_RECEIVED then
 						local decoded_message = game_event.decoded_message
 						local message_qualifier = decoded_message.qualifier
 						
@@ -105,7 +105,7 @@ client_manager = {
 
 							components.client_state:set_profile(profile)
 
-							local new_game_event = client_events:profile_updated()
+							local new_game_event = game_events:profile_updated()
 							components.game_events:add_event(new_game_event)
 
 						elseif message_qualifier == server_messages.SET_STATE then
@@ -117,23 +117,23 @@ client_manager = {
 
 							components.match_state:set_state(settings, state, step)
 							
-							local new_game_event = client_events:state_received()
+							local new_game_event = game_events:state_received()
 							components.game_events:add_event(new_game_event)
 
 						elseif message_qualifier == server_messages.PLAY_EVENTS then
 							local events = decoded_message.events
-							local new_game_event = client_events:events_received(events)
+							local new_game_event = game_events:events_received(events)
 							components.game_events:add_event(new_game_event)
 
 						else
 							error("[CLIENT_MANAGER] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 						end
 						
-					elseif game_event_id == client_events.LOBBY_SCREEN_CREATED then
+					elseif game_event_id == game_events.LOBBY_SCREEN_CREATED then
 						print(os.date() .. " [CLIENT_MANAGER] Lobby screen created")
 						components.client_state:set_in_lobby_state()
 
-					elseif game_event_id == client_events.JOINING_SCREEN_CREATED then
+					elseif game_event_id == game_events.JOINING_SCREEN_CREATED then
 						print(os.date() .. " [CLIENT_MANAGER] Joining screen created")
 						components.client_state:set_joining_state()
 						components.joining_screen:set_state_text("Matchmaking")
@@ -142,14 +142,14 @@ client_manager = {
 						local game_message = game_messages:request_matchmaking(nickname)
 						send_service_message(current_omginstance, game_message)
 
-					elseif game_event_id == client_events.CONNECTION_DISPATCHED then
+					elseif game_event_id == game_events.CONNECTION_DISPATCHED then
 						print(os.date() .. " [CLIENT_MANAGER] Connection dispatched")
 						components.client_state:set_getting_state_state()
 
 						local game_message = game_messages:request_state()
 						send_game_message(current_omginstance, game_message)
 
-					elseif game_event_id == client_events.MATCH_SCREEN_CREATED then
+					elseif game_event_id == game_events.MATCH_SCREEN_CREATED then
 						print(os.date() .. " [CLIENT_MANAGER] Match screen created")
 						components.client_state:set_in_match_state()
 
@@ -157,7 +157,7 @@ client_manager = {
 						local game_message = game_messages:request_spawn()
 						send_game_message(current_omginstance, game_message)
 						
-					elseif game_event_id == client_events.CLIENT_FAILED then
+					elseif game_event_id == game_events.CLIENT_FAILED then
 						print(os.date() .. " [CLIENT_MANAGER] Client failed")
 						components.client_state:set_game_failed_state()
 

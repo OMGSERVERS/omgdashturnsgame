@@ -1,4 +1,4 @@
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 local omgplayer = require("omgservers.omgplayer.omgplayer")
 
 local screen_manager
@@ -28,7 +28,7 @@ screen_manager = {
 			local new_screen_ids = create_screen(components, screen_manager.AUTH_SCREEN_FACTORY)
 			components.screen_state:set_auth_screen(new_screen_ids)
 
-			local new_event = client_events:auth_screen_created()
+			local new_event = game_events:auth_screen_created()
 			components.game_events:add_event(new_event)
 		end
 
@@ -36,7 +36,7 @@ screen_manager = {
 			local new_screen_ids = create_screen(components, screen_manager.LOBBY_SCREEN_FACTORY)
 			components.screen_state:set_lobby_screen(new_screen_ids)
 
-			local new_event = client_events:lobby_screen_created()
+			local new_event = game_events:lobby_screen_created()
 			components.game_events:add_event(new_event)
 		end
 		
@@ -50,16 +50,16 @@ screen_manager = {
 				return true
 			end,
 			update = function(instance, dt, components)
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
-					if game_event_id == client_events.CLIENT_STARTED then
+					if game_event_id == game_events.CLIENT_STARTED then
 						print(os.date() .. " [SCREEN_MANAGER] Game client started")
 
 						create_auth_screen(components)
 						
-					elseif game_event_id == client_events.CLIENT_FAILED then
+					elseif game_event_id == game_events.CLIENT_FAILED then
 						local reason = game_event.reason
 						print(os.date() .. " [SCREEN_MANAGER] Client failed, reason=" ..reason)
 
@@ -68,33 +68,33 @@ screen_manager = {
 
 						components.ops_screen:set_state_text(reason)
 						
-						local new_event = client_events:ops_screen_created()
+						local new_event = game_events:ops_screen_created()
 						components.game_events:add_event(new_event)
 
-					elseif game_event_id == client_events.RESET_PRESSED then
+					elseif game_event_id == game_events.RESET_PRESSED then
 						print(os.date() .. " [SCREEN_MANAGER] Reset button is pressed")
 
 						components.client_state:reset_state()
 						create_auth_screen(components)
 
-					elseif game_event_id == client_events.PROFILE_UPDATED then
+					elseif game_event_id == game_events.PROFILE_UPDATED then
 						print(os.date() .. " [SCREEN_MANAGER] Profile updated")
 						
 						if components.client_state:is_getting_profile_state() then
 							create_lobby_screen(components)
 						end
 
-					elseif game_event_id == client_events.JOIN_PRESSED then
+					elseif game_event_id == game_events.JOIN_PRESSED then
 						local nickname = game_event.nickname
 						print(os.date() .. " [SCREEN_MANAGER] Join button is pressed, nickname=" .. nickname)
 
 						local new_screen_ids = create_screen(components, screen_manager.JOINING_SCREEN_FACTORY)
 						components.screen_state:set_joining_screen(new_screen_ids)
 
-						local new_event = client_events:joining_screen_created()
+						local new_event = game_events:joining_screen_created()
 						components.game_events:add_event(new_event)
 
-					elseif game_event_id == client_events.ASSIGNED then
+					elseif game_event_id == game_events.ASSIGNED then
 						local runtime_qualifier = game_event.runtime_qualifier
 						print(os.date() .. " [SCREEN_MANAGER] Assigned, runtime_qualifier=" .. tostring(runtime_qualifier))
 						
@@ -102,14 +102,14 @@ screen_manager = {
 							create_lobby_screen(components)
 						end
 						
-					elseif game_event_id == client_events.STATE_RECEIVED then
+					elseif game_event_id == game_events.STATE_RECEIVED then
 						print(os.date() .. " [SCREEN_MANAGER] State received")
 						
 						if components.client_state:is_getting_state_state() then
 							local new_screen_ids = create_screen(components, screen_manager.MATCH_SCREEN_FACTORY)
 							components.screen_state:set_match_screen(new_screen_ids)
 							
-							local new_event = client_events:match_screen_created()
+							local new_event = game_events:match_screen_created()
 							components.game_events:add_event(new_event)
 						end
 					end

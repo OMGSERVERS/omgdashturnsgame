@@ -1,7 +1,5 @@
 local match_requests = require("project.messages.match_requests")
-local server_events = require("project.messages.server_events")
-local level_events = require("project.messages.level_events")
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 local match_events = require("project.messages.match_events")
 
 local death_match
@@ -15,7 +13,7 @@ death_match = {
 
 			components.level_state:add_player(client_id, player_collection_ids)
 
-			local new_game_event = level_events:player_created(client_id)
+			local new_game_event = game_events:player_created(client_id)
 			components.game_events:add_event(new_game_event)
 		end
 
@@ -59,19 +57,19 @@ death_match = {
 				if components.death_match:is_simulation_state() then
 					if #components.level_state:get_movements() == 0 then
 						local match_events = components.match_state:get_events()
-						local new_game_event = server_events:step_simulated(match_events)
+						local new_game_event = game_events:step_simulated(match_events)
 						components.game_events:add_event(new_game_event)
 
 						components.death_match:set_queueing_state()
 					end
 				end
 
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
 
-					if game_event_id == server_events.STEP_OVER then
+					if game_event_id == game_events.STEP_OVER then
 						local step_index = game_event.step_index
 						if components.death_match:is_simulation_state() then
 							print(os.date() .. " [DEATH_MATCH] Step is over, but match is still in simulation, step=" .. step_index)
@@ -140,7 +138,7 @@ death_match = {
 							end
 						end
 
-					elseif game_event_id == client_events.LEVEL_CREATED then
+					elseif game_event_id == game_events.LEVEL_CREATED then
 						local state = components.match_state:get_state()
 						
 						local clients = state.clients
@@ -159,7 +157,7 @@ death_match = {
 							create_player(components, client_id, position)
 						end
 						
-					elseif game_event_id == client_events.EVENTS_RECEIVED then
+					elseif game_event_id == game_events.EVENTS_RECEIVED then
 						local events = game_event.events
 						print(os.date() .. " [DEATH_MATCH] Events were received, total=" .. #events)
 

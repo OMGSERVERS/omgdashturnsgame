@@ -1,7 +1,7 @@
 local game_components = require("project.defold.game_project.game_components")
 local game_systems = require("project.defold.game_project.game_systems")
 local game_project = require("project.defold.game_project.game_project")
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 
 function init(self)
 	math.randomseed(100000 * (socket.gettime() % 1))
@@ -16,11 +16,11 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash(game_project.RESET_PRESSED) then
-		local new_event = client_events:reset_pressed()
+		local new_event = game_events:reset_pressed()
 		self.game_components.game_events:add_event(new_event)
 	elseif message_id == hash(game_project.JOIN_PRESSED) then
 		local nickname = message.nickname
-		local new_event = client_events:join_pressed(nickname)
+		local new_event = game_events:join_pressed(nickname)
 		self.game_components.game_events:add_event(new_event)
 	end
 end

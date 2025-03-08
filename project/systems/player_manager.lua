@@ -1,4 +1,4 @@
-local level_events = require("project.messages.level_events")
+local game_events = require("project.messages.game_events")
 
 local player_manager
 player_manager = {
@@ -33,12 +33,12 @@ player_manager = {
 					components.level_state:delete_movement(client_id)
 				end
 
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
 
-					if game_event_id == level_events.PLAYER_CREATED then
+					if game_event_id == game_events.PLAYER_CREATED then
 						local client_id = game_event.client_id
 						print(os.date() .. " [PLAYER_MANAGER] Player created, client_id=" .. tostring(client_id))
 						

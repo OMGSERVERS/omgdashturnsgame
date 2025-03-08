@@ -1,4 +1,4 @@
-local server_events = require("project.messages.server_events")
+local game_events = require("project.messages.game_events")
 
 local match_simulator
 match_simulator = {
@@ -29,7 +29,7 @@ match_simulator = {
 					print(os.date() .. " [MATCH_SIMULATOR] Match is over")
 					simulator:disable()
 
-					local new_event = server_events:match_over()
+					local new_event = game_events:match_over()
 					components.game_events:add_event(new_event)
 				end
 
@@ -38,7 +38,7 @@ match_simulator = {
 					simulator:reset_step_timer()
 					local step_index = simulator:increase_step_index()
 
-					local new_event = server_events:step_over(step_index)
+					local new_event = game_events:step_over(step_index)
 					components.game_events:add_event(new_event)
 				end
 			end

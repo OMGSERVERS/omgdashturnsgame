@@ -1,5 +1,4 @@
-local client_events = require("project.messages.client_events")
-local server_events = require("project.messages.server_events")
+local game_events = require("project.messages.game_events")
 
 local game_entrypoint
 game_entrypoint = {
@@ -19,11 +18,11 @@ game_entrypoint = {
 
 				if os.getenv("SERVER_ENVIRONMENT") then
 					components.entrypoint_state:set_server_mode()
-					local new_event = server_events:server_started()
+					local new_event = game_events:server_started()
 					components.game_events:add_event(new_event)
 				else
 					components.entrypoint_state:set_client_mode()
-					local new_event = client_events:client_started()
+					local new_event = game_events:client_started()
 					components.game_events:add_event(new_event)
 				end
 			end

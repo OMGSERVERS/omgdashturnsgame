@@ -1,5 +1,5 @@
 local defold_ops_screen = require("project.defold.ops_screen.ops_screen")
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 
 local ops_screen
 ops_screen = {
@@ -22,7 +22,7 @@ ops_screen = {
 				for i = 1,#events do
 					local event = events[i]
 					local event_id = event.id
-					if event_id == client_events.OPS_SCREEN_CREATED then
+					if event_id == game_events.OPS_SCREEN_CREATED then
 						local state_text = components.ops_screen:get_state_text()
 						local screen_url = components.screen_state:get_ops_screen_url()
 						defold_ops_screen:change_screen(screen_url, state_text)

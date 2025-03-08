@@ -1,5 +1,5 @@
 local defold_lobby_screen = require("project.defold.lobby_screen.lobby_screen")
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 
 local lobby_screen
 lobby_screen = {
@@ -22,7 +22,7 @@ lobby_screen = {
 				for i = 1,#events do
 					local event = events[i]
 					local event_id = event.id
-					if event_id == client_events.LOBBY_SCREEN_CREATED then
+					if event_id == game_events.LOBBY_SCREEN_CREATED then
 						local screen_url = components.screen_state:get_lobby_screen_url()
 						local profile = components.client_state:get_profile()
 						defold_lobby_screen:setup_screen(screen_url, profile)

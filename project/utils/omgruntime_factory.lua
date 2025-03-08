@@ -1,4 +1,4 @@
-local server_events = require("project.messages.server_events")
+local game_events = require("project.messages.game_events")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
 
 local omgruntime_factory
@@ -17,19 +17,19 @@ omgruntime_factory = {
 
 				if event_qualifier == omgruntime.constants.SERVER_STARTED then
 					local runtime_qualifier = event_body.runtime_qualifier
-					local new_game_event = server_events:runtime_started(runtime_qualifier)
+					local new_game_event = game_events:runtime_started(runtime_qualifier)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgruntime.constants.COMMAND_RECEIVED then
 					local command_qualifier = event_body.qualifier
 					local command_body = event_body.body
-					local new_game_event = server_events:command_received(command_qualifier, command_body)
+					local new_game_event = game_events:command_received(command_qualifier, command_body)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgruntime.constants.MESSAGE_RECEIVED then
 					local client_id = event_body.client_id
 					local decoded_message = json.decode(event_body.message)
-					local new_game_event = server_events:message_received(client_id, decoded_message)
+					local new_game_event = game_events:server_received(client_id, decoded_message)
 					components.game_events:add_event(new_game_event)
 
 				else

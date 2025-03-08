@@ -1,4 +1,4 @@
-local client_events = require("project.messages.client_events")
+local game_events = require("project.messages.game_events")
 local omgplayer = require("omgservers.omgplayer.omgplayer")
 
 local omginstance_factory
@@ -17,39 +17,39 @@ omginstance_factory = {
 				if event_qualifier == omgplayer.constants.SIGNED_UP then
 					local user_id = event_body.user_id 
 					local password = event_body.password
-					local new_game_event = client_events:signed_up(user_id, password)
+					local new_game_event = game_events:signed_up(user_id, password)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.SIGNED_IN then
 					local client_id = event_body.client_id
-					client_events:signed_in(client_id)
-					local new_game_event = client_events:signed_in(client_id)
+					game_events:signed_in(client_id)
+					local new_game_event = game_events:signed_in(client_id)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.GREETED then
 					local version_id = event_body.version_id
 					local version_created = event_body.version_created
-					local new_game_event = client_events:greeted(version_id, version_created)
+					local new_game_event = game_events:greeted(version_id, version_created)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.ASSIGNED then
 					local runtime_qualifier = event_body.runtime_qualifier
 					local runtime_id = event_body.runtime_id
-					local new_game_event = client_events:assigned(runtime_qualifier, runtime_id)
+					local new_game_event = game_events:assigned(runtime_qualifier, runtime_id)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.MESSAGE_RECEIVED then
 					local decoded_message = json.decode(event_body.message)
-					local new_game_event = client_events:message_received(decoded_message)
+					local new_game_event = game_events:client_received(decoded_message)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.CONNECTION_DISPATCHED then
-					local new_game_event = client_events:connection_dispatched()
+					local new_game_event = game_events:connection_dispatched()
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.PLAYER_FAILED then
 					local reason = event_body.reason
-					local new_game_event = client_events:client_failed(reason)
+					local new_game_event = game_events:client_failed(reason)
 					components.game_events:add_event(new_game_event)
 
 				end

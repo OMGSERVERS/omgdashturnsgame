@@ -2,7 +2,7 @@ local server_messages = require("project.messages.server_messages")
 local profile_wrapper = require("project.utils.profile_wrapper")
 local game_messages = require("project.messages.game_messages")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
-local server_events = require("project.messages.server_events")
+local game_events = require("project.messages.game_events")
 
 local DEFAULT_GAME_MODE = "death-match"
 
@@ -30,12 +30,12 @@ lobby_runtime = {
 			update = function(instance, dt, components)
 				local current_omgruntime = components.server_state:get_omgruntime()
 
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
 
-					if game_event_id == server_events.COMMAND_RECEIVED then
+					if game_event_id == game_events.COMMAND_RECEIVED then
 						local command_qualifier = game_event.command_qualifier
 						local command_body = game_event.command_body
 

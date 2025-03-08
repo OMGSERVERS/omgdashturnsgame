@@ -2,7 +2,7 @@ local server_messages = require("project.messages.server_messages")
 local profile_wrapper = require("project.utils.profile_wrapper")
 local game_messages = require("project.messages.game_messages")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
-local server_events = require("project.messages.server_events")
+local game_events = require("project.messages.game_events")
 local match_requests = require("project.messages.match_requests")
 
 local match_runtime
@@ -25,12 +25,12 @@ match_runtime = {
 			update = function(instance, dt, components)
 				local current_omgruntime = components.server_state:get_omgruntime()
 
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
 
-					if game_event_id == server_events.COMMAND_RECEIVED then
+					if game_event_id == game_events.COMMAND_RECEIVED then
 						local command_qualifier = game_event.command_qualifier
 						local command_body = game_event.command_body
 
@@ -45,7 +45,7 @@ match_runtime = {
 							}
 							components.match_state:init_state(settings)
 
-							local new_game_event = server_events:state_initialized()
+							local new_game_event = game_events:state_initialized()
 							components.game_events:add_event(new_game_event)
 							
 						elseif command_qualifier == omgruntime.constants.ADD_MATCH_CLIENT then
@@ -72,7 +72,7 @@ match_runtime = {
 							components.match_runtime:add_request(match_request)
 							
 						end
-					elseif game_event_id == server_events.MESSAGE_RECEIVED then
+					elseif game_event_id == game_events.SERVER_RECEIVED then
 						local client_id = game_event.client_id
 						local decoded_message = game_event.decoded_message
 						local message_qualifier = decoded_message.qualifier
@@ -109,13 +109,13 @@ match_runtime = {
 							print(os.date() .. " [MATCH_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 						end
 
-					elseif game_event_id == server_events.STEP_SIMULATED then
+					elseif game_event_id == game_events.STEP_SIMULATED then
 						local events = game_event.events
 						print(os.date() .. " [MATCH_RUNTIME] Step is simulated, " .. #events .. " events to send")
 						local server_message = server_messages:play_events(events)
 						omgruntime:broadcast_binary_message(json.encode(server_message))
 						
-					elseif game_event_id == server_events.MATCH_OVER then
+					elseif game_event_id == game_events.MATCH_OVER then
 						print(os.date() .. " [MATCH_RUNTIME] Match is over")
 						current_omgruntime:stop_matchmaking()
 

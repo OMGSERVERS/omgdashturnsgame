@@ -1,5 +1,4 @@
-local client_events = require("project.messages.client_events")
-local server_events = require("project.messages.server_events")
+local game_events = require("project.messages.game_events")
 
 local level_manager
 level_manager = {
@@ -31,7 +30,7 @@ level_manager = {
 			
 			components.level_state:set_level(level_qualifier, new_level_ids, level_bounds)
 			
-			local new_event = client_events:level_created()
+			local new_event = game_events:level_created()
 			components.game_events:add_event(new_event)
 		end
 		
@@ -41,17 +40,17 @@ level_manager = {
 				return true
 			end,
 			update = function(instance, dt, components)
-				local game_events = components.game_events:get_events()
-				for i = 1,#game_events do
-					local game_event = game_events[i]
+				local events = components.game_events:get_events()
+				for i = 1,#events do
+					local game_event = events[i]
 					local game_event_id = game_event.id
 
-					if game_event_id == client_events.MATCH_SCREEN_CREATED then
+					if game_event_id == game_events.MATCH_SCREEN_CREATED then
 						local level_qualifier = components.match_state:get_level_qualifier()
 						print(os.date() .. " [LEVEL_MANAGER] Match screen created, creating level, level_qualifier=" .. level_qualifier)
 						create_level(components, level_qualifier)
 						
-					elseif game_event_id == server_events.STATE_INITIALIZED then
+					elseif game_event_id == game_events.STATE_INITIALIZED then
 						local level_qualifier = components.match_state:get_level_qualifier()
 						print(os.date() .. " [LEVEL_MANAGER] State initialized, creating level, level_qualifier=" .. level_qualifier)
 						create_level(components, level_qualifier)
