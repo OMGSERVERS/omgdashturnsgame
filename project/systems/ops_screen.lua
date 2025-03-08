@@ -1,5 +1,4 @@
 local defold_ops_screen = require("project.defold.ops_screen.ops_screen")
-local game_events = require("project.messages.game_events")
 
 local ops_screen
 ops_screen = {
@@ -17,17 +16,12 @@ ops_screen = {
 
 				return true
 			end,
+			ops_screen_created = function(instance, components, event)
+				local state_text = components.ops_screen:get_state_text()
+				local screen_url = components.screen_state:get_ops_screen_url()
+				defold_ops_screen:change_screen(screen_url, state_text)
+			end,
 			update = function(instance, dt, components)
-				local events = components.game_events:get_events()
-				for i = 1,#events do
-					local event = events[i]
-					local event_id = event.id
-					if event_id == game_events.OPS_SCREEN_CREATED then
-						local state_text = components.ops_screen:get_state_text()
-						local screen_url = components.screen_state:get_ops_screen_url()
-						defold_ops_screen:change_screen(screen_url, state_text)
-					end
-				end
 			end
 		}
 	end

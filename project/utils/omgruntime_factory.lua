@@ -29,7 +29,7 @@ omgruntime_factory = {
 				elseif event_qualifier == omgruntime.constants.MESSAGE_RECEIVED then
 					local client_id = event_body.client_id
 					local decoded_message = json.decode(event_body.message)
-					local new_game_event = game_events:server_received(client_id, decoded_message)
+					local new_game_event = game_events:client_message_received(client_id, decoded_message)
 					components.game_events:add_event(new_game_event)
 
 				else

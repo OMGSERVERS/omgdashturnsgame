@@ -27,84 +27,78 @@ lobby_runtime = {
 				
 				return true
 			end,
-			update = function(instance, dt, components)
+			command_received = function(instance, components, event)
+				local command_qualifier = event.command_qualifier
+				local command_body = event.command_body
+
 				local current_omgruntime = components.server_state:get_omgruntime()
 
-				local events = components.game_events:get_events()
-				for i = 1,#events do
-					local game_event = events[i]
-					local game_event_id = game_event.id
+				if command_qualifier == omgruntime.constants.INIT_RUNTIME then
+					print(os.date() .. " [LOBBY_RUNTIME] Init runtime")
+					local version_config = command_body.runtime_config.version_config
+					components.lobby_runtime:set_config(version_config)
 
-					if game_event_id == game_events.COMMAND_RECEIVED then
-						local command_qualifier = game_event.command_qualifier
-						local command_body = game_event.command_body
+				elseif command_qualifier == omgruntime.constants.ADD_CLIENT then
+					local client_id = command_body.client_id
+					local profile = command_body.profile
+					print(os.date() .. " [LOBBY_RUNTIME] Add client, client_id=" .. tostring(client_id))
 
-						if command_qualifier == omgruntime.constants.INIT_RUNTIME then
-							print(os.date() .. " [LOBBY_RUNTIME] Init runtime")
-							local version_config = command_body.runtime_config.version_config
-							components.lobby_runtime:set_config(version_config)
-							
-						elseif command_qualifier == omgruntime.constants.ADD_CLIENT then
-							local client_id = command_body.client_id
-							local profile = command_body.profile
-							print(os.date() .. " [LOBBY_RUNTIME] Add client, client_id=" .. tostring(client_id))
+					if profile.version then
+						local wrapped_profile = profile_wrapper:wrap(profile)
+						components.lobby_runtime:add_profile(client_id, wrapped_profile)
+					else
+						local new_player_id = components.lobby_runtime:get_next_id()
+						local player_nickname = "Player" .. new_player_id
+						local wrapped_profile = profile_wrapper:create(player_nickname)
+						components.lobby_runtime:add_profile(client_id, wrapped_profile)
 
-							if profile.version then
-								local wrapped_profile = profile_wrapper:wrap(profile)
-								components.lobby_runtime:add_profile(client_id, wrapped_profile)
-							else
-								local new_player_id = components.lobby_runtime:get_next_id()
-								local player_nickname = "Player" .. new_player_id
-								local wrapped_profile = profile_wrapper:create(player_nickname)
-								components.lobby_runtime:add_profile(client_id, wrapped_profile)
+						current_omgruntime:set_profile(client_id, wrapped_profile.profile)
+					end
 
-								current_omgruntime:set_profile(client_id, wrapped_profile.profile)
-							end
-							
-						elseif command_qualifier == omgruntime.constants.DELETE_CLIENT then
-							local client_id = command_body.client_id
-							print(os.date() .. " [LOBBY_RUNTIME] Delete client, client_id=" .. tostring(client_id))
-							components.lobby_runtime:delete_profile(client_id)
-							
-						elseif command_qualifier == omgruntime.constants.HANDLE_MESSAGE then
-							local client_id = command_body.client_id
-							local command_message = json.decode(command_body.message)
+				elseif command_qualifier == omgruntime.constants.DELETE_CLIENT then
+					local client_id = command_body.client_id
+					print(os.date() .. " [LOBBY_RUNTIME] Delete client, client_id=" .. tostring(client_id))
+					components.lobby_runtime:delete_profile(client_id)
 
-							local message_qualifier = command_message.qualifier
+				elseif command_qualifier == omgruntime.constants.HANDLE_MESSAGE then
+					local client_id = command_body.client_id
+					local command_message = json.decode(command_body.message)
 
-							if message_qualifier == game_messages.REQUEST_PROFILE then
-								print(os.date() .. " [LOBBY_RUNTIME] Request profile, client_id=" .. tostring(client_id))
-								
-								local wrapped_profile = components.lobby_runtime:get_profile(client_id)
-								if wrapped_profile then
-									local server_message = server_messages:set_profile(wrapped_profile.profile)
-									respond_client(current_omgruntime, client_id, server_message)
-								else
-									print(os.date() .. " [LOBBY_RUNTIME] Profile was not found while handling request_profile message, client_id=" .. client_id)
-								end
+					local message_qualifier = command_message.qualifier
 
-							elseif message_qualifier == game_messages.REQUEST_MATCHMAKING then
-								local new_nickname = command_message.nickname
-								print(os.date() .. " [LOBBY_RUNTIME] Request matchmaking, client_id=" .. tostring(client_id) .. ", nickname=" .. tostring(new_nickname))
+					if message_qualifier == game_messages.REQUEST_PROFILE then
+						print(os.date() .. " [LOBBY_RUNTIME] Request profile, client_id=" .. tostring(client_id))
 
-								local wrapped_profile = components.lobby_runtime:get_profile(client_id)
-								local current_nickname = wrapped_profile.profile.data.nickname
-
-								if new_nickname and current_nickname ~= new_nickname then
-									wrapped_profile:change_nickname(new_nickname)
-
-									omgruntime:set_profile(client_id, wrapped_profile.profile)
-									local server_message = server_messages:set_profile(wrapped_profile.profile)
-									respond_client(current_omgruntime, client_id, server_message)
-								end
-
-								omgruntime:request_matchmaking(client_id, DEFAULT_GAME_MODE)
-							else
-								print(os.date() .. " [LOBBY_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
-							end
+						local wrapped_profile = components.lobby_runtime:get_profile(client_id)
+						if wrapped_profile then
+							local server_message = server_messages:set_profile(wrapped_profile.profile)
+							respond_client(current_omgruntime, client_id, server_message)
+						else
+							print(os.date() .. " [LOBBY_RUNTIME] Profile was not found while handling request_profile message, client_id=" .. client_id)
 						end
+
+					elseif message_qualifier == game_messages.REQUEST_MATCHMAKING then
+						local new_nickname = command_message.nickname
+						print(os.date() .. " [LOBBY_RUNTIME] Request matchmaking, client_id=" .. tostring(client_id) .. ", nickname=" .. tostring(new_nickname))
+
+						local wrapped_profile = components.lobby_runtime:get_profile(client_id)
+						local current_nickname = wrapped_profile.profile.data.nickname
+
+						if new_nickname and current_nickname ~= new_nickname then
+							wrapped_profile:change_nickname(new_nickname)
+
+							omgruntime:set_profile(client_id, wrapped_profile.profile)
+							local server_message = server_messages:set_profile(wrapped_profile.profile)
+							respond_client(current_omgruntime, client_id, server_message)
+						end
+
+						omgruntime:request_matchmaking(client_id, DEFAULT_GAME_MODE)
+					else
+						print(os.date() .. " [LOBBY_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 					end
 				end
+			end,
+			update = function(instance, dt, components)
 			end
 		}
 	end

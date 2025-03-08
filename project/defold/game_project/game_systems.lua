@@ -52,9 +52,17 @@ game_systems = {
 			id = "game_systems",
 			-- Methods
 			update = function(instance, dt)
-				for i = 1,#systems do
-					local system = systems[i]
+				for system_index = 1, #systems do
+					local system = systems[system_index]
 					if system:predicate(components) then
+						local events = components.game_events:get_events()
+						for event_index = 1, #events do
+							local event = events[event_index]
+							local qualifier = event.id
+							if system[qualifier] then
+								system[qualifier](system, components, event)
+							end
+						end
 						system:update(dt, components)
 					end
 				end

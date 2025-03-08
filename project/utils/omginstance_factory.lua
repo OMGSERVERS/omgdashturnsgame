@@ -40,7 +40,7 @@ omginstance_factory = {
 
 				elseif event_qualifier == omgplayer.constants.MESSAGE_RECEIVED then
 					local decoded_message = json.decode(event_body.message)
-					local new_game_event = game_events:client_received(decoded_message)
+					local new_game_event = game_events:server_message_received(decoded_message)
 					components.game_events:add_event(new_game_event)
 
 				elseif event_qualifier == omgplayer.constants.CONNECTION_DISPATCHED then

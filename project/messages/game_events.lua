@@ -11,7 +11,7 @@ game_events = {
 	SIGNED_IN = "signed_in",
 	GREETED = "greeted",
 	ASSIGNED = "assigned",
-	CLIENT_RECEIVED = "client_received",
+	SERVER_MESSAGE_RECEIVED = "server_message_received",
 	CONNECTION_DISPATCHED = "connection_dispatched",
 	CLIENT_FAILED = "client_failed",
 	RESET_PRESSED = "reset_pressed",
@@ -24,7 +24,7 @@ game_events = {
 	SERVER_STARTED = "server_started",
 	RUNTIME_STARTED = "runtime_started",
 	COMMAND_RECEIVED = "command_received",
-	SERVER_RECEIVED = "server_received",
+	CLIENT_MESSAGE_RECEIVED = "client_message_received",
 	STATE_INITIALIZED = "state_initialized",
 	MATCH_OVER = "match_over",
 	STEP_OVER = "step_over",
@@ -89,9 +89,9 @@ game_events = {
 			runtime_id =runtime_id,
 		}
 	end,
-	client_received = function(self, decoded_message)
+	server_message_received = function(self, decoded_message)
 		return {
-			id = game_events.CLIENT_RECEIVED,
+			id = game_events.SERVER_MESSAGE_RECEIVED,
 			decoded_message = decoded_message,
 		}
 	end,
@@ -157,9 +157,9 @@ game_events = {
 			command_body = command_body,
 		}
 	end,
-	server_received = function(self, client_id, decoded_message)
+	client_message_received = function(self, client_id, decoded_message)
 		return {
-			id = game_events.SERVER_RECEIVED,
+			id = game_events.CLIENT_MESSAGE_RECEIVED,
 			client_id = client_id,
 			decoded_message = decoded_message,
 		}

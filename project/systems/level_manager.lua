@@ -39,24 +39,17 @@ level_manager = {
 			predicate = function(instance, components)
 				return true
 			end,
+			match_screen_created = function(instance, components, event)
+				local level_qualifier = components.match_state:get_level_qualifier()
+				print(os.date() .. " [LEVEL_MANAGER] Match screen created, creating level, level_qualifier=" .. level_qualifier)
+				create_level(components, level_qualifier)
+			end,
+			state_initialized = function(instance, components, event)
+				local level_qualifier = components.match_state:get_level_qualifier()
+				print(os.date() .. " [LEVEL_MANAGER] State initialized, creating level, level_qualifier=" .. level_qualifier)
+				create_level(components, level_qualifier)
+			end,
 			update = function(instance, dt, components)
-				local events = components.game_events:get_events()
-				for i = 1,#events do
-					local game_event = events[i]
-					local game_event_id = game_event.id
-
-					if game_event_id == game_events.MATCH_SCREEN_CREATED then
-						local level_qualifier = components.match_state:get_level_qualifier()
-						print(os.date() .. " [LEVEL_MANAGER] Match screen created, creating level, level_qualifier=" .. level_qualifier)
-						create_level(components, level_qualifier)
-						
-					elseif game_event_id == game_events.STATE_INITIALIZED then
-						local level_qualifier = components.match_state:get_level_qualifier()
-						print(os.date() .. " [LEVEL_MANAGER] State initialized, creating level, level_qualifier=" .. level_qualifier)
-						create_level(components, level_qualifier)
-						
-					end
-				end
 			end
 		}
 	end

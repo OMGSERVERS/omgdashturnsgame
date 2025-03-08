@@ -49,71 +49,63 @@ screen_manager = {
 				
 				return true
 			end,
-			update = function(instance, dt, components)
-				local events = components.game_events:get_events()
-				for i = 1,#events do
-					local game_event = events[i]
-					local game_event_id = game_event.id
-					if game_event_id == game_events.CLIENT_STARTED then
-						print(os.date() .. " [SCREEN_MANAGER] Game client started")
+			client_started = function(instance, components, event)
+				print(os.date() .. " [SCREEN_MANAGER] Game client started")
+				create_auth_screen(components)
+			end,
+			client_failed = function(instance, components, event)
+				local reason = event.reason
+				print(os.date() .. " [SCREEN_MANAGER] Client failed, reason=" ..reason)
 
-						create_auth_screen(components)
-						
-					elseif game_event_id == game_events.CLIENT_FAILED then
-						local reason = game_event.reason
-						print(os.date() .. " [SCREEN_MANAGER] Client failed, reason=" ..reason)
+				local new_screen_ids = create_screen(components, screen_manager.OPS_SCREEN_FACTORY)
+				components.screen_state:set_ops_screen(new_screen_ids)
 
-						local new_screen_ids = create_screen(components, screen_manager.OPS_SCREEN_FACTORY)
-						components.screen_state:set_ops_screen(new_screen_ids)
+				components.ops_screen:set_state_text(reason)
 
-						components.ops_screen:set_state_text(reason)
-						
-						local new_event = game_events:ops_screen_created()
-						components.game_events:add_event(new_event)
-
-					elseif game_event_id == game_events.RESET_PRESSED then
-						print(os.date() .. " [SCREEN_MANAGER] Reset button is pressed")
-
-						components.client_state:reset_state()
-						create_auth_screen(components)
-
-					elseif game_event_id == game_events.PROFILE_UPDATED then
-						print(os.date() .. " [SCREEN_MANAGER] Profile updated")
-						
-						if components.client_state:is_getting_profile_state() then
-							create_lobby_screen(components)
-						end
-
-					elseif game_event_id == game_events.JOIN_PRESSED then
-						local nickname = game_event.nickname
-						print(os.date() .. " [SCREEN_MANAGER] Join button is pressed, nickname=" .. nickname)
-
-						local new_screen_ids = create_screen(components, screen_manager.JOINING_SCREEN_FACTORY)
-						components.screen_state:set_joining_screen(new_screen_ids)
-
-						local new_event = game_events:joining_screen_created()
-						components.game_events:add_event(new_event)
-
-					elseif game_event_id == game_events.ASSIGNED then
-						local runtime_qualifier = game_event.runtime_qualifier
-						print(os.date() .. " [SCREEN_MANAGER] Assigned, runtime_qualifier=" .. tostring(runtime_qualifier))
-						
-						if runtime_qualifier == omgplayer.constants.LOBBY then
-							create_lobby_screen(components)
-						end
-						
-					elseif game_event_id == game_events.STATE_RECEIVED then
-						print(os.date() .. " [SCREEN_MANAGER] State received")
-						
-						if components.client_state:is_getting_state_state() then
-							local new_screen_ids = create_screen(components, screen_manager.MATCH_SCREEN_FACTORY)
-							components.screen_state:set_match_screen(new_screen_ids)
-							
-							local new_event = game_events:match_screen_created()
-							components.game_events:add_event(new_event)
-						end
-					end
+				local new_event = game_events:ops_screen_created()
+				components.game_events:add_event(new_event)
+			end,
+			reset_pressed = function(instance, components, event)
+				print(os.date() .. " [SCREEN_MANAGER] Reset button is pressed")
+				components.client_state:reset_state()
+				create_auth_screen(components)
+			end,
+			profile_updated = function(instance, components, event)
+				print(os.date() .. " [SCREEN_MANAGER] Profile updated")
+				if components.client_state:is_getting_profile_state() then
+					create_lobby_screen(components)
 				end
+			end,
+			join_pressed = function(instance, components, event)
+				local nickname = event.nickname
+				print(os.date() .. " [SCREEN_MANAGER] Join button is pressed, nickname=" .. nickname)
+
+				local new_screen_ids = create_screen(components, screen_manager.JOINING_SCREEN_FACTORY)
+				components.screen_state:set_joining_screen(new_screen_ids)
+				
+				local new_event = game_events:joining_screen_created()
+				components.game_events:add_event(new_event)
+			end,
+			assigned = function(instance, components, event)
+				local runtime_qualifier = event.runtime_qualifier
+				print(os.date() .. " [SCREEN_MANAGER] Assigned, runtime_qualifier=" .. tostring(runtime_qualifier))
+
+				if runtime_qualifier == omgplayer.constants.LOBBY then
+					create_lobby_screen(components)
+				end
+			end,
+			state_received = function(instance, components, event)
+				print(os.date() .. " [SCREEN_MANAGER] State received")
+
+				if components.client_state:is_getting_state_state() then
+					local new_screen_ids = create_screen(components, screen_manager.MATCH_SCREEN_FACTORY)
+					components.screen_state:set_match_screen(new_screen_ids)
+
+					local new_event = game_events:match_screen_created()
+					components.game_events:add_event(new_event)
+				end
+			end,
+			update = function(instance, dt, components)
 			end
 		}
 	end
