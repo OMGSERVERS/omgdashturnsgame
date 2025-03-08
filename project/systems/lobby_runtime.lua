@@ -2,7 +2,6 @@ local server_messages = require("project.messages.server_messages")
 local profile_wrapper = require("project.utils.profile_wrapper")
 local game_messages = require("project.messages.game_messages")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
-local game_events = require("project.messages.game_events")
 
 local DEFAULT_GAME_MODE = "death-match"
 

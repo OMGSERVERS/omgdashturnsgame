@@ -75,7 +75,7 @@ level_state = {
 					if player then
 						return player.collection_ids
 					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. client_id)
+						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
 					end
 				end
 			end,
@@ -85,7 +85,7 @@ level_state = {
 					if player then
 						return player.collection_ids["/match_player"]
 					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. client_id)
+						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
 					end
 				else
 					print(os.date() .. " [LEVEL_STATE] Players is not set")
@@ -98,7 +98,43 @@ level_state = {
 						local match_player_url = player.collection_ids["/match_player"]
 						return msg.url(nil, match_player_url, "nickname")
 					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. client_id)
+						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
+					end
+				else
+					print(os.date() .. " [LEVEL_STATE] Players is not set")
+				end
+			end,
+			get_player_skin_url = function(instance, client_id)
+				if players then
+					local player = players[client_id]
+					if player then
+						return player.collection_ids["/skin"]
+					else
+						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
+					end
+				else
+					print(os.date() .. " [LEVEL_STATE] Players is not set")
+				end
+			end,
+			get_weapon_left_hand_url = function(instance, client_id)
+				if players then
+					local player = players[client_id]
+					if player then
+						return player.collection_ids["/weapon_left_hand"]
+					else
+						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
+					end
+				else
+					print(os.date() .. " [LEVEL_STATE] Players is not set")
+				end
+			end,
+			get_weapon_right_hand_url = function(instance, client_id)
+				if players then
+					local player = players[client_id]
+					if player then
+						return player.collection_ids["/weapon_right_hand"]
+					else
+						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
 					end
 				else
 					print(os.date() .. " [LEVEL_STATE] Players is not set")
@@ -117,7 +153,7 @@ level_state = {
 				if player then
 					movements[client_id] = movement
 				else
-					print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. client_id)
+					print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
 				end
 			end,
 			get_movements = function(instance)

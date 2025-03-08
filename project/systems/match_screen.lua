@@ -1,5 +1,3 @@
-local game_events = require("project.messages.game_events")
-
 local match_screen
 match_screen = {
 	create = function(self)

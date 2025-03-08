@@ -1,8 +1,24 @@
-local game_events = require("project.messages.game_events")
-
 local player_manager
 player_manager = {
 	create = function(self)
+
+		local set_player_flip = function (components, client_id, flip)
+			local player_collection_ids = components.level_state:get_player_collection_ids(client_id)
+			if player_collection_ids then
+				local player_skin_url = player_collection_ids["/skin"]
+				local weapon_left_hand_url = player_collection_ids["/weapon_left_hand"]
+				local weapon_right_hand_url = player_collection_ids["/weapon_right_hand"]
+				sprite.set_hflip(player_skin_url, flip)
+				if flip then
+					msg.post(weapon_left_hand_url, "enable")
+					msg.post(weapon_right_hand_url, "disable")
+				else
+					msg.post(weapon_left_hand_url, "disable")
+					msg.post(weapon_right_hand_url, "enable")
+				end
+			end
+		end
+		
 		return {
 			qualifier = "player_manager",
 			predicate = function(instance, components)
@@ -15,6 +31,8 @@ player_manager = {
 				local nickname = components.match_state:get_nickname(client_id)
 				local player_nickname_component_url = components.level_state:get_player_nickname_component_url(client_id)
 				label.set_text(player_nickname_component_url, nickname)
+
+				set_player_flip(components, client_id, false)
 			end,
 			update = function(instance, dt, components)
 				local movements_to_delete = {}
