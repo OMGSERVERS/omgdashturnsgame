@@ -13,6 +13,7 @@ local match_runtime = require("project.systems.match_runtime")
 local match_simulator = require("project.systems.match_simulator")
 local death_match = require("project.systems.death_match")
 local level_manager = require("project.systems.level_manager")
+local player_manager = require("project.systems.player_manager")
 local events_manager = require("project.systems.events_manager")
 
 local game_systems
@@ -36,6 +37,7 @@ game_systems = {
 			-- Shared
 			game_entrypoint:create(),
 			level_manager:create(),
+			player_manager:create(),
 			death_match:create(),
 			events_manager:create(),
 		}

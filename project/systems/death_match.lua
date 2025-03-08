@@ -1,5 +1,6 @@
 local match_requests = require("project.messages.match_requests")
 local server_events = require("project.messages.server_events")
+local level_events = require("project.messages.level_events")
 local client_events = require("project.messages.client_events")
 local match_events = require("project.messages.match_events")
 
@@ -14,9 +15,8 @@ death_match = {
 
 			components.level_state:add_player(client_id, player_collection_ids)
 
-			local nickname = components.match_state:get_nickname(client_id)
-			local player_nickname_component_url = components.level_state:get_player_nickname_component_url(client_id)
-			label.set_text(player_nickname_component_url, nickname)
+			local new_game_event = level_events:player_created(client_id)
+			components.game_events:add_event(new_game_event)
 		end
 
 		local delete_player = function(components, client_id)
