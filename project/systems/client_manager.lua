@@ -132,6 +132,15 @@ client_manager = {
 				local current_omginstance = components.client_state:get_omginstance()
 				send_service_message(current_omginstance, game_message)
 			end,
+			leaving_screen_created = function(instance, components, event)
+				print(os.date() .. " [CLIENT_MANAGER] Leaving screen created")
+				components.client_state:set_leaving_state()
+				components.leaving_screen:set_state_text("Leaving")
+
+				local game_message = game_messages:request_leave()
+				local current_omginstance = components.client_state:get_omginstance()
+				send_game_message(current_omginstance, game_message)
+			end,
 			connection_dispatched = function(instance, components, event)
 				print(os.date() .. " [CLIENT_MANAGER] Connection dispatched")
 				components.client_state:set_getting_state_state()
@@ -152,6 +161,14 @@ client_manager = {
 			client_failed = function(instance, components, event)
 				print(os.date() .. " [CLIENT_MANAGER] Client failed")
 				components.client_state:set_game_failed_state()
+			end,
+			pointer_placed = function(instance, components, event)
+				local x = event.x
+				local y = event.y
+				print(os.date() .. " [CLIENT_MANAGER] Pointer placed, x=" .. tostring(x) .. ", y=" .. tostring(y))
+				local game_message = game_messages:request_move(x, y)
+				local current_omginstance = components.client_state:get_omginstance()
+				send_game_message(current_omginstance, game_message)
 			end,
 			update = function(instance, dt, components)
 				local current_omginstance = components.client_state:get_omginstance()

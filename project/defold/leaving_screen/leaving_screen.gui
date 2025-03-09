@@ -1,15 +1,11 @@
-script: "/game/match_gui/match_gui.gui_script"
+script: "/project/defold/leaving_screen/leaving_screen.gui_script"
+fonts {
+  name: "default"
+  font: "/game/game_assets/font.font"
+}
 fonts {
   name: "font_x2"
   font: "/game/game_assets/font_x2.font"
-}
-fonts {
-  name: "font"
-  font: "/game/game_assets/font.font"
-}
-textures {
-  name: "game_gui"
-  texture: "/game/game_assets/game_gui.atlas"
 }
 nodes {
   position {
@@ -28,13 +24,9 @@ nodes {
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
-  position {
-    x: 300.0
-    y: 220.0
-  }
   size {
-    x: 32.0
-    y: 32.0
+    x: 640.0
+    y: 480.0
   }
   color {
     x: 0.0
@@ -42,19 +34,31 @@ nodes {
     z: 0.0
   }
   type: TYPE_BOX
-  id: "leave_button"
+  id: "background"
   parent: "root"
+  size_mode: SIZE_MODE_AUTO
 }
 nodes {
-  scale {
-    x: 2.0
-    y: 2.0
+  size {
+    x: 640.0
+    y: 40.0
   }
   type: TYPE_BOX
-  texture: "game_gui/leave_button"
-  id: "icon"
-  parent: "leave_button"
+  id: "leaving_state"
+  parent: "root"
+  alpha: 0.0
   size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  size {
+    x: 640.0
+    y: 40.0
+  }
+  type: TYPE_TEXT
+  text: "Leaving screen"
+  font: "font_x2"
+  id: "leaving_state_text"
+  parent: "leaving_state"
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

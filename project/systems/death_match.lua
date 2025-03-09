@@ -106,6 +106,9 @@ death_match = {
 						local y = request.y
 
 						print(os.date() .. " [DEATH_MATCH] Move player, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y)
+						if not components.level_state:get_movement(client_id) then
+							components.death_match:increase_movements()
+						end
 						create_movement(components, client_id, x, y)
 
 					elseif qualifier == match_requests.DELETE_PLAYER then
@@ -195,9 +198,19 @@ death_match = {
 					end
 				end
 			end,
+			player_moved = function(instance, components, event)
+				local client_id = event.client_id
+				local x = event.x
+				local y = event.y
+
+				print(os.date() .. " [DEATH_MATCH] Player moved, client_id=" .. tostring(client_id))
+				
+				components.match_state:move_player(client_id, x, y)
+				components.death_match:decrease_movements()
+			end,
 			update = function(instance, dt, components)
 				if components.death_match:is_simulation_state() then
-					if #components.level_state:get_movements() == 0 then
+					if components.death_match:are_movements_finished() then
 						local step_events = components.match_state:get_events()
 						local new_game_event = game_events:step_simulated(step_events)
 						components.game_events:add_event(new_game_event)

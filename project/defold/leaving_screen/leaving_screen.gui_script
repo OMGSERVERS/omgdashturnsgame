@@ -1,0 +1,10 @@
+local leaving_screen = require("project.defold.leaving_screen.leaving_screen")
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(leaving_screen.CHANGE_SCREEN) then
+		local state_text = message.state_text
+
+		local state_node = gui.get_node("leaving_state_text")
+		gui.set_text(state_node, state_text)
+	end
+end

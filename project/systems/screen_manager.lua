@@ -8,6 +8,7 @@ screen_manager = {
 	OPS_SCREEN_FACTORY = "/screen_factory#ops_screen",
 	JOINING_SCREEN_FACTORY = "/screen_factory#joining_screen",
 	MATCH_SCREEN_FACTORY = "/screen_factory#match_screen",
+	LEAVING_SCREEN_FACTORY = "/screen_factory#leaving_screen",
 	-- Methods
 	create = function(self)
 		local create_screen = function(components, factory)
@@ -104,6 +105,15 @@ screen_manager = {
 					local new_event = game_events:match_screen_created()
 					components.game_events:add_event(new_event)
 				end
+			end,
+			leave_pressed = function(instance, components, event)
+				print(os.date() .. " [SCREEN_MANAGER] Leave button is pressed")
+
+				local new_screen_ids = create_screen(components, screen_manager.LEAVING_SCREEN_FACTORY)
+				components.screen_state:set_leaving_screen(new_screen_ids)
+
+				local new_event = game_events:leaving_screen_created()
+				components.game_events:add_event(new_event)
 			end,
 			update = function(instance, dt, components)
 			end

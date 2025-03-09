@@ -1,5 +1,10 @@
-local player_manager
-player_manager = {
+
+local game_events = require("project.messages.game_events")
+
+local level_movements
+level_movements = {
+	SPEED = 2,
+	-- Methods
 	create = function(self)
 
 		local set_player_flip = function (components, client_id, flip)
@@ -20,13 +25,13 @@ player_manager = {
 		end
 		
 		return {
-			qualifier = "player_manager",
+			qualifier = "level_movements",
 			predicate = function(instance, components)
 				return true
 			end,
 			player_created = function(instance, components, event)
 				local client_id = event.client_id
-				print(os.date() .. " [PLAYER_MANAGER] Player created, client_id=" .. tostring(client_id))
+				print(os.date() .. " [LEVEL_MOVEMENTS] Player created, client_id=" .. tostring(client_id))
 
 				local nickname = components.match_state:get_nickname(client_id)
 				local player_nickname_component_url = components.level_state:get_player_nickname_component_url(client_id)
@@ -39,9 +44,9 @@ player_manager = {
 				local movements = components.level_state:get_movements()
 				if movements then
 					for client_id, movement in pairs(movements) do
-						local get_player_url = components.level_state:get_player_url(client_id)
+						local player_url = components.level_state:get_player_url(client_id)
 
-						local current_possition = go.get_position(get_player_url)
+						local current_possition = go.get_position(player_url)
 						local from_position = movement.from_position
 						local to_position = movement.to_position
 
@@ -49,13 +54,21 @@ player_manager = {
 						local current_distance_sqr = vmath.length_sqr(current_possition - from_position)
 
 						if current_distance_sqr >= total_distance_sqr then
+							print(os.date() .. " [LEVEL_MOVEMENTS] Player moved, client_id=" .. tostring(client_id))
+							local new_game_event = game_events:player_moved(client_id, current_possition.x, current_possition.y)
+							components.game_events:add_event(new_game_event)
+
 							movements_to_delete[#movements_to_delete + 1] = client_id
+						else
+							local direction = to_position - from_position
+							vmath.normalize(direction)
+							local new_position = current_possition + direction * (level_movements.SPEED * dt)
+							go.set_position(new_position, player_url)
 						end
 					end
 				end
 
-				for i = 1, #movements_to_delete do
-					local client_id = movements_to_delete[i]
+				for _, client_id in ipairs(movements_to_delete) do
 					components.level_state:delete_movement(client_id)
 				end
 			end
@@ -63,4 +76,4 @@ player_manager = {
 	end
 }
 
-return player_manager
+return level_movements

@@ -78,12 +78,6 @@ match_state = {
 			get_nickname = function(instance, client_id)
 				return state.clients[client_id].nickname
 			end,
-			delete_client = function(instance, client_id)
-				state.clients[client_id] = nil
-
-				local match_event = match_events:client_deleted(client_id)
-				events[#events + 1] = match_event
-			end,
 			add_player = function(instance, client_id, x, y)
 				state.players[client_id] = {
 					x = x,
@@ -113,6 +107,14 @@ match_state = {
 					local match_event = match_events:player_deleted(client_id)
 					events[#events + 1] = match_event
 				end
+			end,
+			delete_client = function(instance, client_id)
+				instance:delete_player(client_id)
+				
+				state.clients[client_id] = nil
+
+				local match_event = match_events:client_deleted(client_id)
+				events[#events + 1] = match_event
 			end,
 		}
 	end

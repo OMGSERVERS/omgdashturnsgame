@@ -6,6 +6,7 @@ game_events = {
 	LOBBY_SCREEN_CREATED = "lobby_screen_created",
 	JOINING_SCREEN_CREATED = "joining_screen_created",
 	MATCH_SCREEN_CREATED = "match_screen_created",
+	LEAVING_SCREEN_CREATED = "leaving_screen_created",
 	OPS_SCREEN_CREATED = "ops_screen_created",
 	SIGNED_UP = "signed_up",
 	SIGNED_IN = "signed_in",
@@ -20,6 +21,9 @@ game_events = {
 	EVENTS_RECEIVED = "events_received",
 	JOIN_PRESSED = "join_pressed",
 	LEVEL_CREATED = "level_created",
+	LEAVE_PRESSED = "leave_pressed",
+	PLAYER_POINTED = "player_pointed",
+	POINTER_PLACED = "pointer_placed",
 	-- Server
 	SERVER_STARTED = "server_started",
 	RUNTIME_STARTED = "runtime_started",
@@ -31,6 +35,7 @@ game_events = {
 	STEP_SIMULATED = "step_simulated",
 	-- Shared
 	PLAYER_CREATED = "player_created",
+	PLAYER_MOVED = "player_moved",
 	-- Methods
 	client_started = function(self)
 		return {
@@ -55,6 +60,11 @@ game_events = {
 	match_screen_created = function(self)
 		return {
 			id = game_events.MATCH_SCREEN_CREATED,
+		}
+	end,
+	leaving_screen_created = function(self)
+		return {
+			id = game_events.LEAVING_SCREEN_CREATED,
 		}
 	end,
 	ops_screen_created = function(self)
@@ -191,6 +201,33 @@ game_events = {
 		return {
 			id = game_events.PLAYER_CREATED,
 			client_id = client_id,
+		}
+	end,
+	leave_pressed = function(self)
+		return {
+			id = game_events.LEAVE_PRESSED,
+		}
+	end,
+	player_pointed = function(self, x, y)
+		return {
+			id = game_events.PLAYER_POINTED,
+			x = x,
+			y = y,
+		}
+	end,
+	pointer_placed = function(self, x, y)
+		return {
+			id = game_events.POINTER_PLACED,
+			x = x,
+			y = y,
+		}
+	end,
+	player_moved = function(self, client_id, x, y)
+		return {
+			id = game_events.PLAYER_MOVED,
+			client_id = client_id,
+			x = x,
+			y = y,
 		}
 	end,
 }

@@ -28,3 +28,9 @@ embedded_components {
   data: "prototype: \"/project/defold/match_screen/match_screen.collection\"\n"
   ""
 }
+embedded_components {
+  id: "leaving_screen"
+  type: "collectionfactory"
+  data: "prototype: \"/project/defold/leaving_screen/leaving_screen.collection\"\n"
+  ""
+}

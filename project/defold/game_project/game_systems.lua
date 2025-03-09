@@ -4,8 +4,10 @@ local screen_manager = require("project.systems.screen_manager")
 local auth_screen = require("project.systems.auth_screen")
 local lobby_screen = require("project.systems.lobby_screen")
 local joining_screen = require("project.systems.joining_screen")
+local leaving_screen = require("project.systems.leaving_screen")
 local match_screen = require("project.systems.match_screen")
 local match_camera = require("project.systems.match_camera")
+local match_pointer = require("project.systems.match_pointer")
 local ops_screen = require("project.systems.ops_screen")
 local server_manager = require("project.systems.server_manager")
 local lobby_runtime = require("project.systems.lobby_runtime")
@@ -13,7 +15,7 @@ local match_runtime = require("project.systems.match_runtime")
 local match_simulator = require("project.systems.match_simulator")
 local death_match = require("project.systems.death_match")
 local level_manager = require("project.systems.level_manager")
-local player_manager = require("project.systems.player_manager")
+local level_movements = require("project.systems.level_movements")
 local events_manager = require("project.systems.events_manager")
 
 local game_systems
@@ -26,8 +28,10 @@ game_systems = {
 			auth_screen:create(),
 			lobby_screen:create(),
 			joining_screen:create(),
+			leaving_screen:create(),
 			match_screen:create(),
 			match_camera:create(),
+			match_pointer:create(),
 			ops_screen:create(),
 			-- Server
 			server_manager:create(),
@@ -37,7 +41,7 @@ game_systems = {
 			-- Shared
 			game_entrypoint:create(),
 			level_manager:create(),
-			player_manager:create(),
+			level_movements:create(),
 			death_match:create(),
 			events_manager:create(),
 		}

@@ -73,6 +73,21 @@ screen_state = {
 				local match_camera_component_url = msg.url(nil, match_camera, "camera")
 				return match_camera_component_url
 			end,
+			get_match_pointer_url = function(instance)
+				assert(collection_ids, "screen's collection ids is not set")
+				return collection_ids["/match_pointer"]
+			end,
+			set_leaving_screen = function(instance, screen_ids)
+				screen_qualifier = screen_state.LEAVING_SCREEN
+				collection_ids = screen_ids
+			end,
+			is_leaving_screen = function(instance)
+				return screen_qualifier == screen_state.LEAVING_SCREEN
+			end,
+			get_leaving_screen_url = function(instance)
+				assert(collection_ids, "screen's collection ids is not set")
+				return collection_ids["/leaving_screen"]
+			end,
 			set_ops_screen = function(instance, screen_ids)
 				screen_qualifier = screen_state.OPS_SCREEN
 				collection_ids = screen_ids

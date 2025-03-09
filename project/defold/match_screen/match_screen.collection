@@ -10,4 +10,12 @@ instances {
   id: "level_factory"
   prototype: "/project/defold/level_factory/level_factory.go"
 }
+instances {
+  id: "match_pointer"
+  prototype: "/project/defold/match_pointer/match_pointer.go"
+}
+instances {
+  id: "match_gui"
+  prototype: "/project/defold/match_gui/match_gui.go"
+}
 scale_along_z: 0
