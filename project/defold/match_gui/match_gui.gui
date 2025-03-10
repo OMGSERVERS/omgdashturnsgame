@@ -44,6 +44,7 @@ nodes {
   type: TYPE_BOX
   id: "leave_button"
   parent: "root"
+  alpha: 0.0
 }
 nodes {
   scale {

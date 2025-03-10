@@ -24,7 +24,7 @@ death_match = {
 				for key, go_id in pairs(player_collection_ids) do
 					go.delete(go_id)
 				end
-				components.level_state:delete_player(client_id)
+				components.level_state:delete_player(components, client_id)
 			else
 				print(os.date() .. " [DEATH_MATCH] Player was not found to delete, client_id=" .. client_id)
 			end
@@ -42,6 +42,9 @@ death_match = {
 				to_position = to_position,
 			}
 			components.level_state:add_movement(client_id, movement)
+
+			local new_game_event = game_events:movement_created(client_id, x, y)
+			components.game_events:add_event(new_game_event)
 		end
 		
 		return {
@@ -187,7 +190,7 @@ death_match = {
 					elseif qualifier == match_events.PLAYER_DELETED then
 						local client_id = event.client_id
 						print(os.date() .. " [DEATH_MATCH] Delete player, client_id=" .. client_id)
-						delete_player(client_id)
+						delete_player(components, client_id)
 						components.match_state:delete_player(client_id)
 
 					elseif qualifier == match_events.CLIENT_DELETED then

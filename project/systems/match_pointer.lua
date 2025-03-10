@@ -47,11 +47,22 @@ match_pointer = {
 				local world_x, world_y = screen_to_world(components, x, y, 0)
 				local world_z = world_y
 				local match_pointer_url = components.screen_state:get_match_pointer_url()
-				local position = vmath.vector3(world_x, world_y, world_z)
+				-- -1 to ensure the pointer is below the player
+				local position = vmath.vector3(world_x, world_y - 1, world_z)
 				go.set_position(position, match_pointer_url)
+				msg.post(match_pointer_url, "enable")
 
 				local new_event = game_events:pointer_placed(world_x, world_y)
 				components.game_events:add_event(new_event)
+			end,
+			movement_created = function(instance, components, event)
+				local client_id = event.client_id
+
+				if client_id == components.client_state:get_client_id() then
+					print(os.date() .. " [LEVEL_MOVEMENTS] This player's movement created, client_id=" .. tostring(client_id))
+					local match_pointer_url = components.screen_state:get_match_pointer_url()
+					msg.post(match_pointer_url, "disable")
+				end
 			end,
 			update = function(instance, dt, components)
 			end

@@ -35,6 +35,7 @@ game_events = {
 	STEP_SIMULATED = "step_simulated",
 	-- Shared
 	PLAYER_CREATED = "player_created",
+	MOVEMENT_CREATED = "movement_created",
 	PLAYER_MOVED = "player_moved",
 	-- Methods
 	client_started = function(self)
@@ -218,6 +219,14 @@ game_events = {
 	pointer_placed = function(self, x, y)
 		return {
 			id = game_events.POINTER_PLACED,
+			x = x,
+			y = y,
+		}
+	end,
+	movement_created = function(self, client_id, x, y)
+		return {
+			id = game_events.MOVEMENT_CREATED,
+			client_id = client_id,
 			x = x,
 			y = y,
 		}

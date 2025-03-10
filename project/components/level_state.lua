@@ -152,7 +152,7 @@ level_state = {
 				local player = players[client_id]
 				if player then
 					movements[client_id] = movement
-					print(os.date() .. " [LEVEL_STATE] Movement was added, client_id=" .. tostring(client_id) .. ", movement=" .. json.encode(movement))
+					print(os.date() .. " [LEVEL_STATE] Movement was added, client_id=" .. tostring(client_id))
 				else
 					print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
 				end
