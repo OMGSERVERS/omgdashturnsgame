@@ -30,8 +30,8 @@ game_events = {
 	COMMAND_RECEIVED = "command_received",
 	CLIENT_MESSAGE_RECEIVED = "client_message_received",
 	STATE_INITIALIZED = "state_initialized",
-	MATCH_OVER = "match_over",
 	STEP_OVER = "step_over",
+	MATCH_OVER = "match_over",
 	STEP_SIMULATED = "step_simulated",
 	-- Shared
 	PLAYER_CREATED = "player_created",

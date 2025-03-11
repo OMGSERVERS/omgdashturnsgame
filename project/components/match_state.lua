@@ -49,7 +49,7 @@ match_state = {
 				return settings
 			end,
 			get_level_qualifier = function()
-				return settings.level
+				return settings.match_level
 			end,
 			get_state = function()
 				return state

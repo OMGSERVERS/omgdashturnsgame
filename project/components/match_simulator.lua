@@ -1,6 +1,6 @@
 local match_simulator
 match_simulator = {
-	MATCH_LIFEIMTE = 256,
+	MATCH_LIFETIME = 256,
 	STEP_INTERVAL = 2,
 	-- Methods
 	create = function(self)
@@ -8,18 +8,23 @@ match_simulator = {
 		local match_timer = 0
 		local step_timer = 0
 		local step_index = 1
+		local simulation = false
 		
 		return {
 			qualifier = "match_simulator",
 			-- Methods
+			get_step_interval = function(instance)
+				return match_simulator.STEP_INTERVAL
+			end,
 			enable = function(instance)
 				enabled = true
-			end,
-			disable = function(instance)
-				enabled = false
 				match_timer = 0
 				step_timer = 0
 				step_index = 1
+				simulation = false
+			end,
+			disable = function(instance)
+				enabled = false
 			end,
 			is_enabled = function(instance)
 				return enabled
@@ -31,7 +36,7 @@ match_simulator = {
 				match_timer = match_timer + dt
 			end,
 			is_match_over = function(instance)
-				return match_timer > match_simulator.MATCH_LIFEIMTE
+				return match_timer > match_simulator.MATCH_LIFETIME
 			end,
 			get_step_timer = function(instance)
 				return step_timer
@@ -52,7 +57,13 @@ match_simulator = {
 				local prev_step = step_index
 				step_index = step_index + 1
 				return prev_step
-			end
+			end,
+			is_simulation = function(instance)
+				return simulation
+			end,
+			set_simulation = function(instance, value)
+				simulation = value
+			end,
 		}
 	end
 }

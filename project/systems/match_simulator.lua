@@ -21,6 +21,10 @@ match_simulator = {
 
 				return true
 			end,
+			step_simulated = function(instance, components, event)
+				components.match_simulator:set_simulation(false)
+				components.match_simulator:reset_step_timer()
+			end,
 			update = function(instance, dt, components)
 				local simulator = components.match_simulator
 
@@ -33,13 +37,16 @@ match_simulator = {
 					components.game_events:add_event(new_event)
 				end
 
-				simulator:update_step_timer(dt)
-				if simulator:is_step_over() then
-					simulator:reset_step_timer()
-					local step_index = simulator:increase_step_index()
+				if not simulator:is_simulation() then
+					simulator:update_step_timer(dt)
+					
+					if simulator:is_step_over() then
+						local step_index = simulator:increase_step_index()
+						simulator:set_simulation(true)
 
-					local new_event = game_events:step_over(step_index)
-					components.game_events:add_event(new_event)
+						local new_event = game_events:step_over(step_index)
+						components.game_events:add_event(new_event)
+					end
 				end
 			end
 		}

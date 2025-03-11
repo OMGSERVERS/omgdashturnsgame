@@ -46,7 +46,7 @@ level_manager = {
 			end,
 			state_initialized = function(instance, components, event)
 				local level_qualifier = components.match_state:get_level_qualifier()
-				print(os.date() .. " [LEVEL_MANAGER] State initialized, creating level, level_qualifier=" .. level_qualifier)
+				print(os.date() .. " [LEVEL_MANAGER] State initialized, creating level, level_qualifier=" .. tostring(level_qualifier))
 				create_level(components, level_qualifier)
 			end,
 			update = function(instance, dt, components)

@@ -57,6 +57,11 @@ screen_state = {
 			is_match_screen = function(instance)
 				return screen_qualifier == screen_state.MATCH_SCREEN
 			end,
+			get_match_gui_url = function(instance)
+				assert(collection_ids, "screen's collection ids is not set")
+				local match_gui_url = collection_ids["/match_gui"]
+				return match_gui_url
+			end,
 			get_level_factory_url = function(instance, level_qualifier)
 				assert(collection_ids, "screen's collection ids is not set")
 				local level_factory = collection_ids["/level_factory"]

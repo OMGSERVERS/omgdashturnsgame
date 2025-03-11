@@ -34,7 +34,8 @@ match_runtime = {
 					components.match_simulator:enable()
 
 					local settings = {
-						level = server_messages.FOREST_LEVEL,
+						match_level = server_messages.FOREST_LEVEL,
+						step_interval = components.match_simulator:get_step_interval(),
 					}
 					components.match_state:init_state(settings)
 

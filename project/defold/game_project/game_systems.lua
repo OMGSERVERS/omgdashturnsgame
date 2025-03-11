@@ -8,6 +8,7 @@ local leaving_screen = require("project.systems.leaving_screen")
 local match_screen = require("project.systems.match_screen")
 local match_camera = require("project.systems.match_camera")
 local match_pointer = require("project.systems.match_pointer")
+local match_timer = require("project.systems.match_timer")
 local ops_screen = require("project.systems.ops_screen")
 local server_manager = require("project.systems.server_manager")
 local lobby_runtime = require("project.systems.lobby_runtime")
@@ -33,6 +34,7 @@ game_systems = {
 			match_screen:create(),
 			match_camera:create(),
 			match_pointer:create(),
+			match_timer:create(),
 			ops_screen:create(),
 			-- Server
 			server_manager:create(),

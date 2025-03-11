@@ -1,10 +1,16 @@
 local game_project = require("project.defold.game_project.game_project")
+local match_gui = require("project.defold.match_gui.match_gui")
 local druid = require("druid.druid")
 
 local GAME_PROJECT = "/game_project#game_project"
 
 local function leave_button(self)
 	game_project:leave_pressed(GAME_PROJECT)
+end
+
+local function reset_progress_bar(self, timer_value)
+	self.timer_value = timer_value
+	self.max_timer = timer_value
 end
 
 function init(self)
@@ -19,10 +25,26 @@ end
 
 function update(self, dt)
 	self.druid:update(dt)
+	
+	if self.timer_value then
+		local timer_value = math.max(0, self.timer_value - dt)
+		local timer_scale = timer_value / self.max_timer
+		
+		local box_node = gui.get_node("step_timer")
+		gui.set_scale(box_node, vmath.vector3(timer_scale, 1, 1))
+
+		self.timer_value = timer_value
+	end
 end
 
 function on_message(self, message_id, message, sender)
 	self.druid:on_message(message_id, message, sender)
+	
+	if message_id == hash(match_gui.RESET_PROGRESS_BAR) then
+		print(os.date() .. " [MATCH_GUI] Reset progress bar")
+		local timer_value = message.timer_value
+		reset_progress_bar(self, timer_value)
+	end
 end
 
 function on_input(self, action_id, action)

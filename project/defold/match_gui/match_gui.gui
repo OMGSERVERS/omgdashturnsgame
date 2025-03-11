@@ -57,5 +57,20 @@ nodes {
   parent: "leave_button"
   size_mode: SIZE_MODE_AUTO
 }
+nodes {
+  position {
+    x: -320.0
+    y: -237.0
+  }
+  size {
+    x: 640.0
+    y: 6.0
+  }
+  type: TYPE_BOX
+  id: "step_timer"
+  pivot: PIVOT_W
+  parent: "root"
+  size_mode: SIZE_MODE_AUTO
+}
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

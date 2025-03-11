@@ -113,7 +113,7 @@ client_manager = {
 					local events = decoded_message.events
 					local new_game_event = game_events:events_received(events)
 					components.game_events:add_event(new_game_event)
-
+					
 				else
 					error("[CLIENT_MANAGER] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 				end
