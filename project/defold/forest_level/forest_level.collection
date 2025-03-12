@@ -15,4 +15,110 @@ instances {
     y: 200.0
   }
 }
+instances {
+  id: "spawn_point1"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 60.0
+    y: 73.0
+  }
+}
+instances {
+  id: "spawn_point2"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 187.0
+    y: 55.0
+  }
+}
+instances {
+  id: "spawn_point3"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 39.0
+    y: 198.0
+  }
+}
+instances {
+  id: "spawn_point4"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 58.0
+    y: 323.0
+  }
+}
+instances {
+  id: "spawn_point5"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 222.0
+    y: 340.0
+  }
+}
+instances {
+  id: "spawn_point6"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 389.0
+    y: 329.0
+  }
+}
+instances {
+  id: "spawn_point7"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 442.0
+    y: 280.0
+  }
+}
+instances {
+  id: "spawn_point8"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 475.0
+    y: 199.0
+  }
+}
+instances {
+  id: "spawn_point9"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 476.0
+    y: 88.0
+  }
+}
+instances {
+  id: "spawn_point10"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 416.0
+    y: 33.0
+  }
+}
+instances {
+  id: "spawn_point11"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 306.0
+    y: 31.0
+  }
+}
 scale_along_z: 0
+embedded_instances {
+  id: "spawn_points"
+  children: "spawn_point1"
+  children: "spawn_point10"
+  children: "spawn_point11"
+  children: "spawn_point2"
+  children: "spawn_point3"
+  children: "spawn_point4"
+  children: "spawn_point5"
+  children: "spawn_point6"
+  children: "spawn_point7"
+  children: "spawn_point8"
+  children: "spawn_point9"
+  data: ""
+  position {
+    z: 1.0
+  }
+}

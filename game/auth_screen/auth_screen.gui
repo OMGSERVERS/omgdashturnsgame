@@ -1,11 +1,11 @@
 script: "/game/auth_screen/auth_screen.gui_script"
 fonts {
   name: "default"
-  font: "/game/game_assets/font.font"
+  font: "/project/defold/game_assets/font.font"
 }
 fonts {
   name: "font_x2"
-  font: "/game/game_assets/font_x2.font"
+  font: "/project/defold/game_assets/font_x2.font"
 }
 nodes {
   position {

@@ -1,15 +1,15 @@
 script: "/project/defold/match_gui/match_gui.gui_script"
 fonts {
   name: "font_x2"
-  font: "/game/game_assets/font_x2.font"
+  font: "/project/defold/game_assets/font_x2.font"
 }
 fonts {
   name: "font"
-  font: "/game/game_assets/font.font"
+  font: "/project/defold/game_assets/font.font"
 }
 textures {
   name: "game_gui"
-  texture: "/game/game_assets/game_gui.atlas"
+  texture: "/project/defold/game_assets/game_gui.atlas"
 }
 nodes {
   position {
@@ -60,11 +60,11 @@ nodes {
 nodes {
   position {
     x: -320.0
-    y: -237.0
+    y: -238.0
   }
   size {
     x: 640.0
-    y: 6.0
+    y: 4.0
   }
   type: TYPE_BOX
   id: "step_timer"

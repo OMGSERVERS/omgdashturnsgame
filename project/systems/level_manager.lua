@@ -27,8 +27,25 @@ level_manager = {
 				w = w * level_manager.TILE_W,
 				h = h * level_manager.TILE_H,
 			}
+
+			local spawn_points = {}
+			local spawn_point_index = 1
+			while true do
+				local collection_key = "/spawn_point" .. spawn_point_index
+				local spawn_point_url = new_level_ids[collection_key]
+				if spawn_point_url then
+					local spawn_position = go.get_position(spawn_point_url)
+					spawn_position.z = spawn_position.y
+					spawn_points[#spawn_points + 1] = spawn_position
+
+					msg.post(spawn_point_url, "disable")
+					spawn_point_index = spawn_point_index + 1
+				else
+					break
+				end
+			end
 			
-			components.level_state:set_level(level_qualifier, new_level_ids, level_bounds)
+			components.level_state:set_level(level_qualifier, new_level_ids, level_bounds, spawn_points)
 			
 			local new_event = game_events:level_created()
 			components.game_events:add_event(new_event)

@@ -1,3 +1,4 @@
+local physics_listener = require("project.utils.physics_listener")
 local game_events = require("project.messages.game_events")
 
 local match_simulator
@@ -20,6 +21,10 @@ match_simulator = {
 				end
 
 				return true
+			end,
+			level_created = function(instance, components, event)
+				print(os.date() .. " [MATCH_SCREEN] Level created, setting the physics listener")
+				physics.set_listener(physics_listener:create())
 			end,
 			step_simulated = function(instance, components, event)
 				components.match_simulator:set_simulation(false)

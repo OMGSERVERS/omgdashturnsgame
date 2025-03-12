@@ -1,15 +1,15 @@
 script: "/game/match_log/match_log.gui_script"
 fonts {
   name: "font_x2"
-  font: "/game/game_assets/font_x2.font"
+  font: "/project/defold/game_assets/font_x2.font"
 }
 fonts {
   name: "font"
-  font: "/game/game_assets/font.font"
+  font: "/project/defold/game_assets/font.font"
 }
 textures {
   name: "game_gui"
-  texture: "/game/game_assets/game_gui.atlas"
+  texture: "/project/defold/game_assets/game_gui.atlas"
 }
 nodes {
   size {

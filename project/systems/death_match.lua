@@ -1,3 +1,4 @@
+local defold_match_player = require("project.defold.match_player.match_player")
 local match_requests = require("project.messages.match_requests")
 local game_events = require("project.messages.game_events")
 local match_events = require("project.messages.match_events")
@@ -15,6 +16,11 @@ death_match = {
 
 			local new_game_event = game_events:player_created(client_id)
 			components.game_events:add_event(new_game_event)
+
+			local player_url = components.level_state:get_player_url(client_id)
+			-- just play events from the server in client mode
+			local disable_collisions = components.entrypoint_state:is_client_mode()
+			defold_match_player:setup_player(player_url, client_id, disable_collisions)
 		end
 
 		local delete_player = function(components, client_id)
@@ -37,6 +43,21 @@ death_match = {
 			local z = y
 			local to_position = vmath.vector3(x, y, z)
 
+			local result = physics.raycast(from_position, to_position, { hash("level") })
+			if result then
+				local hit_position = result.position
+				hit_position.z = hit_position.y
+				local distance = vmath.length(hit_position - from_position)
+				pprint(hit_position)
+				pprint(from_position)
+				print(distance)
+				if distance < 16 then
+					to_position = from_position
+				else
+					to_position = hit_position
+				end
+			end
+			
 			local movement = {
 				from_position = from_position,
 				to_position = to_position,
@@ -85,20 +106,10 @@ death_match = {
 						local client_id = request.client_id
 						print(os.date() .. " [DEATH_MATCH] Spawn player, client_id=" .. client_id)
 
-						local level_bounds = components.level_state:get_level_bounds()
-						if level_bounds then
-							local x = level_bounds.x
-							local y = level_bounds.y
-							local w = level_bounds.w
-							local h = level_bounds.h
-							local spawn_x = math.random(x, x + w)
-							local spawn_y = math.random(y, y + h)
-
-							local z = y
-							local position = vmath.vector3(spawn_x, spawn_y, z)
-
-							create_player(components, client_id, position)
-							components.match_state:add_player(client_id, spawn_x, spawn_y)
+						local spawn_position = components.level_state:get_random_spawn_position()
+						if spawn_position then
+							create_player(components, client_id, spawn_position)
+							components.match_state:add_player(client_id, spawn_position.x, spawn_position.y)
 						else
 							print(os.date() .. " [DEATH_MATCH] Level bounds is not set to spawn player, client_id=" .. client_id)
 						end

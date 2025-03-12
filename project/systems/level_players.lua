@@ -6,7 +6,7 @@ level_movements = {
 	SPEED = 2,
 	-- Methods
 	create = function(self)
-		local setup_player = function(components, client_id, flip, attack_angle)
+		local setup_skin = function(components, client_id, flip, attack_angle)
 			local player_collection_ids = components.level_state:get_player_collection_ids(client_id)
 			if player_collection_ids then
 				local player_skin_url = player_collection_ids["/skin"]
@@ -45,8 +45,14 @@ level_movements = {
 				local player_skin_url = components.level_state:get_player_skin_url(client_id)
 				go.animate(player_skin_url, "scale.x", go.PLAYBACK_LOOP_PINGPONG, 1.1, go.EASING_LINEAR, 1, 0)
 				go.animate(player_skin_url, "scale.y", go.PLAYBACK_LOOP_PINGPONG, 1.1, go.EASING_LINEAR, 1, 0)
+
+				local player_url = components.level_state:get_player_url(client_id)
+				local player_position = go.get_position(player_url)
+				local z = player_position.y
+				local new_position = vmath.vector3(player_position.x, player_position.y, z)
+				go.set_position(new_position, player_url)
 				
-				setup_player(components, client_id, false)
+				setup_skin(components, client_id, false)
 			end,
 			movement_created = function(instance, components, event)
 				local client_id = event.client_id
@@ -60,7 +66,7 @@ level_movements = {
 
 				local flip = x < player_position.x
 				local attack_angle = math.atan2(y - player_position.y, x - player_position.x) - math.pi * 0.5
-				setup_player(components, client_id, flip, attack_angle)
+				setup_skin(components, client_id, flip, attack_angle)
 			end,
 			update = function(instance, dt, components)
 			end

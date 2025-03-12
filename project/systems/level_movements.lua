@@ -3,13 +3,26 @@ local game_events = require("project.messages.game_events")
 
 local level_movements
 level_movements = {
-	SPEED = 2,
+	SPEED = 160,
 	-- Methods
 	create = function(self)
 		return {
 			qualifier = "level_movements",
 			predicate = function(instance, components)
 				return true
+			end,
+			collision_solved = function(instance, components, event)
+-- 				local client_id = event.client_id
+-- 				local correction = event.correction
+-- 				local player_url = components.level_state:get_player_url(client_id)
+-- 				local current_possition = go.get_position(player_url)
+-- 				local new_position = current_possition + correction
+-- 				go.set_position(new_position, player_url)
+-- 
+-- 				local movement = components.level_state:get_movement(client_id)
+-- 				if movement then
+-- 					movement.to_position = new_position
+-- 				end
 			end,
 			update = function(instance, dt, components)
 				local movements_to_delete = {}
@@ -36,8 +49,7 @@ level_movements = {
 
 							movements_to_delete[#movements_to_delete + 1] = client_id
 						else
-							local direction = to_position - from_position
-							vmath.normalize(direction)
+							local direction = vmath.normalize(to_position - from_position)
 							local new_position = current_possition + direction * (level_movements.SPEED * dt)
 							go.set_position(new_position, player_url)
 						end

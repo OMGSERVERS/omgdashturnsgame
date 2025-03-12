@@ -1,0 +1,35 @@
+local game_project = require("project.defold.game_project.game_project")
+local match_player = require("project.defold.match_player.match_player")
+
+local GAME_PROJECT = "/game_project#game_project"
+local COLLISION_OBJECT = "#collisionobject"
+
+local function setup_player(self, client_id, disable_collisions)
+	print(os.date() .. " [MATCH_PLAYER] Setup player, client_id=" .. tostring(client_id) .. ", disable_collisions=" .. tostring(disable_collisions))
+	
+	self.client_id = client_id
+	if disable_collisions then
+		msg.post(COLLISION_OBJECT, "disable")
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("contact_point_response") then
+		if message.distance > 0 then
+			local proj = vmath.project(self.correction, message.normal * message.distance)
+			if proj < 1 then
+				local comp = (message.distance - message.distance * proj) * message.normal
+				
+				self.correction = self.correction + comp
+
+				game_project:collision_solved(GAME_PROJECT, self.client_id, self.correction)
+			end
+		end
+	end
+
+	if message_id == hash(match_player.SETUP_PLAYER) then
+		local client_id = message.client_id
+		local disable_collisions = message.disable_collisions
+		setup_player(self, client_id, disable_collisions)
+	end
+end

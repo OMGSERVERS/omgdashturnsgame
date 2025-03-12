@@ -1,4 +1,4 @@
-tile_set: "/game/game_assets/all_tiles.tilesource"
+tile_set: "/project/defold/game_assets/all_tiles.tilesource"
 layers {
   id: "back"
   z: 0.0

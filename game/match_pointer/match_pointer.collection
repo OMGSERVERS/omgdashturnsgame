@@ -22,7 +22,7 @@ embedded_instances {
   "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
-  "  texture: \\\"/game/game_assets/all_tiles.tilesource\\\"\\n"
+  "  texture: \\\"/project/defold/game_assets/all_tiles.tilesource\\\"\\n"
   "}\\n"
   "\"\n"
   "}\n"

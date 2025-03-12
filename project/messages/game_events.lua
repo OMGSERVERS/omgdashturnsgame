@@ -37,6 +37,7 @@ game_events = {
 	PLAYER_CREATED = "player_created",
 	MOVEMENT_CREATED = "movement_created",
 	PLAYER_MOVED = "player_moved",
+	COLLISION_SOLVED = "collision_solved",
 	-- Methods
 	client_started = function(self)
 		return {
@@ -237,6 +238,13 @@ game_events = {
 			client_id = client_id,
 			x = x,
 			y = y,
+		}
+	end,
+	collision_solved = function(self, client_id, correction)
+		return {
+			id = game_events.COLLISION_SOLVED,
+			client_id = client_id,
+			correction = correction,
 		}
 	end,
 }

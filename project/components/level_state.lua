@@ -8,6 +8,7 @@ level_state = {
 		local bounds = nil
 		local players = nil
 		local movements = nil
+		local spawn_points = nil
 		
 		return {
 			qualifier = "level_state",
@@ -18,16 +19,22 @@ level_state = {
 			get_collection_ids = function(instance)
 				return collection_ids
 			end,
-			set_level = function(instance, level_qualifier, level_collection_ids, level_bounds)
-				print(os.date() .. " [LEVEL_STATE] Set level")
+			set_level = function(instance, level_qualifier, level_collection_ids, level_bounds, level_spawn_points)
+				print(os.date() .. " [LEVEL_STATE] Set level, spawn_points=" .. #level_spawn_points)
 				qualifier = level_qualifier
 				collection_ids = level_collection_ids
 				bounds = level_bounds
 				players = {}
 				movements = {}
+				spawn_points = level_spawn_points
 			end,
 			get_level_bounds = function(instance)
 				return bounds
+			end,
+			get_random_spawn_position = function(instance)
+				if spawn_points then
+					return spawn_points[math.random(#spawn_points)]
+				end
 			end,
 			get_camera_point_url = function(instance)
 				if collection_ids then
