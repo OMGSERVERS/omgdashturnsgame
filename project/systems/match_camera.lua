@@ -3,7 +3,6 @@ match_camera = {
 	CAMERA_SMOOTH=0.05,
 	-- Methods
 	create = function(self)
-
 		local bound_position = function(components, position)
 			local bounds = components.level_state:get_level_bounds()
 			
@@ -25,6 +24,15 @@ match_camera = {
 			
 			return vmath.clamp(position, min_position, max_position)
 		end
+
+		local reset_camera_zoom = function(components, window_width, window_height)
+			local scale_x = window_width / 640
+			local scale_y = window_height / 480
+			local scale = math.ceil(math.min(scale_x, scale_y))
+
+			local match_camera_component_url = components.screen_state:get_match_camera_component_url()
+			go.set(match_camera_component_url, "orthographic_zoom", scale)
+		end
 		
 		return {
 			qualifier = "match_camera",
@@ -39,6 +47,16 @@ match_camera = {
 				
 				return true
 			end,
+			level_created = function(instance, components, event)
+				window.set_listener(function(self, event, data)
+					if event == window.WINDOW_EVENT_RESIZED then
+						reset_camera_zoom(components, data.width, data.height)
+					end
+				end)
+
+				local width, height = window.get_size()
+				reset_camera_zoom(components, width, height)
+			end,
 			update = function(instance, dt, components)
 				local client_id = components.client_state:get_client_id()
 				if client_id then
@@ -48,7 +66,7 @@ match_camera = {
 					if match_camera_url and player_url then
 						local camera_position = go.get_position(match_camera_url)
 						local player_position = bound_position(components, go.get_position(player_url))
-						
+
 						local new_position = camera_position + (player_position - camera_position) * match_camera.CAMERA_SMOOTH
 						new_position.z = camera_position.z
 
