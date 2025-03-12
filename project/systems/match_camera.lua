@@ -26,12 +26,14 @@ match_camera = {
 		end
 
 		local reset_camera_zoom = function(components, window_width, window_height)
-			local scale_x = window_width / 640
-			local scale_y = window_height / 480
-			local scale = math.ceil(math.min(scale_x, scale_y))
+			local scale_x = window_width / sys.get_config_number("display.width")
+			local scale_y = window_height / sys.get_config_number("display.height")
+			local scale = math.ceil(math.max(scale_x, scale_y))
 
 			local match_camera_component_url = components.screen_state:get_match_camera_component_url()
 			go.set(match_camera_component_url, "orthographic_zoom", scale)
+			
+			print(os.date() .. " [MATCH_CAMER] Set zoom, orthographic_zoom=" .. tostring(scale))
 		end
 		
 		return {
