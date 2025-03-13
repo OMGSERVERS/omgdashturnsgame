@@ -27,10 +27,11 @@ death_match = {
 			local player_collection_ids = components.level_state:get_player_collection_ids(client_id)
 			if player_collection_ids then
 				print(os.date() .. " [DEATH_MATCH] Delete player, client_id=" .. client_id)
+				pprint(player_collection_ids)
 				for key, go_id in pairs(player_collection_ids) do
 					go.delete(go_id)
 				end
-				components.level_state:delete_player(components, client_id)
+				components.level_state:delete_player(client_id)
 			else
 				print(os.date() .. " [DEATH_MATCH] Player was not found to delete, client_id=" .. client_id)
 			end
@@ -48,9 +49,6 @@ death_match = {
 				local hit_position = result.position
 				hit_position.z = hit_position.y
 				local distance = vmath.length(hit_position - from_position)
-				pprint(hit_position)
-				pprint(from_position)
-				print(distance)
 				if distance < 16 then
 					to_position = from_position
 				else
@@ -129,7 +127,7 @@ death_match = {
 						local client_id = request.client_id
 
 						print(os.date() .. " [DEATH_MATCH] Delete player, client_id=" .. client_id)
-						delete_player(client_id)
+						delete_player(components, client_id)
 						components.match_state:delete_player(client_id)
 
 					elseif qualifier == match_requests.DELETE_CLIENT then
@@ -161,7 +159,8 @@ death_match = {
 			events_received = function(instance, components, event)
 				local events = event.events
 				print(os.date() .. " [DEATH_MATCH] Events were received, total=" .. #events)
-
+				components.match_state:reset_events()
+				
 				for event_index = 1,#events do
 					local event = events[event_index]
 					local qualifier = event.qualifier
@@ -196,7 +195,8 @@ death_match = {
 						local client_id = event.client_id
 						local killer_id = event.killer_id
 
-						-- TBD
+						print(os.date() .. " [DEATH_MATCH] Player killed, client_id=" .. tostring(client_id) .. ", killer_id=" .. killer_id)
+						components.level_state:add_kill(client_id, killer_id)
 
 					elseif qualifier == match_events.PLAYER_DELETED then
 						local client_id = event.client_id
@@ -221,6 +221,21 @@ death_match = {
 				
 				components.match_state:move_player(client_id, x, y)
 				components.death_match:decrease_movements()
+
+				local kill = components.level_state:get_kill(client_id)
+				if kill then
+					local new_event = game_events:player_killed(kill.client_id, client_id)
+					components.game_events:add_event(new_event)
+				end
+			end,
+			player_killed = function(instance, components, event)
+				local client_id = event.client_id
+				local killer_id = event.killer_id
+				print(os.date() .. " [DEATH_MATCH] Player killed, client_id=" .. tostring(client_id) .. ", killer_id=" .. tostring(killer_id))
+				delete_player(components, client_id)
+				components.match_state:kill_player(client_id, killer_id)
+
+				components.level_state:delete_kill(client_id)
 			end,
 			update = function(instance, dt, components)
 				if components.death_match:is_simulation_state() then

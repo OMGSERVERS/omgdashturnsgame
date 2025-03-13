@@ -11,18 +11,57 @@ level_movements = {
 			predicate = function(instance, components)
 				return true
 			end,
-			collision_solved = function(instance, components, event)
--- 				local client_id = event.client_id
--- 				local correction = event.correction
--- 				local player_url = components.level_state:get_player_url(client_id)
--- 				local current_possition = go.get_position(player_url)
--- 				local new_position = current_possition + correction
--- 				go.set_position(new_position, player_url)
--- 
--- 				local movement = components.level_state:get_movement(client_id)
--- 				if movement then
--- 					movement.to_position = new_position
--- 				end
+			collision_detected = function(instance, components, event)
+				local a_url = event.a_url
+				local b_url = event.b_url
+
+				local a_client_id = components.level_state:get_client_id(a_url)
+				local b_client_id = components.level_state:get_client_id(b_url)
+
+				if a_client_id and b_client_id then
+					print(os.date() .. " [LEVEL_MOVEMENTS] Collission detected, a_client_id=" .. tostring(a_client_id) .. ", b_client_id=" .. tostring(b_client_id))
+
+					local a_movement = components.level_state:get_movement(a_client_id)
+					local a_position = event.a_position
+					local b_movement = components.level_state:get_movement(b_client_id)
+					local b_position = event.b_position
+					
+					if a_movement and not b_movement then
+						-- A is winner
+						local new_event = game_events:player_killed(b_client_id, a_client_id)
+						components.game_events:add_event(new_event)
+					elseif not a_movement and b_movement then
+						-- B is winner
+						local new_event = game_events:player_killed(a_client_id, b_client_id)
+						components.game_events:add_event(new_event)
+					elseif a_movement and b_movement then
+						local a_distance = vmath.length(a_movement.to_position - a_position)
+						local b_distance = vmath.length(b_movement.to_position - b_position)
+
+						if a_distance < b_distance then
+							-- A is winner
+							local new_event = game_events:player_killed(b_client_id, a_client_id)
+							components.game_events:add_event(new_event)
+						else
+							-- B is winner
+							local new_event = game_events:player_killed(a_client_id, b_client_id)
+							components.game_events:add_event(new_event)
+						end
+					end
+					
+					if a_movement then
+						if vmath.length(event.a_position - a_movement.from_position) > 32 then
+							a_movement.to_position = a_position
+						end
+					end
+					
+					
+					if b_movement then
+						if vmath.length(event.b_position - b_movement.from_position) > 32 then
+							b_movement.to_position = b_position
+						end
+					end
+				end
 			end,
 			update = function(instance, dt, components)
 				local movements_to_delete = {}

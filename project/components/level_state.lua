@@ -7,7 +7,9 @@ level_state = {
 		local collection_ids = nil
 		local bounds = nil
 		local players = nil
+		local index = nil
 		local movements = nil
+		local kills = nil
 		local spawn_points = nil
 		
 		return {
@@ -19,13 +21,25 @@ level_state = {
 			get_collection_ids = function(instance)
 				return collection_ids
 			end,
+			reset_state = function(instance)
+				qualifier = nil
+				collection_ids = nil
+				bounds = nil
+				players = nil
+				index = nil
+				movements = nil
+				kills = nil
+				spawn_points = nil
+			end,
 			set_level = function(instance, level_qualifier, level_collection_ids, level_bounds, level_spawn_points)
 				print(os.date() .. " [LEVEL_STATE] Set level, spawn_points=" .. #level_spawn_points)
 				qualifier = level_qualifier
 				collection_ids = level_collection_ids
 				bounds = level_bounds
 				players = {}
+				index = {}
 				movements = {}
+				kills = {}
 				spawn_points = level_spawn_points
 			end,
 			get_level_bounds = function(instance)
@@ -52,6 +66,9 @@ level_state = {
 					print(os.date() .. " [LEVEL_STATE] Collection ids is not set")
 				end
 			end,
+			get_players = function(instance)
+				return players
+			end,
 			get_player_factory_url = function(instance)
 				if collection_ids then
 					local player_factory = collection_ids["/player_factory"]
@@ -65,6 +82,9 @@ level_state = {
 					players[client_id] = {
 						collection_ids = player_collection_ids
 					}
+
+					local player_url = player_collection_ids["/match_player"]
+					index[player_url] = client_id
 				else
 					print(os.date() .. " [LEVEL_STATE] Players is not set")
 				end
@@ -96,6 +116,11 @@ level_state = {
 					end
 				else
 					print(os.date() .. " [LEVEL_STATE] Players is not set")
+				end
+			end,
+			get_client_id = function(instance, player_url)
+				if index then
+					return index[player_url]
 				end
 			end,
 			get_player_nickname_component_url = function(instance, client_id)
@@ -149,6 +174,10 @@ level_state = {
 			end,
 			delete_player = function(instance, client_id)
 				if players then
+					local player_url = instance:get_player_url(client_id)
+					if player_url then
+						index[player_url] = nil
+					end
 					players[client_id] = nil
 				else
 					print(os.date() .. " [LEVEL_STATE] Players is not set")
@@ -173,6 +202,19 @@ level_state = {
 			end,
 			delete_movement = function(instance, client_id)
 				movements[client_id] = nil
+			end,
+			add_kill = function(instance, client_id, killer_id)
+				kills[killer_id] = {
+					client_id = client_id
+				}
+				print(os.date() .. " [LEVEL_STATE] Kill was added, client_id=" .. tostring(client_id) .. ", killer_id=" .. killer_id)
+			end,
+			get_kill = function(instance, killer_id)
+				assert(kills, "level is not set")
+				return kills[killer_id]
+			end,
+			delete_kill = function(instance, killer_id)
+				kills[killer_id] = nil
 			end,
 		}
 	end

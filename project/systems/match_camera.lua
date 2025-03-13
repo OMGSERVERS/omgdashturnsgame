@@ -33,7 +33,7 @@ match_camera = {
 			local match_camera_component_url = components.screen_state:get_match_camera_component_url()
 			go.set(match_camera_component_url, "orthographic_zoom", scale)
 			
-			print(os.date() .. " [MATCH_CAMER] Set zoom, orthographic_zoom=" .. tostring(scale))
+			print(os.date() .. " [MATCH_CAMERA] Set zoom, orthographic_zoom=" .. tostring(scale))
 		end
 		
 		return {
@@ -42,14 +42,12 @@ match_camera = {
 				if not components.entrypoint_state:is_client_mode() then
 					return
 				end
-
-				if not components.screen_state:is_match_screen() then
-					return
-				end
 				
 				return true
 			end,
 			level_created = function(instance, components, event)
+				print(os.date() .. " [MATCH_CAMERA] Level created, set window listener")
+				
 				window.set_listener(function(self, event, data)
 					if event == window.WINDOW_EVENT_RESIZED then
 						reset_camera_zoom(components, data.width, data.height)
@@ -59,20 +57,28 @@ match_camera = {
 				local width, height = window.get_size()
 				reset_camera_zoom(components, width, height)
 			end,
+			leave_pressed = function(instance, components, event)
+				print(os.date() .. " [MATCH_CAMERA] Leave pressed, delete window listener")
+				window.set_listener(nil)
+			end,
 			update = function(instance, dt, components)
-				local client_id = components.client_state:get_client_id()
-				if client_id then
-					local match_camera_url = components.screen_state:get_match_camera_url()
-					local player_url = components.level_state:get_player_url(client_id)
 
-					if match_camera_url and player_url then
-						local camera_position = go.get_position(match_camera_url)
-						local player_position = bound_position(components, go.get_position(player_url))
+				if components.screen_state:is_match_screen() then
+					
+					local client_id = components.client_state:get_client_id()
+					if client_id then
+						local match_camera_url = components.screen_state:get_match_camera_url()
+						local player_url = components.level_state:get_player_url(client_id)
 
-						local new_position = camera_position + (player_position - camera_position) * match_camera.CAMERA_SMOOTH
-						new_position.z = camera_position.z
+						if match_camera_url and player_url then
+							local camera_position = go.get_position(match_camera_url)
+							local player_position = bound_position(components, go.get_position(player_url))
 
-						go.set_position(new_position, match_camera_url)
+							local new_position = camera_position + (player_position - camera_position) * match_camera.CAMERA_SMOOTH
+							new_position.z = camera_position.z
+
+							go.set_position(new_position, match_camera_url)
+						end
 					end
 				end
 			end

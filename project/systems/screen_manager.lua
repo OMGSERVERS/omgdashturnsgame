@@ -99,11 +99,15 @@ screen_manager = {
 				print(os.date() .. " [SCREEN_MANAGER] State received")
 
 				if components.client_state:is_getting_state_state() then
+					components.level_state:reset_state()
+					
 					local new_screen_ids = create_screen(components, screen_manager.MATCH_SCREEN_FACTORY)
 					components.screen_state:set_match_screen(new_screen_ids)
 
 					local new_event = game_events:match_screen_created()
 					components.game_events:add_event(new_event)
+				else
+					print(os.date() .. " [SCREEN_MANAGER] State was received but client is not getting state, skip it")
 				end
 			end,
 			leave_pressed = function(instance, components, event)

@@ -37,7 +37,8 @@ game_events = {
 	PLAYER_CREATED = "player_created",
 	MOVEMENT_CREATED = "movement_created",
 	PLAYER_MOVED = "player_moved",
-	COLLISION_SOLVED = "collision_solved",
+	COLLISION_DETECTED = "collision_detected",
+	PLAYER_KILLED = "player_killed",
 	-- Methods
 	client_started = function(self)
 		return {
@@ -240,11 +241,20 @@ game_events = {
 			y = y,
 		}
 	end,
-	collision_solved = function(self, client_id, correction)
+	collision_detected = function(self, a_url, a_position, b_url, b_position)
 		return {
-			id = game_events.COLLISION_SOLVED,
+			id = game_events.COLLISION_DETECTED,
+			a_url = a_url,
+			a_position = a_position,
+			b_url = b_url,
+			b_position = b_position,
+		}
+	end,
+	player_killed = function(self, client_id, killer_id)
+		return {
+			id = game_events.PLAYER_KILLED,
 			client_id = client_id,
-			correction = correction,
+			killer_id = killer_id,
 		}
 	end,
 }

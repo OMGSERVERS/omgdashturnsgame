@@ -96,9 +96,12 @@ match_state = {
 				events[#events + 1] = match_event
 			end,
 			kill_player = function(instance, client_id, killer_id)
-				state.players[client_id] = nil
-				local match_event = match_events:player_killed(client_id, killer_id)
-				events[#events + 1] = match_event
+				local player = state.players[client_id]
+				if player then
+					state.players[client_id] = nil
+					local match_event = match_events:player_killed(client_id, killer_id)
+					events[#events + 1] = match_event
+				end
 			end,
 			delete_player = function(instance, client_id)
 				local player = state.players[client_id]

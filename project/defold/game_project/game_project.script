@@ -30,10 +30,5 @@ function on_message(self, message_id, message, sender)
 		local y = message.y
 		local new_event = game_events:player_pointed(x, y)
 		self.game_components.game_events:add_event(new_event)
-	elseif message_id == hash(game_project.COLLISION_SOLVED) then
-		local client_id = message.client_id
-		local correction = message.correction
-		local new_event = game_events:collision_solved(client_id, correction)
-		self.game_components.game_events:add_event(new_event)
 	end
 end
