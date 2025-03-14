@@ -1,14 +1,15 @@
+local level_wrapper = require("project.utils.level_wrapper")
+
 local level_state
 level_state = {
 	FOREST_LEVEL = "forest_level",
 	-- Methods
 	create = function(self)
 		local qualifier = nil
-		local collection_ids = nil
+		local wrapped_level = nil
 		local bounds = nil
 		local players = nil
 		local index = nil
-		local movements = nil
 		local kills = nil
 		local spawn_points = nil
 		
@@ -18,27 +19,28 @@ level_state = {
 			get_level_qualifier = function(instance)
 				return qualifier
 			end,
-			get_collection_ids = function(instance)
-				return collection_ids
+			get_wrapped_level = function(instance)
+				return wrapped_level
 			end,
 			reset_state = function(instance)
 				qualifier = nil
-				collection_ids = nil
+				wrapped_level = nil
 				bounds = nil
 				players = nil
 				index = nil
-				movements = nil
+
 				kills = nil
 				spawn_points = nil
 			end,
-			set_level = function(instance, level_qualifier, level_collection_ids, level_bounds, level_spawn_points)
+			set_level = function(instance, level_qualifier, level_wrapped_level, level_bounds, level_spawn_points)
+				assert(level_wrapped_level.qualifier == level_wrapper.INSTANCE_QUALIFIER, "wrapped level qualifier is incorrect")
+				
 				print(os.date() .. " [LEVEL_STATE] Set level, spawn_points=" .. #level_spawn_points)
 				qualifier = level_qualifier
-				collection_ids = level_collection_ids
+				wrapped_level = level_wrapped_level
 				bounds = level_bounds
 				players = {}
 				index = {}
-				movements = {}
 				kills = {}
 				spawn_points = level_spawn_points
 			end,
@@ -50,32 +52,8 @@ level_state = {
 					return spawn_points[math.random(#spawn_points)]
 				end
 			end,
-			get_camera_point_url = function(instance)
-				if collection_ids then
-					local camera_point = collection_ids["/camera_point"]
-					return camera_point
-				else
-					print(os.date() .. " [LEVEL_STATE] Collection ids is not set")
-				end
-			end,
-			get_level_tilemap_url = function(instance)
-				if collection_ids then
-					local level_tilemap = collection_ids["/level_tilemap"]
-					return msg.url(nil, level_tilemap, "level_tilemap")
-				else
-					print(os.date() .. " [LEVEL_STATE] Collection ids is not set")
-				end
-			end,
 			get_players = function(instance)
 				return players
-			end,
-			get_player_factory_url = function(instance)
-				if collection_ids then
-					local player_factory = collection_ids["/player_factory"]
-					return msg.url(nil, player_factory, "player_factory")
-				else
-					print(os.date() .. " [LEVEL_STATE] Collection ids is not set")
-				end
 			end,
 			add_player = function(instance, client_id, player_collection_ids)
 				if players then

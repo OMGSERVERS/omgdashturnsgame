@@ -19,7 +19,8 @@ match_screen = {
 				local match_camera_url = components.screen_state:get_match_camera_url()
 				local camera_position = go.get_position(match_camera_url)
 
-				local camera_point_url = components.level_state:get_camera_point_url()
+				local wrapped_level = components.level_state:get_wrapped_level()
+				local camera_point_url = wrapped_level:get_camera_point_url()
 				local point_position = go.get_position(camera_point_url)
 
 				local initial_position = vmath.vector3(point_position.x, point_position.y, camera_position.z)

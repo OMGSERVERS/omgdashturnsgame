@@ -9,8 +9,10 @@ death_match = {
 	create = function(self)
 
 		local create_player = function(components, client_id, position)
-			local player_factory_url = components.level_state:get_player_factory_url()
-			local player_collection_ids = collectionfactory.create(player_factory_url, position)
+			local wrapped_level = components.level_state:get_wrapped_level()
+
+			local player_factory_component_url = wrapped_level:get_player_factory_component_url()
+			local player_collection_ids = collectionfactory.create(player_factory_component_url, position)
 			pprint(player_collection_ids)
 
 			components.level_state:add_player(client_id, player_collection_ids)

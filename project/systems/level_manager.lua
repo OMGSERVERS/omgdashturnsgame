@@ -1,4 +1,6 @@
+local level_wrapper = require("project.utils.level_wrapper")
 local game_events = require("project.messages.game_events")
+
 
 local level_manager
 level_manager = {
@@ -8,13 +10,9 @@ level_manager = {
 	-- Methods
 	create = function(self)
 		local delete_level = function(components)
-			local level_ids = components.level_state:get_collection_ids()
-			if level_ids then
-				print(os.date() .. " [LEVEL_MANAGER] Delete current level collection")
-				pprint(level_ids)
-				for key, level_go_id in pairs(level_ids) do
-					go.delete(level_go_id)
-				end
+			local wrapped_level = components.level_state:get_wrapped_level()
+			if wrapped_level then
+				wrapped_level:delete_collectin_gos()
 			end
 
 			local players = components.level_state:get_players()
@@ -33,6 +31,7 @@ level_manager = {
 			local new_event = game_events:level_deleted()
 			components.game_events:add_event(new_event)
 		end
+		
 		local create_level = function(components, level_qualifier)
 			delete_level(components)
 			
@@ -40,7 +39,8 @@ level_manager = {
 			local new_level_ids = collectionfactory.create(level_factory_url)
 			pprint(new_level_ids)
 
-			local level_tilemap_component_url = msg.url(nil, new_level_ids["/level_tilemap"], "level_tilemap")
+			local wrapped_level = level_wrapper:create(new_level_ids)
+			local level_tilemap_component_url = wrapped_level:get_level_tilemap_component_url()
 			local x, y, w, h = tilemap.get_bounds(level_tilemap_component_url)
 			local level_bounds = {
 				x = x * level_manager.TILE_W - level_manager.TILE_W,
@@ -66,7 +66,7 @@ level_manager = {
 				end
 			end
 			
-			components.level_state:set_level(level_qualifier, new_level_ids, level_bounds, spawn_points)
+			components.level_state:set_level(level_qualifier, wrapped_level, level_bounds, spawn_points)
 			
 			local new_event = game_events:level_created()
 			components.game_events:add_event(new_event)
