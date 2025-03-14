@@ -57,8 +57,8 @@ match_camera = {
 				local width, height = window.get_size()
 				reset_camera_zoom(components, width, height)
 			end,
-			leave_pressed = function(instance, components, event)
-				print(os.date() .. " [MATCH_CAMERA] Leave pressed, delete window listener")
+			level_deleted = function(instance, components, event)
+				print(os.date() .. " [MATCH_CAMERA] Level deleted, delete window listener")
 				window.set_listener(nil)
 			end,
 			update = function(instance, dt, components)

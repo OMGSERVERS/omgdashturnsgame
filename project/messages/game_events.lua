@@ -20,7 +20,6 @@ game_events = {
 	STATE_RECEIVED = "state_received",
 	EVENTS_RECEIVED = "events_received",
 	JOIN_PRESSED = "join_pressed",
-	LEVEL_CREATED = "level_created",
 	LEAVE_PRESSED = "leave_pressed",
 	PLAYER_POINTED = "player_pointed",
 	POINTER_PLACED = "pointer_placed",
@@ -34,6 +33,8 @@ game_events = {
 	MATCH_OVER = "match_over",
 	STEP_SIMULATED = "step_simulated",
 	-- Shared
+	LEVEL_CREATED = "level_created",
+	LEVEL_DELETED = "level_deleted",
 	PLAYER_CREATED = "player_created",
 	MOVEMENT_CREATED = "movement_created",
 	PLAYER_MOVED = "player_moved",
@@ -150,6 +151,11 @@ game_events = {
 	level_created = function(self)
 		return {
 			id = game_events.LEVEL_CREATED,
+		}
+	end,
+	level_deleted = function(self)
+		return {
+			id = game_events.LEVEL_DELETED,
 		}
 	end,
 	server_started = function(self)

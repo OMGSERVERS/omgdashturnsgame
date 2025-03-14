@@ -183,26 +183,6 @@ level_state = {
 					print(os.date() .. " [LEVEL_STATE] Players is not set")
 				end
 			end,
-			add_movement = function(instance, client_id, movement)
-				assert(players, "level is not set")
-				local player = players[client_id]
-				if player then
-					movements[client_id] = movement
-					print(os.date() .. " [LEVEL_STATE] Movement was added, client_id=" .. tostring(client_id))
-				else
-					print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-				end
-			end,
-			get_movement = function(instance, client_id)
-				assert(movements, "level is not set")
-				return movements[client_id]
-			end,
-			get_movements = function(instance)
-				return movements
-			end,
-			delete_movement = function(instance, client_id)
-				movements[client_id] = nil
-			end,
 			add_kill = function(instance, client_id, killer_id)
 				kills[killer_id] = {
 					client_id = client_id

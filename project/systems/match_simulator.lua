@@ -26,8 +26,8 @@ match_simulator = {
 				print(os.date() .. " [MATCH_SCREEN] Level created, set physics listener")
 				physics.set_listener(physics_listener:create(components))
 			end,
-			leave_pressed = function(instance, components, event)
-				print(os.date() .. " [MATCH_CAMERA] Leave pressed, delete physics listener")
+			level_deleted = function(instance, components, event)
+				print(os.date() .. " [MATCH_CAMERA] Level deleted, delete physics listener")
 				physics.set_listener(nil)
 			end,
 			step_simulated = function(instance, components, event)

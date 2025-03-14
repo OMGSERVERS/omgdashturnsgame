@@ -1,4 +1,5 @@
 local defold_match_player = require("project.defold.match_player.match_player")
+local movement_factory = require("project.utils.movement_factory")
 local match_requests = require("project.messages.match_requests")
 local game_events = require("project.messages.game_events")
 local match_events = require("project.messages.match_events")
@@ -55,12 +56,9 @@ death_match = {
 					to_position = hit_position
 				end
 			end
-			
-			local movement = {
-				from_position = from_position,
-				to_position = to_position,
-			}
-			components.level_state:add_movement(client_id, movement)
+
+			local movement = movement_factory:create(client_id, from_position, to_position)
+			components.level_movements:add_movement(movement)
 
 			local new_game_event = game_events:movement_created(client_id, x, y)
 			components.game_events:add_event(new_game_event)
