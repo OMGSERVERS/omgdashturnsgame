@@ -15,8 +15,8 @@ level_movements = {
 				local a_url = event.a_url
 				local b_url = event.b_url
 
-				local a_client_id = components.level_state:get_client_id(a_url)
-				local b_client_id = components.level_state:get_client_id(b_url)
+				local a_client_id = components.level_players:get_client_id(a_url)
+				local b_client_id = components.level_players:get_client_id(b_url)
 
 				if a_client_id and b_client_id then
 					print(os.date() .. " [LEVEL_MOVEMENTS] Collission detected, a_client_id=" .. tostring(a_client_id) .. ", b_client_id=" .. tostring(b_client_id))
@@ -75,30 +75,32 @@ level_movements = {
 				local client_ids = {}
 				local movements = components.level_movements:get_movements()
 				for client_id, movement in pairs(movements) do
-					local wrapped_player = components.level_state:get_wrapped_player(client_id)
-					local player_url = wrapped_player:get_player_url()
+					local wrapped_player = components.level_players:get_wrapped_player(client_id)
+					if wrapped_player then
+						local player_url = wrapped_player:get_player_url()
 
-					local current_possition = go.get_position(player_url)
-					local from_position = movement:get_from_position()
-					local to_position = movement:get_to_position()
+						local current_possition = go.get_position(player_url)
+						local from_position = movement:get_from_position()
+						local to_position = movement:get_to_position()
 
-					local total_distance_sqr = movement:get_distance_sqr()
-					local current_distance_sqr = vmath.length_sqr(current_possition - from_position)
+						local total_distance_sqr = movement:get_distance_sqr()
+						local current_distance_sqr = vmath.length_sqr(current_possition - from_position)
 
-					if current_distance_sqr >= total_distance_sqr then
-						print(os.date() .. " [LEVEL_MOVEMENTS] Player moved, client_id=" .. tostring(client_id))
+						if current_distance_sqr >= total_distance_sqr then
+							print(os.date() .. " [LEVEL_MOVEMENTS] Player moved, client_id=" .. tostring(client_id))
 
-						-- set final position
-						go.set_position(to_position, player_url)
+							-- set final position
+							go.set_position(to_position, player_url)
 
-						local new_game_event = game_events:player_moved(client_id, current_possition.x, current_possition.y)
-						components.game_events:add_event(new_game_event)
+							local new_game_event = game_events:player_moved(client_id, current_possition.x, current_possition.y)
+							components.game_events:add_event(new_game_event)
 
-						client_ids[#client_ids + 1] = client_id
-					else
-						local direction = vmath.normalize(to_position - from_position)
-						local new_position = current_possition + direction * (level_movements.SPEED * dt)
-						go.set_position(new_position, player_url)
+							client_ids[#client_ids + 1] = client_id
+						else
+							local direction = vmath.normalize(to_position - from_position)
+							local new_position = current_possition + direction * (level_movements.SPEED * dt)
+							go.set_position(new_position, player_url)
+						end
 					end
 				end
 

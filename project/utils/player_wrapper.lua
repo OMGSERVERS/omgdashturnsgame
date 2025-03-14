@@ -27,6 +27,10 @@ player_wrapper = {
 			get_player_url = function(instance)
 				return collection_ids["/match_player"]
 			end,
+			get_collision_object_component_url = function(instance)
+				local match_player_url = collection_ids["/match_player"]
+				return msg.url(nil, match_player_url, "collisionobject")
+			end,
 			get_player_nickname_component_url = function(instance)
 				local match_player_url = collection_ids["/match_player"]
 				return msg.url(nil, match_player_url, "nickname")

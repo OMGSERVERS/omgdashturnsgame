@@ -65,7 +65,7 @@ match_camera = {
 				if components.screen_state:is_match_screen() then
 					local client_id = components.client_state:get_client_id()
 					if client_id then
-						local wrapped_player = components.level_state:get_wrapped_player(client_id)
+						local wrapped_player = components.level_players:get_wrapped_player(client_id)
 						if wrapped_player then
 							local match_camera_url = components.screen_state:get_match_camera_url()
 							local player_url = wrapped_player:get_player_url()

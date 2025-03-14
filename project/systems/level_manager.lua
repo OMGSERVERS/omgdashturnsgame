@@ -15,7 +15,7 @@ level_manager = {
 				wrapped_level:delete_collection_gos()
 			end
 
-			local wrapped_players = components.level_state:get_wrapped_players()
+			local wrapped_players = components.level_players:get_wrapped_players()
 			if wrapped_players then
 				for client_id, wrapped_player in pairs(wrapped_players) do
 					wrapped_player:delete_collection_gos()
@@ -23,6 +23,7 @@ level_manager = {
 			end
 
 			components.level_state:reset_component()
+			components.level_players:reset_component()
 			components.level_movements:reset_component()
 			components.level_kills:reset_component()
 

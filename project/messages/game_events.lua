@@ -36,6 +36,7 @@ game_events = {
 	LEVEL_CREATED = "level_created",
 	LEVEL_DELETED = "level_deleted",
 	PLAYER_CREATED = "player_created",
+	PLAYER_DELETED = "player_deleted",
 	MOVEMENT_CREATED = "movement_created",
 	PLAYER_MOVED = "player_moved",
 	COLLISION_DETECTED = "collision_detected",
@@ -209,6 +210,13 @@ game_events = {
 		assert(client_id, "client_id is nil")
 		return {
 			id = game_events.PLAYER_CREATED,
+			client_id = client_id,
+		}
+	end,
+	player_deleted = function(self, client_id)
+		assert(client_id, "client_id is nil")
+		return {
+			id = game_events.PLAYER_DELETED,
 			client_id = client_id,
 		}
 	end,
