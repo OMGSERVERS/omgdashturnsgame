@@ -1,5 +1,5 @@
 local game_project = require("project.defold.game_project.game_project")
-local lobby_screen = require("game.lobby_screen.lobby_screen")
+local lobby_screen = require("project.defold.lobby_screen.lobby_screen")
 local input = require("druid.extended.input")
 local druid = require("druid.druid")
 druid.register("input", input)

@@ -1,6 +1,6 @@
 components {
   id: "level_tilemap"
-  component: "/game/forest_level/forest_tilemap.tilemap"
+  component: "/project/defold/forest_level/forest_level/forest_tilemap.tilemap"
 }
 embedded_components {
   id: "collisionobject"
