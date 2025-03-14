@@ -62,7 +62,6 @@ match_camera = {
 				window.set_listener(nil)
 			end,
 			update = function(instance, dt, components)
-
 				if components.screen_state:is_match_screen() then
 					local client_id = components.client_state:get_client_id()
 					if client_id then

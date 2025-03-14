@@ -8,16 +8,16 @@ movement_factory = {
 		
 		return {
 			qualifier = movement_factory.INSTANCE_QUALIFIER,
-			get_client_id = function()
+			get_client_id = function(instance)
 				return client_id
 			end,
-			get_from_position = function()
+			get_from_position = function(instance)
 				return from_position
 			end,
-			get_to_position = function()
+			get_to_position = function(instance)
 				return to_position
 			end,
-			set_to_position = function(new_to_position)
+			set_to_position = function(instance, new_to_position)
 				pprint(new_to_position)
 				to_position = new_to_position
 			end,
