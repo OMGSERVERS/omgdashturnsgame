@@ -12,7 +12,6 @@ level_state = {
 
 		local bounds = nil
 		
-		local kills = {}
 		local spawn_points = {}
 		
 		return {
@@ -31,7 +30,6 @@ level_state = {
 				players_index = {}
 				
 				bounds = nil
-				kills = {}
 				spawn_points = {}
 			end,
 			set_level = function(instance, level_qualifier, level_wrapped_level, level_bounds, level_spawn_points)
@@ -79,19 +77,6 @@ level_state = {
 					players_index[player_url] = nil
 				end
 				wrapped_players[client_id] = nil
-			end,
-			add_kill = function(instance, client_id, killer_id)
-				kills[killer_id] = {
-					client_id = client_id
-				}
-				print(os.date() .. " [LEVEL_STATE] Kill was added, client_id=" .. tostring(client_id) .. ", killer_id=" .. killer_id)
-			end,
-			get_kill = function(instance, killer_id)
-				assert(kills, "level is not set")
-				return kills[killer_id]
-			end,
-			delete_kill = function(instance, killer_id)
-				kills[killer_id] = nil
 			end,
 		}
 	end

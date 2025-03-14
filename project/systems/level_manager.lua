@@ -23,6 +23,8 @@ level_manager = {
 			end
 
 			components.level_state:reset_component()
+			components.level_movements:reset_component()
+			components.level_kills:reset_component()
 
 			local new_event = game_events:level_deleted()
 			components.game_events:add_event(new_event)

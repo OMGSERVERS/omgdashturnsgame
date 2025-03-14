@@ -15,6 +15,7 @@ local match_simulator = require("project.components.match_simulator")
 local match_state = require("project.components.match_state")
 local level_state = require("project.components.level_state")
 local level_movements = require("project.components.level_movements")
+local level_kills = require("project.components.level_kills")
 local death_match = require("project.components.death_match")
 
 local game_components
@@ -38,6 +39,7 @@ game_components = {
 			match_state = match_state:create(),
 			level_state = level_state:create(),
 			level_movements = level_movements:create(),
+			level_kills = level_kills:create(),
 			death_match = death_match:create(),
 		}
 

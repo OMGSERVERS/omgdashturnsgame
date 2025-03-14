@@ -198,7 +198,7 @@ death_match = {
 						local killer_id = event.killer_id
 
 						print(os.date() .. " [DEATH_MATCH] Player killed, client_id=" .. tostring(client_id) .. ", killer_id=" .. killer_id)
-						components.level_state:add_kill(client_id, killer_id)
+						components.level_kills:add_kill(killer_id, client_id)
 
 					elseif qualifier == match_events.PLAYER_DELETED then
 						local client_id = event.client_id
@@ -224,7 +224,7 @@ death_match = {
 				components.match_state:move_player(client_id, x, y)
 				components.death_match:decrease_movements()
 
-				local kill = components.level_state:get_kill(client_id)
+				local kill = components.level_kills:get_kill(client_id)
 				if kill then
 					local new_event = game_events:player_killed(kill.client_id, client_id)
 					components.game_events:add_event(new_event)
@@ -237,7 +237,7 @@ death_match = {
 				delete_player(components, client_id)
 				components.match_state:kill_player(client_id, killer_id)
 
-				components.level_state:delete_kill(client_id)
+				components.level_kills:delete_kill(client_id)
 			end,
 			update = function(instance, dt, components)
 				if components.death_match:is_simulation_state() then
