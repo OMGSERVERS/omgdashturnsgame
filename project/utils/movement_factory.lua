@@ -18,11 +18,12 @@ movement_factory = {
 				return to_position
 			end,
 			set_to_position = function(new_to_position)
+				pprint(new_to_position)
 				to_position = new_to_position
 			end,
 			get_distance_sqr = function(instance)
 				return vmath.length_sqr(to_position - from_position)
-			end
+			end,
 		}
 	end
 }

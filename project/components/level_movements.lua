@@ -13,7 +13,7 @@ level_movements = {
 				movements = {}
 			end,
 			add_movement = function(instance, movement)
-				assert(movement.qualifier == movement_factory.INSTANCE_QUALIFIER, "it is not a movement")
+				assert(movement.qualifier == movement_factory.INSTANCE_QUALIFIER, "movement.qualifier is incorrect")
 				local client_id = movement:get_client_id()
 				movements[client_id] = movement
 				print(os.date() .. " [LEVEL_MOVEMENTS] Movement was added, client_id=" .. tostring(client_id))

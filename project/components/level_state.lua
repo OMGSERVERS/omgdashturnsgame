@@ -7,11 +7,13 @@ level_state = {
 	create = function(self)
 		local qualifier = nil
 		local wrapped_level = nil
+		local wrapped_players = {}
+		local players_index = {}
+
 		local bounds = nil
-		local players = nil
-		local index = nil
-		local kills = nil
-		local spawn_points = nil
+		
+		local kills = {}
+		local spawn_points = {}
 		
 		return {
 			qualifier = "level_state",
@@ -22,26 +24,29 @@ level_state = {
 			get_wrapped_level = function(instance)
 				return wrapped_level
 			end,
-			reset_state = function(instance)
+			reset_component = function(instance)
 				qualifier = nil
 				wrapped_level = nil
+				wrapped_players = {}
+				players_index = {}
+				
 				bounds = nil
-				players = nil
-				index = nil
-
-				kills = nil
-				spawn_points = nil
+				kills = {}
+				spawn_points = {}
 			end,
 			set_level = function(instance, level_qualifier, level_wrapped_level, level_bounds, level_spawn_points)
+				assert(instance, "instance is nil")
+				assert(level_qualifier, "level_qualifier is nil")
+				assert(level_wrapped_level, "level_wrapped_level is nil")
+				assert(level_bounds, "level_bounds is nil")
+				assert(level_spawn_points, "level_spawn_points is nil")
+				
 				assert(level_wrapped_level.qualifier == level_wrapper.INSTANCE_QUALIFIER, "wrapped level qualifier is incorrect")
 				
 				print(os.date() .. " [LEVEL_STATE] Set level, spawn_points=" .. #level_spawn_points)
 				qualifier = level_qualifier
 				wrapped_level = level_wrapped_level
 				bounds = level_bounds
-				players = {}
-				index = {}
-				kills = {}
 				spawn_points = level_spawn_points
 			end,
 			get_level_bounds = function(instance)
@@ -52,114 +57,28 @@ level_state = {
 					return spawn_points[math.random(#spawn_points)]
 				end
 			end,
-			get_players = function(instance)
-				return players
+			get_wrapped_players = function(instance)
+				return wrapped_players
 			end,
-			add_player = function(instance, client_id, player_collection_ids)
-				if players then
-					players[client_id] = {
-						collection_ids = player_collection_ids
-					}
-
-					local player_url = player_collection_ids["/match_player"]
-					index[player_url] = client_id
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
+			add_wrapped_player = function(instance, wrapped_player)
+				local client_id = wrapped_player:get_client_id()
+				wrapped_players[client_id] = wrapped_player
+				local player_url = wrapped_player:get_player_url()
+				players_index[player_url] = client_id
 			end,
-			get_player = function(instance, client_id)
-				if players then
-					return players[client_id]
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
-			end,
-			get_player_collection_ids = function(instance, client_id)
-				if players then
-					local player = players[client_id]
-					if player then
-						return player.collection_ids
-					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-					end
-				end
-			end,
-			get_player_url = function(instance, client_id)
-				if players then
-					local player = players[client_id]
-					if player then
-						return player.collection_ids["/match_player"]
-					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-					end
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
+			get_wrapped_player = function(instance, client_id)
+				return wrapped_players[client_id]
 			end,
 			get_client_id = function(instance, player_url)
-				if index then
-					return index[player_url]
-				end
-			end,
-			get_player_nickname_component_url = function(instance, client_id)
-				if players then
-					local player = players[client_id]
-					if player then
-						local match_player_url = player.collection_ids["/match_player"]
-						return msg.url(nil, match_player_url, "nickname")
-					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-					end
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
-			end,
-			get_player_skin_url = function(instance, client_id)
-				if players then
-					local player = players[client_id]
-					if player then
-						return player.collection_ids["/skin"]
-					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-					end
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
-			end,
-			get_weapon_left_hand_url = function(instance, client_id)
-				if players then
-					local player = players[client_id]
-					if player then
-						return player.collection_ids["/weapon_left_hand"]
-					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-					end
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
-			end,
-			get_weapon_right_hand_url = function(instance, client_id)
-				if players then
-					local player = players[client_id]
-					if player then
-						return player.collection_ids["/weapon_right_hand"]
-					else
-						print(os.date() .. " [LEVEL_STATE] Player was not found, client_id=" .. tostring(client_id))
-					end
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
-				end
+				return players_index[player_url]
 			end,
 			delete_player = function(instance, client_id)
-				if players then
-					local player_url = instance:get_player_url(client_id)
-					if player_url then
-						index[player_url] = nil
-					end
-					players[client_id] = nil
-				else
-					print(os.date() .. " [LEVEL_STATE] Players is not set")
+				local wrapped_player = instance:get_wrapped_player(client_id)
+				if wrapped_player then
+					local player_url = wrapped_player:get_player_url()
+					players_index[player_url] = nil
 				end
+				wrapped_players[client_id] = nil
 			end,
 			add_kill = function(instance, client_id, killer_id)
 				kills[killer_id] = {

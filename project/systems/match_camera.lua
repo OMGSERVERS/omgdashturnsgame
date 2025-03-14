@@ -64,20 +64,22 @@ match_camera = {
 			update = function(instance, dt, components)
 
 				if components.screen_state:is_match_screen() then
-					
 					local client_id = components.client_state:get_client_id()
 					if client_id then
-						local match_camera_url = components.screen_state:get_match_camera_url()
-						local player_url = components.level_state:get_player_url(client_id)
+						local wrapped_player = components.level_state:get_wrapped_player(client_id)
+						if wrapped_player then
+							local match_camera_url = components.screen_state:get_match_camera_url()
+							local player_url = wrapped_player:get_player_url()
 
-						if match_camera_url and player_url then
-							local camera_position = go.get_position(match_camera_url)
-							local player_position = bound_position(components, go.get_position(player_url))
+							if match_camera_url and player_url then
+								local camera_position = go.get_position(match_camera_url)
+								local player_position = bound_position(components, go.get_position(player_url))
 
-							local new_position = camera_position + (player_position - camera_position) * match_camera.CAMERA_SMOOTH
-							new_position.z = camera_position.z
+								local new_position = camera_position + (player_position - camera_position) * match_camera.CAMERA_SMOOTH
+								new_position.z = camera_position.z
 
-							go.set_position(new_position, match_camera_url)
+								go.set_position(new_position, match_camera_url)
+							end
 						end
 					end
 				end

@@ -99,7 +99,7 @@ screen_manager = {
 				print(os.date() .. " [SCREEN_MANAGER] State received")
 
 				if components.client_state:is_getting_state_state() then
-					components.level_state:reset_state()
+					components.level_state:reset_component()
 					
 					local new_screen_ids = create_screen(components, screen_manager.MATCH_SCREEN_FACTORY)
 					components.screen_state:set_match_screen(new_screen_ids)

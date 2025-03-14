@@ -3,6 +3,7 @@ local movement_factory = require("project.utils.movement_factory")
 local match_requests = require("project.messages.match_requests")
 local game_events = require("project.messages.game_events")
 local match_events = require("project.messages.match_events")
+local player_wrapper = require("project.utils.player_wrapper")
 
 local death_match
 death_match = {
@@ -15,25 +16,23 @@ death_match = {
 			local player_collection_ids = collectionfactory.create(player_factory_component_url, position)
 			pprint(player_collection_ids)
 
-			components.level_state:add_player(client_id, player_collection_ids)
+			local wrapped_player = player_wrapper:create(client_id, player_collection_ids)
+			components.level_state:add_wrapped_player(wrapped_player)
 
 			local new_game_event = game_events:player_created(client_id)
 			components.game_events:add_event(new_game_event)
 
-			local player_url = components.level_state:get_player_url(client_id)
+			local player_url = wrapped_player:get_player_url()
 			-- just play events from the server in client mode
 			local disable_collisions = components.entrypoint_state:is_client_mode()
 			defold_match_player:setup_player(player_url, client_id, disable_collisions)
 		end
 
 		local delete_player = function(components, client_id)
-			local player_collection_ids = components.level_state:get_player_collection_ids(client_id)
-			if player_collection_ids then
+			local wrapped_player = components.level_state:get_wrapped_player(client_id)
+			if wrapped_player then
 				print(os.date() .. " [DEATH_MATCH] Delete player, client_id=" .. client_id)
-				pprint(player_collection_ids)
-				for key, go_id in pairs(player_collection_ids) do
-					go.delete(go_id)
-				end
+				wrapped_player:delete_collection_gos()
 				components.level_state:delete_player(client_id)
 			else
 				print(os.date() .. " [DEATH_MATCH] Player was not found to delete, client_id=" .. client_id)
@@ -41,29 +40,32 @@ death_match = {
 		end
 
 		local create_movement = function(components, client_id, x, y)
-			local player_url = components.level_state:get_player_url(client_id)
-			local from_position = go.get_position(player_url)
+			local wrapped_player = components.level_state:get_wrapped_player(client_id)
+			if wrapped_player then
+				local player_url = wrapped_player:get_player_url()
+				local from_position = go.get_position(player_url)
 
-			local z = y
-			local to_position = vmath.vector3(x, y, z)
+				local z = y
+				local to_position = vmath.vector3(x, y, z)
 
-			local result = physics.raycast(from_position, to_position, { hash("level") })
-			if result then
-				local hit_position = result.position
-				hit_position.z = hit_position.y
-				local distance = vmath.length(hit_position - from_position)
-				if distance < 16 then
-					to_position = from_position
-				else
-					to_position = hit_position
+				local result = physics.raycast(from_position, to_position, { hash("level") })
+				if result then
+					local hit_position = result.position
+					hit_position.z = hit_position.y
+					local distance = vmath.length(hit_position - from_position)
+					if distance < 16 then
+						to_position = from_position
+					else
+						to_position = hit_position
+					end
 				end
+
+				local movement = movement_factory:create(client_id, from_position, to_position)
+				components.level_movements:add_movement(movement)
+
+				local new_game_event = game_events:movement_created(client_id, x, y)
+				components.game_events:add_event(new_game_event)
 			end
-
-			local movement = movement_factory:create(client_id, from_position, to_position)
-			components.level_movements:add_movement(movement)
-
-			local new_game_event = game_events:movement_created(client_id, x, y)
-			components.game_events:add_event(new_game_event)
 		end
 		
 		return {
@@ -118,7 +120,7 @@ death_match = {
 						local y = request.y
 
 						print(os.date() .. " [DEATH_MATCH] Move player, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y)
-						if not components.level_state:get_movement(client_id) then
+						if not components.level_movements:get_movement(client_id) then
 							components.death_match:increase_movements()
 						end
 						create_movement(components, client_id, x, y)

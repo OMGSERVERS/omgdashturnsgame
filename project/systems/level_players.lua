@@ -1,17 +1,14 @@
-
-local game_events = require("project.messages.game_events")
-
-local level_movements
-level_movements = {
+local level_players
+level_players = {
 	SPEED = 2,
 	-- Methods
 	create = function(self)
 		local setup_skin = function(components, client_id, flip, attack_angle)
-			local player_collection_ids = components.level_state:get_player_collection_ids(client_id)
-			if player_collection_ids then
-				local player_skin_url = player_collection_ids["/skin"]
-				local weapon_left_hand_url = player_collection_ids["/weapon_left_hand"]
-				local weapon_right_hand_url = player_collection_ids["/weapon_right_hand"]
+			local wrapped_player = components.level_state:get_wrapped_player(client_id)
+			if wrapped_player then
+				local player_skin_url = wrapped_player:get_player_skin_url()
+				local weapon_left_hand_url = wrapped_player:get_weapon_left_hand_url()
+				local weapon_right_hand_url = wrapped_player:get_weapon_right_hand_url()
 				sprite.set_hflip(player_skin_url, flip)
 				if flip then
 					msg.post(weapon_left_hand_url, "enable")
@@ -30,23 +27,25 @@ level_movements = {
 		end
 		
 		return {
-			qualifier = "level_movements",
+			qualifier = "level_players",
 			predicate = function(instance, components)
 				return true
 			end,
 			player_created = function(instance, components, event)
 				local client_id = event.client_id
-				print(os.date() .. " [LEVEL_MOVEMENTS] Player created, client_id=" .. tostring(client_id))
+				print(os.date() .. " [LEVEL_PLAYERS] Player created, client_id=" .. tostring(client_id))
 
+				local wrapped_player = components.level_state:get_wrapped_player(client_id)
+				
 				local nickname = components.match_state:get_nickname(client_id)
-				local player_nickname_component_url = components.level_state:get_player_nickname_component_url(client_id)
+				local player_nickname_component_url = wrapped_player:get_player_nickname_component_url(client_id)
 				label.set_text(player_nickname_component_url, nickname)
 
-				local player_skin_url = components.level_state:get_player_skin_url(client_id)
+				local player_skin_url = wrapped_player:get_player_skin_url(client_id)
 				go.animate(player_skin_url, "scale.x", go.PLAYBACK_LOOP_PINGPONG, 1.1, go.EASING_LINEAR, 1, 0)
 				go.animate(player_skin_url, "scale.y", go.PLAYBACK_LOOP_PINGPONG, 1.1, go.EASING_LINEAR, 1, 0)
 
-				local player_url = components.level_state:get_player_url(client_id)
+				local player_url = wrapped_player:get_player_url()
 				local player_position = go.get_position(player_url)
 				local z = player_position.y
 				local new_position = vmath.vector3(player_position.x, player_position.y, z)
@@ -58,9 +57,11 @@ level_movements = {
 				local client_id = event.client_id
 				local x = event.x
 				local y = event.y
-				print(os.date() .. " [LEVEL_MOVEMENTS] Movement created, client_id=" .. tostring(client_id))
+				print(os.date() .. " [LEVEL_PLAYERS] Movement created, client_id=" .. tostring(client_id))
 
-				local player_url = components.level_state:get_player_url(client_id)
+				local wrapped_player = components.level_state:get_wrapped_player(client_id)
+				
+				local player_url = wrapped_player:get_player_url()
 				local player_position = go.get_position(player_url)
 				-- local target_position = vmath.vector3(x, y, player_position.z)
 
@@ -74,4 +75,4 @@ level_movements = {
 	end
 }
 
-return level_movements
+return level_players

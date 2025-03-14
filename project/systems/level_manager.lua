@@ -12,21 +12,17 @@ level_manager = {
 		local delete_level = function(components)
 			local wrapped_level = components.level_state:get_wrapped_level()
 			if wrapped_level then
-				wrapped_level:delete_collectin_gos()
+				wrapped_level:delete_collection_gos()
 			end
 
-			local players = components.level_state:get_players()
-			if players then
-				for client_id, player in pairs(players) do
-					print(os.date() .. " [LEVEL_MANAGER] Delete player collection, client_id=" .. client_id)
-					local player_ids = player.collection_ids
-					for key, player_go_id in pairs(player_ids) do
-						go.delete(player_go_id)
-					end
+			local wrapped_players = components.level_state:get_wrapped_players()
+			if wrapped_players then
+				for client_id, wrapped_player in pairs(wrapped_players) do
+					wrapped_player:delete_collection_gos()
 				end
 			end
 
-			components.level_state:reset_state()
+			components.level_state:reset_component()
 
 			local new_event = game_events:level_deleted()
 			components.game_events:add_event(new_event)
@@ -40,6 +36,7 @@ level_manager = {
 			pprint(new_level_ids)
 
 			local wrapped_level = level_wrapper:create(new_level_ids)
+			
 			local level_tilemap_component_url = wrapped_level:get_level_tilemap_component_url()
 			local x, y, w, h = tilemap.get_bounds(level_tilemap_component_url)
 			local level_bounds = {

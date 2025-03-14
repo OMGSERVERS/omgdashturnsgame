@@ -21,14 +21,10 @@ level_movements = {
 				if a_client_id and b_client_id then
 					print(os.date() .. " [LEVEL_MOVEMENTS] Collission detected, a_client_id=" .. tostring(a_client_id) .. ", b_client_id=" .. tostring(b_client_id))
 
-					local a_movement = components.level_state:get_movement(a_client_id)
-					local a_from_position = a_movement:get_from_position()
-					local a_to_position = a_movement:get_to_position()
+					local a_movement = components.level_movements:get_movement(a_client_id)
 					local a_position = event.a_position
 
-					local b_movement = components.level_state:get_movement(b_client_id)
-					local b_from_position = b_movement:get_from_position()
-					local b_to_position = b_movement:get_to_position()
+					local b_movement = components.level_movements:get_movement(b_client_id)
 					local b_position = event.b_position
 					
 					if a_movement and not b_movement then
@@ -40,6 +36,9 @@ level_movements = {
 						local new_event = game_events:player_killed(a_client_id, b_client_id)
 						components.game_events:add_event(new_event)
 					elseif a_movement and b_movement then
+						local a_to_position = a_movement:get_to_position()
+						local b_to_position = b_movement:get_to_position()
+						
 						local a_distance = vmath.length(a_to_position - a_position)
 						local b_distance = vmath.length(b_to_position - b_position)
 
@@ -55,14 +54,18 @@ level_movements = {
 					end
 					
 					if a_movement then
-						if vmath.length(event.a_position - a_from_position) > 32 then
+						local a_from_position = a_movement:get_from_position()
+						
+						if vmath.length(a_position - a_from_position) > 32 then
+							pprint(a_position)
 							a_movement:set_to_position(a_position)
 						end
 					end
 					
-					
 					if b_movement then
-						if vmath.length(event.b_position - b_from_position) > 32 then
+						local b_from_position = b_movement:get_from_position()
+						if vmath.length(b_position - b_from_position) > 32 then
+							pprint(b_position)
 							b_movement:set_to_position(b_position)
 						end
 					end
@@ -72,7 +75,8 @@ level_movements = {
 				local client_ids = {}
 				local movements = components.level_movements:get_movements()
 				for client_id, movement in pairs(movements) do
-					local player_url = components.level_state:get_player_url(client_id)
+					local wrapped_player = components.level_state:get_wrapped_player(client_id)
+					local player_url = wrapped_player:get_player_url()
 
 					local current_possition = go.get_position(player_url)
 					local from_position = movement:get_from_position()

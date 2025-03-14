@@ -1,6 +1,7 @@
 local level_wrapper
 level_wrapper = {
 	INSTANCE_QUALIFIER = "level_wrapper",
+	-- Methods
 	create = function(self, level_collection_ids)
 		assert(level_collection_ids, "level collection ids is nil")
 		
@@ -8,10 +9,11 @@ level_wrapper = {
 
 		return {
 			qualifier = level_wrapper.INSTANCE_QUALIFIER,
-			get_collection_ids = function()
+			-- Methods
+			get_collection_ids = function(instance)
 				return collection_ids
 			end,
-			delete_collectin_gos = function()
+			delete_collection_gos = function(instance)
 				print(os.date() .. " [LEVEL_WRAPPER] Delete collection gos")
 				pprint(collection_ids)
 				for _, go_url in pairs(collection_ids) do
