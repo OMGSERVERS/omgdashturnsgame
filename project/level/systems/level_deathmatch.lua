@@ -17,11 +17,11 @@ level_deathmatch = {
 			end,
 			step_over = function(instance, components, event)
 				local step_index = event.step_index
-				if components.death_match:is_simulation_state() then
+				if components.level_deathmatch:is_simulation_state() then
 					print(os.date() .. " [LEVEL_DEATHMATCH] Step is over, but match is still in simulation, step=" .. step_index)
 				else
 					print(os.date() .. " [LEVEL_DEATHMATCH] Step is over, step=" .. step_index)
-					components.death_match:set_simulation_state()
+					components.level_deathmatch:set_simulation_state()
 				end
 
 				components.match_state:set_step(step_index)
@@ -59,7 +59,7 @@ level_deathmatch = {
 
 						print(os.date() .. " [LEVEL_DEATHMATCH] Move player, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y)
 						if not components.level_movements:get_movement(client_id) then
-							components.death_match:increase_movements()
+							components.level_deathmatch:increase_movements()
 						end
 						level_utils:create_movement(components, client_id, x, y)
 
@@ -160,7 +160,7 @@ level_deathmatch = {
 				print(os.date() .. " [LEVEL_DEATHMATCH] Player moved, client_id=" .. tostring(client_id))
 				
 				components.match_state:move_player(client_id, x, y)
-				components.death_match:decrease_movements()
+				components.level_deathmatch:decrease_movements()
 
 				local kill = components.level_kills:get_kill(client_id)
 				if kill then
@@ -178,13 +178,13 @@ level_deathmatch = {
 				components.level_kills:delete_kill(client_id)
 			end,
 			update = function(instance, dt, components)
-				if components.death_match:is_simulation_state() then
-					if components.death_match:are_movements_finished() then
+				if components.level_deathmatch:is_simulation_state() then
+					if components.level_deathmatch:are_movements_finished() then
 						local step_events = components.match_state:get_events()
 						local new_game_event = game_events:step_simulated(step_events)
 						components.game_events:add_event(new_game_event)
 
-						components.death_match:set_queueing_state()
+						components.level_deathmatch:set_queueing_state()
 					end
 				end
 			end

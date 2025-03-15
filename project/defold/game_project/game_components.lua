@@ -11,13 +11,13 @@ local ops_screen = require("project.screens.components.ops_screen")
 local server_state = require("project.server.components.server_state")
 local lobby_runtime = require("project.server.components.lobby_runtime")
 local match_runtime = require("project.server.components.match_runtime")
-local match_simulator = require("project.components.match_simulator")
+local match_simulator = require("project.server.components.match_simulator")
 local match_state = require("project.components.match_state")
 local level_state = require("project.level.components.level_state")
 local level_players = require("project.level.components.level_players")
 local level_movements = require("project.level.components.level_movements")
 local level_kills = require("project.level.components.level_kills")
-local death_match = require("project.components.death_match")
+local level_deathmatch = require("project.level.components.level_deathmatch")
 
 local game_components
 game_components = {
@@ -42,7 +42,7 @@ game_components = {
 			level_players = level_players:create(),
 			level_movements = level_movements:create(),
 			level_kills = level_kills:create(),
-			death_match = death_match:create(),
+			level_deathmatch = level_deathmatch:create(),
 		}
 
 		local total = 0

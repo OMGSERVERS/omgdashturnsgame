@@ -1,28 +1,28 @@
-local death_match
-death_match = {
+local level_deathmatch
+level_deathmatch = {
 	QUEUEING = "queueing",
 	SIMULATION = "simulation",
 	-- Methods
 	create = function(self)
-		local state = death_match.QUEUEING
+		local state = level_deathmatch.QUEUEING
 		local movements = 0
 		
 		return {
-			qualifier = "death_match",
+			qualifier = "level_deathmatch",
 			-- Methods
 			set_queueing_state = function(instance)
-				print(os.date() .. " [DEATH_MATCH] Set state -> " .. death_match.QUEUEING)
-				state = death_match.QUEUEING
+				print(os.date() .. " [LEVEL_DEATHMATCH] Set state -> " .. level_deathmatch.QUEUEING)
+				state = level_deathmatch.QUEUEING
 			end,
 			is_queueing_state = function(instance)
-				return state == death_match.QUEUEING
+				return state == level_deathmatch.QUEUEING
 			end,
 			set_simulation_state = function(instance)
-				print(os.date() .. " [DEATH_MATCH] Set state -> " .. death_match.SIMULATION)
-				state = death_match.SIMULATION
+				print(os.date() .. " [LEVEL_DEATHMATCH] Set state -> " .. level_deathmatch.SIMULATION)
+				state = level_deathmatch.SIMULATION
 			end,
 			is_simulation_state = function(instance)
-				return state == death_match.SIMULATION
+				return state == level_deathmatch.SIMULATION
 			end,
 			increase_movements = function(instance)
 				movements = movements + 1
@@ -37,4 +37,4 @@ death_match = {
 	end
 }
 
-return death_match
+return level_deathmatch
