@@ -23,8 +23,8 @@ level_state = {
 				bounds = nil
 				spawn_points = {}
 			end,
-			set_level = function(instance, level_qualifier, level_wrapped_level, level_bounds, level_spawn_points)
-				print(os.date() .. " [LEVEL_STATE] Set level, spawn_points=" .. #level_spawn_points)
+			setup_level = function(instance, level_qualifier, level_wrapped_level, level_bounds, level_spawn_points)
+				print(os.date() .. " [LEVEL_STATE] Setup level, spawn_points=" .. #level_spawn_points)
 				qualifier = level_qualifier
 				wrapped_level = level_wrapped_level
 				bounds = level_bounds

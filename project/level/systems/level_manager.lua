@@ -1,6 +1,6 @@
 local level_wrapper = require("project.utils.level_wrapper")
 local game_events = require("project.messages.game_events")
-
+local level_utils = require("project.utils.level_utils")
 
 local level_manager
 level_manager = {
@@ -13,26 +13,26 @@ level_manager = {
 			local wrapped_level = components.level_state:get_wrapped_level()
 			if wrapped_level then
 				wrapped_level:delete_collection_gos()
-			end
 
-			local wrapped_players = components.level_players:get_wrapped_players()
-			if wrapped_players then
-				for client_id, wrapped_player in pairs(wrapped_players) do
-					wrapped_player:delete_collection_gos()
+				local wrapped_players = components.level_players:get_wrapped_players()
+				if wrapped_players then
+					for client_id, wrapped_player in pairs(wrapped_players) do
+						wrapped_player:delete_collection_gos()
+					end
 				end
+
+				local new_event = game_events:level_deleted()
+				components.game_events:add_event(new_event)
 			end
+		end
+		
+		local create_level = function(components, level_qualifier)
+			delete_level(components)
 
 			components.level_state:reset_component()
 			components.level_players:reset_component()
 			components.level_movements:reset_component()
 			components.level_kills:reset_component()
-
-			local new_event = game_events:level_deleted()
-			components.game_events:add_event(new_event)
-		end
-		
-		local create_level = function(components, level_qualifier)
-			delete_level(components)
 			
 			local level_factory_url = msg.url(nil, level_manager.LEVEL_FACTORY, level_qualifier)
 			local new_level_ids = collectionfactory.create(level_factory_url)
@@ -66,7 +66,7 @@ level_manager = {
 				end
 			end
 			
-			components.level_state:set_level(level_qualifier, wrapped_level, level_bounds, spawn_points)
+			components.level_state:setup_level(level_qualifier, wrapped_level, level_bounds, spawn_points)
 			
 			local new_event = game_events:level_created()
 			components.game_events:add_event(new_event)

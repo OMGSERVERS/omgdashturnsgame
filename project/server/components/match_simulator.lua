@@ -2,13 +2,15 @@ local match_simulator
 match_simulator = {
 	MATCH_LIFETIME = 256,
 	STEP_INTERVAL = 2,
+	QUEUEING_STATE = "queueing",
+	SIMULATION_STATE = "simulation",
 	-- Methods
 	create = function(self)
 		local enabled = false
+		local state = match_simulator.QUEUEING_STATE
 		local match_timer = 0
 		local step_timer = 0
 		local step_index = 1
-		local simulation = false
 		
 		return {
 			qualifier = "match_simulator",
@@ -16,18 +18,32 @@ match_simulator = {
 			get_step_interval = function(instance)
 				return match_simulator.STEP_INTERVAL
 			end,
-			enable = function(instance)
+			setup_simulator = function(instance)
 				enabled = true
+				state = match_simulator.QUEUEING_STATE
 				match_timer = 0
 				step_timer = 0
 				step_index = 1
-				simulation = false
+			end,
+			is_enabled = function(instance)
+				return enabled
 			end,
 			disable = function(instance)
 				enabled = false
 			end,
-			is_enabled = function(instance)
-				return enabled
+			set_queueing_state = function(instance)
+				state = match_simulator.QUEUEING_STATE
+				print(os.date() .. " [MATCH_SIMULATOR] Set state -> " .. tostring(state))
+			end,
+			is_queueing_state = function(instance)
+				return state == match_simulator.QUEUEING_STATE
+			end,
+			set_simulation_state = function(instance)
+				state = match_simulator.SIMULATION_STATE
+				print(os.date() .. " [MATCH_SIMULATOR] Set state -> " .. state)
+			end,
+			is_simulation_state = function(instance)
+				return state == match_simulator.SIMULATION_STATE
 			end,
 			get_match_timer = function(instance)
 				return match_timer

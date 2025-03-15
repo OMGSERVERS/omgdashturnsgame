@@ -31,7 +31,7 @@ match_runtime = {
 					print(os.date() .. " [MATCH_RUNTIME] Init runtime")
 					local version_config = command_body.runtime_config.version_config
 					components.match_runtime:set_config(version_config)
-					components.match_simulator:enable()
+					components.match_simulator:setup_simulator()
 
 					local settings = {
 						match_level = server_messages.FOREST_LEVEL,

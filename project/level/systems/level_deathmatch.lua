@@ -17,15 +17,13 @@ level_deathmatch = {
 			end,
 			step_over = function(instance, components, event)
 				local step_index = event.step_index
-				if components.level_deathmatch:is_simulation_state() then
-					print(os.date() .. " [LEVEL_DEATHMATCH] Step is over, but match is still in simulation, step=" .. step_index)
-				else
-					print(os.date() .. " [LEVEL_DEATHMATCH] Step is over, step=" .. step_index)
-					components.level_deathmatch:set_simulation_state()
-				end
+				print(os.date() .. " [LEVEL_DEATHMATCH] Step is over, step=" .. step_index)
 
 				components.match_state:set_step(step_index)
 				components.match_state:reset_events()
+
+				components.level_movements:reset_component()
+				components.level_kills:reset_component()
 
 				local pulled_requests = components.match_runtime:pull_requests()
 				for request_index = 1,#pulled_requests do
@@ -75,6 +73,12 @@ level_deathmatch = {
 						print(os.date() .. " [LEVEL_DEATHMATCH] Delete client, client_id=" .. client_id)
 						components.match_state:delete_client(client_id)
 					end
+				end
+
+				if components.level_deathmatch:are_movements_finished() then
+					local step_events = components.match_state:get_events()
+					local new_game_event = game_events:step_simulated(step_events)
+					components.game_events:add_event(new_game_event)
 				end
 			end,
 			level_created = function(instance, components, event)
@@ -167,6 +171,12 @@ level_deathmatch = {
 					local new_event = game_events:player_killed(kill.client_id, client_id)
 					components.game_events:add_event(new_event)
 				end
+
+				if components.level_deathmatch:are_movements_finished() then
+					local step_events = components.match_state:get_events()
+					local new_game_event = game_events:step_simulated(step_events)
+					components.game_events:add_event(new_game_event)
+				end
 			end,
 			player_killed = function(instance, components, event)
 				local client_id = event.client_id
@@ -178,15 +188,11 @@ level_deathmatch = {
 				components.level_kills:delete_kill(client_id)
 			end,
 			update = function(instance, dt, components)
-				if components.level_deathmatch:is_simulation_state() then
-					if components.level_deathmatch:are_movements_finished() then
-						local step_events = components.match_state:get_events()
-						local new_game_event = game_events:step_simulated(step_events)
-						components.game_events:add_event(new_game_event)
-
-						components.level_deathmatch:set_queueing_state()
-					end
-				end
+				-- if components.match_simulator:is_enabled() then
+				-- 	if components.match_simulator:is_simulation_state() then
+				
+				-- 	end
+				-- end
 			end
 		}
 	end
