@@ -158,6 +158,16 @@ client_manager = {
 				local current_omginstance = components.client_state:get_omginstance()
 				send_game_message(current_omginstance, game_message)
 			end,
+			player_killed = function(instance, components, event)
+				local killed_client_id = event.client_id
+				local this_client_id = components.client_state:get_client_id()
+				if killed_client_id == this_client_id then
+					print(os.date() .. " [CLIENT_MANAGER] Player killed, request spawn")
+					local game_message = game_messages:request_spawn()
+					local current_omginstance = components.client_state:get_omginstance()
+					send_game_message(current_omginstance, game_message)
+				end
+			end,
 			client_failed = function(instance, components, event)
 				print(os.date() .. " [CLIENT_MANAGER] Client failed")
 				components.client_state:set_game_failed_state()

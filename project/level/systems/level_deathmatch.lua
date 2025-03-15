@@ -185,14 +185,9 @@ level_deathmatch = {
 				level_utils:delete_player(components, client_id)
 				components.match_state:kill_player(client_id, killer_id)
 
-				components.level_kills:delete_kill(client_id)
+				components.level_kills:delete_kill(killer_id)
 			end,
 			update = function(instance, dt, components)
-				-- if components.match_simulator:is_enabled() then
-				-- 	if components.match_simulator:is_simulation_state() then
-				
-				-- 	end
-				-- end
 			end
 		}
 	end
