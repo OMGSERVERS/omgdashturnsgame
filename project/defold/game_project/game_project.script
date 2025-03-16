@@ -17,18 +17,18 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash(game_project.RESET_PRESSED) then
 		local new_event = game_events:reset_pressed()
-		self.game_components.game_events:add_event(new_event)
+		self.game_components.shared.events:add_event(new_event)
 	elseif message_id == hash(game_project.JOIN_PRESSED) then
 		local nickname = message.nickname
 		local new_event = game_events:join_pressed(nickname)
-		self.game_components.game_events:add_event(new_event)
+		self.game_components.shared.events:add_event(new_event)
 	elseif message_id == hash(game_project.LEAVE_PRESSED) then
 		local new_event = game_events:leave_pressed()
-		self.game_components.game_events:add_event(new_event)
+		self.game_components.shared.events:add_event(new_event)
 	elseif message_id == hash(game_project.PLAYER_POINTED) then
 		local x = message.x
 		local y = message.y
 		local new_event = game_events:player_pointed(x, y)
-		self.game_components.game_events:add_event(new_event)
+		self.game_components.shared.events:add_event(new_event)
 	end
 end

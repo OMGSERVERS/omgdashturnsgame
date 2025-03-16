@@ -1,7 +1,7 @@
 local omgruntime = require("omgservers.omgruntime.omgruntime")
 
-local client_state
-client_state = {
+local server_state
+server_state = {
 	-- Methods
 	create = function(self)
 		local current_omgruntime = nil
@@ -34,4 +34,4 @@ client_state = {
 	end
 }
 
-return client_state
+return server_state

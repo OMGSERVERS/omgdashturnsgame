@@ -17,7 +17,7 @@ physics_listener = {
 
 				if a_group == hash("players") and b_group == hash("players") then
 					local new_event = game_events:collision_detected(a_url, a_position, b_url, b_position)
-					components.game_events:add_event(new_event)
+					components.shared.events:add_event(new_event)
 				end
 			end
 		end
