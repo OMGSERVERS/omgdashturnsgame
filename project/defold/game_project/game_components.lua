@@ -1,5 +1,5 @@
-local game_events = require("project.core.components.game_events")
-local entrypoint_state = require("project.core.components.entrypoint_state")
+local game_events = require("project.shared.components.game_events")
+local entrypoint_state = require("project.shared.components.entrypoint_state")
 local client_state = require("project.client.components.client_state")
 local screen_state = require("project.client.components.screen_state")
 local auth_screen = require("project.screens.components.auth_screen")
