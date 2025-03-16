@@ -1,10 +1,10 @@
 local defold_leaving_screen = require("project.defold.leaving_screen.leaving_screen")
 
-local leaving_screen
-leaving_screen = {
+local client_leaving_screen
+client_leaving_screen = {
 	create = function(self)
 		return {
-			qualifier = "leaving_screen",
+			qualifier = "client_leaving_screen",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -31,4 +31,4 @@ leaving_screen = {
 	end
 }
 
-return leaving_screen
+return client_leaving_screen

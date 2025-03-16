@@ -1,10 +1,10 @@
 local defold_auth_screen = require("project.defold.auth_screen.auth_screen")
 
-local auth_screen
-auth_screen = {
+local client_auth_screen
+client_auth_screen = {
 	create = function(self)
 		return {
-			qualifier = "auth_screen",
+			qualifier = "client_auth_screen",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -31,4 +31,4 @@ auth_screen = {
 	end
 }
 
-return auth_screen
+return client_auth_screen

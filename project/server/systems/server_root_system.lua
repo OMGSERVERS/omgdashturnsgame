@@ -1,11 +1,11 @@
-local omgruntime_factory = require("project.utils.omgruntime_factory")
-local game_events = require("project.messages.game_events")
+local omgruntime_factory = require("project.module.omgruntime_factory")
+local game_events = require("project.message.game_events")
 
-local server_manager
-server_manager = {
+local server_root_system
+server_root_system = {
 	create = function(self)
 		return {
-			qualifier = "server_manager",
+			qualifier = "server_root_system",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
@@ -14,7 +14,7 @@ server_manager = {
 				return true
 			end,
 			server_started = function(instance, components, event)
-				print(os.date() .. " [SERVER_MANAGER] Server started")
+				print(os.date() .. " [SERVER_ROOT_SYSTEM] Server started")
 
 				local current_omgruntime = omgruntime_factory:create(components)
 				components.server_state:set_omgruntime(current_omgruntime)
@@ -33,4 +33,4 @@ server_manager = {
 	end
 }
 
-return server_manager
+return server_root_system

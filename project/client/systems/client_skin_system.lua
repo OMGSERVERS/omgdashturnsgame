@@ -1,6 +1,5 @@
-local level_players
-level_players = {
-	SPEED = 2,
+local client_skin_system
+client_skin_system = {
 	-- Methods
 	create = function(self)
 		local setup_skin = function(components, client_id, flip, attack_angle)
@@ -29,13 +28,17 @@ level_players = {
 		return {
 			qualifier = "level_players",
 			predicate = function(instance, components)
+				if not components.entrypoint_state:is_client_mode() then
+					return
+				end
+
 				return true
 			end,
 			player_created = function(instance, components, event)
 				local client_id = event.client_id
 				local wrapped_player = components.level_players:get_wrapped_player(client_id)
 				if wrapped_player then
-					print(os.date() .. " [LEVEL_PLAYERS] Player created, client_id=" .. tostring(client_id))
+					print(os.date() .. " [CLIENT_SKIN_SYSTEM] Player created, client_id=" .. tostring(client_id))
 
 					local nickname = components.match_state:get_nickname(client_id)
 					local player_nickname_component_url = wrapped_player:get_player_nickname_component_url(client_id)
@@ -60,7 +63,7 @@ level_players = {
 				local y = event.y
 				local wrapped_player = components.level_players:get_wrapped_player(client_id)
 				if wrapped_player then
-					print(os.date() .. " [LEVEL_PLAYERS] Movement created, client_id=" .. tostring(client_id))
+					print(os.date() .. " [CLIENT_SKIN_SYSTEM] Movement created, client_id=" .. tostring(client_id))
 					
 					local player_url = wrapped_player:get_player_url()
 					local player_position = go.get_position(player_url)
@@ -77,4 +80,4 @@ level_players = {
 	end
 }
 
-return level_players
+return client_skin_system

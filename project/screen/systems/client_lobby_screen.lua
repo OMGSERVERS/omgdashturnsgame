@@ -1,10 +1,10 @@
 local defold_lobby_screen = require("project.defold.lobby_screen.lobby_screen")
 
-local lobby_screen
-lobby_screen = {
+local client_lobby_screen
+client_lobby_screen = {
 	create = function(self)
 		return {
-			qualifier = "lobby_screen",
+			qualifier = "client_lobby_screen",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -27,4 +27,4 @@ lobby_screen = {
 	end
 }
 
-return lobby_screen
+return client_lobby_screen

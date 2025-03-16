@@ -1,4 +1,4 @@
-local movement_factory = require("project.utils.movement_factory")
+local movement_factory = require("project.module.movement_factory")
 
 local level_movements
 level_movements = {

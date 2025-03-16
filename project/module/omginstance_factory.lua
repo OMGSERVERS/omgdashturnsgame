@@ -1,4 +1,4 @@
-local game_events = require("project.messages.game_events")
+local game_events = require("project.message.game_events")
 local omgplayer = require("omgservers.omgplayer.omgplayer")
 
 local omginstance_factory

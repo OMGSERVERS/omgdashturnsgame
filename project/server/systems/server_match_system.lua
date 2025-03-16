@@ -1,15 +1,15 @@
-local server_messages = require("project.messages.server_messages")
-local profile_wrapper = require("project.utils.profile_wrapper")
-local game_messages = require("project.messages.game_messages")
+local server_messages = require("project.message.server_messages")
+local profile_wrapper = require("project.module.profile_wrapper")
+local game_messages = require("project.message.game_messages")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
-local game_events = require("project.messages.game_events")
-local match_requests = require("project.messages.match_requests")
+local game_events = require("project.message.game_events")
+local match_requests = require("project.message.match_requests")
 
-local match_runtime
-match_runtime = {
+local server_match_system
+server_match_system = {
 	create = function(self)
 		return {
-			qualifier = "match_runtime",
+			qualifier = "server_match_system",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
@@ -28,7 +28,7 @@ match_runtime = {
 				local current_omgruntime = components.server_state:get_omgruntime()
 				
 				if command_qualifier == omgruntime.constants.INIT_RUNTIME then
-					print(os.date() .. " [MATCH_RUNTIME] Init runtime")
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Init runtime")
 					local version_config = command_body.runtime_config.version_config
 					components.match_runtime:set_config(version_config)
 					components.match_simulator:setup_simulator()
@@ -45,7 +45,7 @@ match_runtime = {
 				elseif command_qualifier == omgruntime.constants.ADD_MATCH_CLIENT then
 					local client_id = command_body.client_id
 					local profile = command_body.profile
-					print(os.date() .. " [MATCH_RUNTIME] Add client, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Add client, client_id=" .. tostring(client_id))
 
 					local wrapped_profile = profile_wrapper:wrap(profile)
 					components.match_runtime:add_profile(client_id, wrapped_profile)
@@ -59,7 +59,7 @@ match_runtime = {
 
 				elseif command_qualifier == omgruntime.constants.DELETE_CLIENT then
 					local client_id = command_body.client_id
-					print(os.date() .. " [MATCH_RUNTIME] Delete client, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Delete client, client_id=" .. tostring(client_id))
 					components.match_runtime:delete_profile(client_id)
 
 					local match_request = match_requests:delete_client(client_id)
@@ -82,20 +82,20 @@ match_runtime = {
 					local server_message = server_messages:set_state(settings, state, step)
 					current_omgruntime:respond_binary_message(client_id, json.encode(server_message))
 
-					print(os.date() .. " [MATCH_RUNTIME] State is sent, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] State is sent, client_id=" .. tostring(client_id))
 
 				elseif message_qualifier == game_messages.REQUEST_LEAVE then
-					print(os.date() .. " [MATCH_RUNTIME] Request leave, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Request leave, client_id=" .. tostring(client_id))
 					current_omgruntime:kick_client(client_id)
 
 				elseif message_qualifier == game_messages.REQUEST_SPAWN then
-					print(os.date() .. " [MATCH_RUNTIME] Request spawn, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Request spawn, client_id=" .. tostring(client_id))
 
 					local match_request = match_requests:spawn_player(client_id)
 					components.match_runtime:add_request(match_request)
 
 				elseif message_qualifier == game_messages.REQUEST_MOVE then
-					print(os.date() .. " [MATCH_RUNTIME] Request move, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Request move, client_id=" .. tostring(client_id))
 					local x = decoded_message.x
 					local y = decoded_message.y
 
@@ -103,17 +103,17 @@ match_runtime = {
 					components.match_runtime:add_request(match_request)
 
 				else
-					print(os.date() .. " [MATCH_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
+					print(os.date() .. " [SERVER_MATCH_SYSTEM] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 				end
 			end,
 			step_simulated = function(instance, components, event)
 				local step_events = event.events
-				print(os.date() .. " [MATCH_RUNTIME] Step is simulated, " .. #step_events .. " events to send")
+				print(os.date() .. " [SERVER_MATCH_SYSTEM] Step is simulated, " .. #step_events .. " events to send")
 				local server_message = server_messages:play_events(step_events)
 				omgruntime:broadcast_binary_message(json.encode(server_message))
 			end,
 			match_over = function(instance, components, event)
-				print(os.date() .. " [MATCH_RUNTIME] Match is over")
+				print(os.date() .. " [SERVER_MATCH_SYSTEM] Match is over")
 				components.server_state:get_omgruntime():stop_matchmaking()
 			end,
 			update = function(instance, dt, components)
@@ -122,4 +122,4 @@ match_runtime = {
 	end
 }
 
-return match_runtime
+return server_match_system

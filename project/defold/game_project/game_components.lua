@@ -1,23 +1,27 @@
-local game_events = require("project.shared.components.game_events")
-local entrypoint_state = require("project.shared.components.entrypoint_state")
+-- Client
 local client_state = require("project.client.components.client_state")
+local level_kills = require("project.client.components.level_kills")
 local screen_state = require("project.client.components.screen_state")
-local auth_screen = require("project.screens.components.auth_screen")
-local lobby_screen = require("project.screens.components.lobby_screen")
-local joining_screen = require("project.screens.components.joining_screen")
-local leaving_screen = require("project.screens.components.leaving_screen")
-local match_screen = require("project.screens.components.match_screen")
-local ops_screen = require("project.screens.components.ops_screen")
-local server_state = require("project.server.components.server_state")
+-- Scren
+local auth_screen = require("project.screen.components.auth_screen")
+local joining_screen = require("project.screen.components.joining_screen")
+local leaving_screen = require("project.screen.components.leaving_screen")
+local lobby_screen = require("project.screen.components.lobby_screen")
+local match_screen = require("project.screen.components.match_screen")
+local ops_screen = require("project.screen.components.ops_screen")
+-- Server
+local level_deathmatch = require("project.server.components.level_deathmatch")
 local lobby_runtime = require("project.server.components.lobby_runtime")
 local match_runtime = require("project.server.components.match_runtime")
 local match_simulator = require("project.server.components.match_simulator")
-local match_state = require("project.components.match_state")
-local level_state = require("project.level.components.level_state")
-local level_players = require("project.level.components.level_players")
-local level_movements = require("project.level.components.level_movements")
-local level_kills = require("project.level.components.level_kills")
-local level_deathmatch = require("project.level.components.level_deathmatch")
+local match_state = require("project.server.components.match_state")
+local server_state = require("project.server.components.server_state")
+-- Shared
+local entrypoint_state = require("project.shared.components.entrypoint_state")
+local game_events = require("project.shared.components.game_events")
+local level_state = require("project.shared.components.level_state")
+local level_players = require("project.shared.components.level_players")
+local level_movements = require("project.shared.components.level_movements")
 
 local game_components
 game_components = {

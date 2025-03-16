@@ -1,53 +1,56 @@
-local game_entrypoint = require("project.shared.systems.game_entrypoint")
-local client_manager = require("project.client.systems.client_manager")
-local screen_manager = require("project.client.systems.screen_manager")
-local auth_screen = require("project.screens.systems.auth_screen")
-local lobby_screen = require("project.screens.systems.lobby_screen")
-local joining_screen = require("project.screens.systems.joining_screen")
-local leaving_screen = require("project.screens.systems.leaving_screen")
-local match_screen = require("project.screens.systems.match_screen")
-local ops_screen = require("project.screens.systems.ops_screen")
-local match_camera = require("project.client.systems.match_camera")
-local match_pointer = require("project.client.systems.match_pointer")
-local match_timer = require("project.client.systems.match_timer")
-local server_manager = require("project.server.systems.server_manager")
-local lobby_runtime = require("project.server.systems.lobby_runtime")
-local match_runtime = require("project.server.systems.match_runtime")
-local match_simulator = require("project.server.systems.match_simulator")
-local level_deathmatch = require("project.level.systems.level_deathmatch")
-local level_manager = require("project.level.systems.level_manager")
-local level_players = require("project.level.systems.level_players")
-local level_movements = require("project.level.systems.level_movements")
-local events_manager = require("project.shared.systems.events_manager")
+-- Client
+local client_camera_system = require("project.client.systems.client_camera_system")
+local client_level_system = require("project.client.systems.client_level_system")
+local client_pointer_system = require("project.client.systems.client_pointer_system")
+local client_root_system = require("project.client.systems.client_root_system")
+local client_screen_system = require("project.client.systems.client_screen_system")
+local client_skin_system = require("project.client.systems.client_skin_system")
+-- Screen
+local client_auth_screen = require("project.screen.systems.client_auth_screen")
+local client_joining_screen = require("project.screen.systems.client_joining_screen")
+local client_leaving_screen = require("project.screen.systems.client_leaving_screen")
+local client_lobby_screen = require("project.screen.systems.client_lobby_screen")
+local client_match_screen = require("project.screen.systems.client_match_screen")
+local client_ops_screen = require("project.screen.systems.client_ops_screen")
+-- Server
+local server_level_system = require("project.server.systems.server_level_system")
+local server_lobby_system = require("project.server.systems.server_lobby_system")
+local server_match_system = require("project.server.systems.server_match_system")
+local server_root_system = require("project.server.systems.server_root_system")
+local server_simulator_system = require("project.server.systems.server_simulator_system")
+-- Shared
+local shared_bootstrap_system = require("project.shared.systems.shared_bootstrap_system")
+local shared_movement_system = require("project.shared.systems.shared_movement_system")
+local shared_event_system = require("project.shared.systems.shared_event_system")
 
 local game_systems
 game_systems = {
 	create = function(self, components)
 		local systems = {
 			-- Client
-			client_manager:create(),
-			screen_manager:create(),
-			auth_screen:create(),
-			lobby_screen:create(),
-			joining_screen:create(),
-			leaving_screen:create(),
-			match_screen:create(),
-			match_camera:create(),
-			match_pointer:create(),
-			match_timer:create(),
-			ops_screen:create(),
+			client_camera_system:create(),
+			client_level_system:create(),
+			client_pointer_system:create(),
+			client_root_system:create(),
+			client_screen_system:create(),
+			client_skin_system:create(),
+			-- Screen
+			client_auth_screen:create(),
+			client_joining_screen:create(),
+			client_leaving_screen:create(),
+			client_lobby_screen:create(),
+			client_match_screen:create(),
+			client_ops_screen:create(),
 			-- Server
-			server_manager:create(),
-			lobby_runtime:create(),
-			match_runtime:create(),
-			match_simulator:create(),
+			server_level_system:create(),
+			server_lobby_system:create(),
+			server_match_system:create(),
+			server_root_system:create(),
+			server_simulator_system:create(),
 			-- Shared
-			game_entrypoint:create(),
-			level_manager:create(),
-			level_players:create(),
-			level_movements:create(),
-			level_deathmatch:create(),
-			events_manager:create(),
+			shared_bootstrap_system:create(),
+			shared_movement_system:create(),
+			shared_event_system:create(),
 		}
 
 		print("Game systems, total=" .. #systems)

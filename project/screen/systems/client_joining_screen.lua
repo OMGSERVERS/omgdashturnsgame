@@ -1,10 +1,10 @@
 local defold_joining_screen = require("project.defold.joining_screen.joining_screen")
 
-local joining_screen
-joining_screen = {
+local client_joining_screen
+client_joining_screen = {
 	create = function(self)
 		return {
-			qualifier = "joining_screen",
+			qualifier = "client_joining_screen",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -31,4 +31,4 @@ joining_screen = {
 	end
 }
 
-return joining_screen
+return client_joining_screen

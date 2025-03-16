@@ -1,7 +1,7 @@
 local game_components = require("project.defold.game_project.game_components")
 local game_systems = require("project.defold.game_project.game_systems")
 local game_project = require("project.defold.game_project.game_project")
-local game_events = require("project.messages.game_events")
+local game_events = require("project.message.game_events")
 
 function init(self)
 	math.randomseed(100000 * (socket.gettime() % 1))

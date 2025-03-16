@@ -1,4 +1,4 @@
-local match_events = require("project.messages.match_events")
+local match_events = require("project.message.match_events")
 
 local match_state
 match_state = {

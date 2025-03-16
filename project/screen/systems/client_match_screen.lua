@@ -1,8 +1,8 @@
-local match_screen
-match_screen = {
+local client_match_screen
+client_match_screen = {
 	create = function(self)
 		return {
-			qualifier = "match_screen",
+			qualifier = "client_match_screen",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -15,7 +15,7 @@ match_screen = {
 				return true
 			end,
 			level_created = function(instance, components, event)
-				print(os.date() .. " [MATCH_SCREEN] Level created, setting match camera")
+				print(os.date() .. " [CLIENT_MATCH_SCREEN] Level created, setting match camera")
 				local match_camera_url = components.screen_state:get_match_camera_url()
 				local camera_position = go.get_position(match_camera_url)
 
@@ -24,7 +24,7 @@ match_screen = {
 				local point_position = go.get_position(camera_point_url)
 
 				local initial_position = vmath.vector3(point_position.x, point_position.y, camera_position.z)
-				print(os.date() .. " [MATCH_SCREEN] New camera position is " .. initial_position)
+				print(os.date() .. " [CLIENT_MATCH_SCREEN] New camera position is " .. initial_position)
 				go.set_position(initial_position, match_camera_url)
 			end,
 			update = function(instance, dt, components)
@@ -33,4 +33,4 @@ match_screen = {
 	end
 }
 
-return match_screen
+return client_match_screen

@@ -1,10 +1,10 @@
 local defold_ops_screen = require("project.defold.ops_screen.ops_screen")
 
-local ops_screen
-ops_screen = {
+local client_ops_screen
+client_ops_screen = {
 	create = function(self)
 		return {
-			qualifier = "ops_screen",
+			qualifier = "client_ops_screen",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -27,4 +27,4 @@ ops_screen = {
 	end
 }
 
-return ops_screen
+return client_ops_screen

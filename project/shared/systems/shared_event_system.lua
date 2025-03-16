@@ -1,8 +1,8 @@
-local events_manager
-events_manager = {
+local shared_event_system
+shared_event_system = {
 	create = function(self)
 		return {
-			qualifier = "events_manager",
+			qualifier = "shared_event_system",
 			predicate = function(instance, components)
 				return true
 			end,
@@ -13,4 +13,4 @@ events_manager = {
 	end
 }
 
-return events_manager
+return shared_event_system

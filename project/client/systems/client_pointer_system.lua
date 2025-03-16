@@ -1,7 +1,7 @@
-local game_events = require("project.messages.game_events")
+local game_events = require("project.message.game_events")
 
-local match_pointer
-match_pointer = {
+local client_pointer_system
+client_pointer_system = {
 	-- Methods
 	create = function(self)
 
@@ -59,7 +59,7 @@ match_pointer = {
 				local client_id = event.client_id
 
 				if client_id == components.client_state:get_client_id() then
-					print(os.date() .. " [LEVEL_MOVEMENTS] This player's movement created, client_id=" .. tostring(client_id))
+					print(os.date() .. " [CLIENT_POINTER_SYSTEM] This player's movement created, client_id=" .. tostring(client_id))
 					local match_pointer_url = components.screen_state:get_match_pointer_url()
 					msg.post(match_pointer_url, "disable")
 				end
@@ -70,4 +70,4 @@ match_pointer = {
 	end
 }
 
-return match_pointer
+return client_pointer_system

@@ -1,5 +1,5 @@
-local match_camera
-match_camera = {
+local client_camera_system
+client_camera_system = {
 	CAMERA_SMOOTH=0.05,
 	-- Methods
 	create = function(self)
@@ -33,11 +33,11 @@ match_camera = {
 			local match_camera_component_url = components.screen_state:get_match_camera_component_url()
 			go.set(match_camera_component_url, "orthographic_zoom", scale)
 			
-			print(os.date() .. " [MATCH_CAMERA] Set zoom, orthographic_zoom=" .. tostring(scale))
+			print(os.date() .. " [CLIENT_CAMERA_SYSTEM] Set zoom, orthographic_zoom=" .. tostring(scale))
 		end
 		
 		return {
-			qualifier = "match_camera",
+			qualifier = "client_camera_system",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_client_mode() then
 					return
@@ -46,7 +46,7 @@ match_camera = {
 				return true
 			end,
 			level_created = function(instance, components, event)
-				print(os.date() .. " [MATCH_CAMERA] Level created, set window listener")
+				print(os.date() .. " [CLIENT_CAMERA_SYSTEM] Level created, set window listener")
 				
 				window.set_listener(function(self, event, data)
 					if event == window.WINDOW_EVENT_RESIZED then
@@ -58,7 +58,7 @@ match_camera = {
 				reset_camera_zoom(components, width, height)
 			end,
 			level_deleted = function(instance, components, event)
-				print(os.date() .. " [MATCH_CAMERA] Level deleted, delete window listener")
+				print(os.date() .. " [CLIENT_CAMERA_SYSTEM] Level deleted, delete window listener")
 				window.set_listener(nil)
 			end,
 			update = function(instance, dt, components)
@@ -74,7 +74,7 @@ match_camera = {
 								local camera_position = go.get_position(match_camera_url)
 								local player_position = bound_position(components, go.get_position(player_url))
 
-								local new_position = camera_position + (player_position - camera_position) * match_camera.CAMERA_SMOOTH
+								local new_position = camera_position + (player_position - camera_position) * client_camera_system.CAMERA_SMOOTH
 								new_position.z = camera_position.z
 
 								go.set_position(new_position, match_camera_url)
@@ -87,4 +87,4 @@ match_camera = {
 	end
 }
 
-return match_camera
+return client_camera_system

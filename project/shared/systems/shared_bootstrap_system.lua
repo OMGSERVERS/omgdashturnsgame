@@ -1,10 +1,10 @@
-local game_events = require("project.messages.game_events")
+local game_events = require("project.message.game_events")
 
-local game_entrypoint
-game_entrypoint = {
+local shared_bootstrap_system
+shared_bootstrap_system = {
 	create = function(self)
 		return {
-			qualifier = "game_entrypoint",
+			qualifier = "shared_bootstrap_system",
 			predicate = function(instance, components)
 				if components.entrypoint_state:is_mode_set() then
 					return
@@ -13,7 +13,7 @@ game_entrypoint = {
 				return true
 			end,
 			update = function(instance, dt, components)
-				print(os.date() .. " [GAME_ENTRYPOINT] Engine info:")
+				print(os.date() .. " [SHARED_BOOTSTRAP_SYSTEM] Engine info:")
 				pprint(sys.get_engine_info())
 
 				if os.getenv("SERVER_ENVIRONMENT") then
@@ -30,4 +30,4 @@ game_entrypoint = {
 	end
 }
 
-return game_entrypoint
+return shared_bootstrap_system

@@ -1,10 +1,75 @@
-local movement_factory = require("project.utils.movement_factory")
-local player_wrapper = require("project.utils.player_wrapper")
-local game_events = require("project.messages.game_events")
+local movement_factory = require("project.module.movement_factory")
+local player_wrapper = require("project.module.player_wrapper")
+local level_wrapper = require("project.module.level_wrapper")
+local game_events = require("project.message.game_events")
 
 local level_utils
 level_utils = {
+	LEVEL_FACTORY = "/level_factory",
+	TILE_W = 16,
+	TILE_H = 16,
 	-- Methods
+	delete_level = function(self, components)
+		local wrapped_level = components.level_state:get_wrapped_level()
+		if wrapped_level then
+			wrapped_level:delete_collection_gos()
+
+			local wrapped_players = components.level_players:get_wrapped_players()
+			if wrapped_players then
+				for client_id, wrapped_player in pairs(wrapped_players) do
+					wrapped_player:delete_collection_gos()
+				end
+			end
+
+			local new_event = game_events:level_deleted()
+			components.game_events:add_event(new_event)
+		end
+	end,
+	create_level = function(self, components, level_qualifier)
+		level_utils:delete_level(components)
+
+		components.level_state:reset_component()
+		components.level_players:reset_component()
+		components.level_movements:reset_component()
+		components.level_kills:reset_component()
+
+		local level_factory_url = msg.url(nil, level_utils.LEVEL_FACTORY, level_qualifier)
+		local new_level_ids = collectionfactory.create(level_factory_url)
+		pprint(new_level_ids)
+
+		local wrapped_level = level_wrapper:create(new_level_ids)
+
+		local level_tilemap_component_url = wrapped_level:get_level_tilemap_component_url()
+		local x, y, w, h = tilemap.get_bounds(level_tilemap_component_url)
+		local level_bounds = {
+			x = x * level_utils.TILE_W - level_utils.TILE_W,
+			y = y * level_utils.TILE_H - level_utils.TILE_H,
+			w = w * level_utils.TILE_W,
+			h = h * level_utils.TILE_H,
+		}
+
+		local spawn_points = {}
+		local spawn_point_index = 1
+		while true do
+			local collection_key = "/spawn_point" .. spawn_point_index
+			local spawn_point_url = new_level_ids[collection_key]
+			if spawn_point_url then
+				local spawn_position = go.get_position(spawn_point_url)
+				spawn_position.z = spawn_position.y
+				spawn_points[#spawn_points + 1] = spawn_position
+
+				msg.post(spawn_point_url, "disable")
+				spawn_point_index = spawn_point_index + 1
+			else
+				break
+			end
+		end
+
+		components.level_state:setup_level(level_qualifier, wrapped_level, level_bounds, spawn_points)
+
+		local new_event = game_events:level_created()
+		components.game_events:add_event(new_event)
+	end,
 	create_player = function(self, components, client_id, position)
 		local wrapped_level = components.level_state:get_wrapped_level()
 		if wrapped_level then

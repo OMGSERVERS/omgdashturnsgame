@@ -1,12 +1,12 @@
-local server_messages = require("project.messages.server_messages")
-local profile_wrapper = require("project.utils.profile_wrapper")
-local game_messages = require("project.messages.game_messages")
+local server_messages = require("project.message.server_messages")
+local profile_wrapper = require("project.module.profile_wrapper")
+local game_messages = require("project.message.game_messages")
 local omgruntime = require("omgservers.omgruntime.omgruntime")
 
 local DEFAULT_GAME_MODE = "death-match"
 
-local lobby_runtime
-lobby_runtime = {
+local server_lobby_system
+server_lobby_system = {
 	create = function(self)
 
 		local respond_client = function(current_omgruntime, client_id, message)
@@ -14,7 +14,7 @@ lobby_runtime = {
 		end
 		
 		return {
-			qualifier = "lobby_runtime",
+			qualifier = "server_lobby_system",
 			predicate = function(instance, components)
 				if not components.entrypoint_state:is_server_mode() then
 					return
@@ -33,14 +33,14 @@ lobby_runtime = {
 				local current_omgruntime = components.server_state:get_omgruntime()
 
 				if command_qualifier == omgruntime.constants.INIT_RUNTIME then
-					print(os.date() .. " [LOBBY_RUNTIME] Init runtime")
+					print(os.date() .. " [SERVER_LOBBY_SYSTEM] Init runtime")
 					local version_config = command_body.runtime_config.version_config
 					components.lobby_runtime:set_config(version_config)
 
 				elseif command_qualifier == omgruntime.constants.ADD_CLIENT then
 					local client_id = command_body.client_id
 					local profile = command_body.profile
-					print(os.date() .. " [LOBBY_RUNTIME] Add client, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_LOBBY_SYSTEM] Add client, client_id=" .. tostring(client_id))
 
 					if profile.version then
 						local wrapped_profile = profile_wrapper:wrap(profile)
@@ -56,7 +56,7 @@ lobby_runtime = {
 
 				elseif command_qualifier == omgruntime.constants.DELETE_CLIENT then
 					local client_id = command_body.client_id
-					print(os.date() .. " [LOBBY_RUNTIME] Delete client, client_id=" .. tostring(client_id))
+					print(os.date() .. " [SERVER_LOBBY_SYSTEM] Delete client, client_id=" .. tostring(client_id))
 					components.lobby_runtime:delete_profile(client_id)
 
 				elseif command_qualifier == omgruntime.constants.HANDLE_MESSAGE then
@@ -66,19 +66,19 @@ lobby_runtime = {
 					local message_qualifier = command_message.qualifier
 
 					if message_qualifier == game_messages.REQUEST_PROFILE then
-						print(os.date() .. " [LOBBY_RUNTIME] Request profile, client_id=" .. tostring(client_id))
+						print(os.date() .. " [SERVER_LOBBY_SYSTEM] Request profile, client_id=" .. tostring(client_id))
 
 						local wrapped_profile = components.lobby_runtime:get_profile(client_id)
 						if wrapped_profile then
 							local server_message = server_messages:set_profile(wrapped_profile.profile)
 							respond_client(current_omgruntime, client_id, server_message)
 						else
-							print(os.date() .. " [LOBBY_RUNTIME] Profile was not found while handling request_profile message, client_id=" .. client_id)
+							print(os.date() .. " [SERVER_LOBBY_SYSTEM] Profile was not found while handling request_profile message, client_id=" .. client_id)
 						end
 
 					elseif message_qualifier == game_messages.REQUEST_MATCHMAKING then
 						local new_nickname = command_message.nickname
-						print(os.date() .. " [LOBBY_RUNTIME] Request matchmaking, client_id=" .. tostring(client_id) .. ", nickname=" .. tostring(new_nickname))
+						print(os.date() .. " [SERVER_LOBBY_SYSTEM] Request matchmaking, client_id=" .. tostring(client_id) .. ", nickname=" .. tostring(new_nickname))
 
 						local wrapped_profile = components.lobby_runtime:get_profile(client_id)
 						local current_nickname = wrapped_profile.profile.data.nickname
@@ -93,7 +93,7 @@ lobby_runtime = {
 
 						omgruntime:request_matchmaking(client_id, DEFAULT_GAME_MODE)
 					else
-						print(os.date() .. " [LOBBY_RUNTIME] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
+						print(os.date() .. " [SERVER_LOBBY_SYSTEM] Unknown message qualifier was received, message_qualifier=" .. tostring(message_qualifier))
 					end
 				end
 			end,
@@ -103,4 +103,4 @@ lobby_runtime = {
 	end
 }
 
-return lobby_runtime
+return server_lobby_system
