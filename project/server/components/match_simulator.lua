@@ -2,6 +2,7 @@ local match_simulator
 match_simulator = {
 	MATCH_LIFETIME = 256,
 	STEP_INTERVAL = 2,
+	SIMULATION_INTERVAL = 1,
 	QUEUEING_STATE = "queueing",
 	SIMULATION_STATE = "simulation",
 	-- Methods
@@ -11,6 +12,7 @@ match_simulator = {
 		local match_timer = 0
 		local step_timer = 0
 		local step_index = 1
+		local simulation_timer = 0
 		
 		return {
 			qualifier = "match_simulator",
@@ -24,6 +26,7 @@ match_simulator = {
 				match_timer = 0
 				step_timer = 0
 				step_index = 1
+				simulation_timer = 0
 			end,
 			is_enabled = function(instance)
 				return enabled
@@ -74,11 +77,17 @@ match_simulator = {
 				step_index = step_index + 1
 				return prev_step
 			end,
-			is_simulation = function(instance)
-				return simulation
+			get_simulation_timer = function(instance)
+				return simulation_timer
 			end,
-			set_simulation = function(instance, value)
-				simulation = value
+			reset_simulation_timer = function(instance, timer)
+				simulation_timer = 0
+			end,
+			update_simulation_timer = function(instance, dt)
+				simulation_timer = simulation_timer+ dt
+			end,
+			is_simulation_over = function(instance)
+				return simulation_timer > match_simulator.SIMULATION_INTERVAL
 			end,
 		}
 	end

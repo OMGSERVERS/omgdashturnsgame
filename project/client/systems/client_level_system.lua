@@ -105,18 +105,11 @@ client_level_system = {
 				print(os.date() .. " [CLIENT_LEVEL_SYSTEM] Player moved, client_id=" .. tostring(client_id))
 
 				components.match_state:move_player(client_id, x, y)
-				components.level_deathmatch:decrease_movements()
 
 				local kill = components.level_kills:get_kill(client_id)
 				if kill then
 					local new_event = game_events:player_killed(kill.client_id, client_id)
 					components.game_events:add_event(new_event)
-				end
-
-				if components.level_deathmatch:are_movements_finished() then
-					local step_events = components.match_state:get_events()
-					local new_game_event = game_events:step_simulated(step_events)
-					components.game_events:add_event(new_game_event)
 				end
 			end,
 			player_killed = function(instance, components, event)

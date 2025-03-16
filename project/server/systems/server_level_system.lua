@@ -123,9 +123,6 @@ server_level_system = {
 						local y = request.y
 
 						print(os.date() .. " [SERVER_LEVEL_SYSTEM] Move player, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y)
-						if not components.level_movements:get_movement(client_id) then
-							components.level_deathmatch:increase_movements()
-						end
 						level_module:create_movement(components, client_id, x, y)
 
 					elseif qualifier == match_requests.DELETE_PLAYER then
@@ -141,14 +138,7 @@ server_level_system = {
 						components.match_state:delete_client(client_id)
 					end
 				end
-
-				if components.level_deathmatch:are_movements_finished() then
-					local step_events = components.match_state:get_events()
-					local new_game_event = game_events:step_simulated(step_events)
-					components.game_events:add_event(new_game_event)
-				end
 			end,
-			
 			player_moved = function(instance, components, event)
 				local client_id = event.client_id
 				local x = event.x
@@ -157,13 +147,6 @@ server_level_system = {
 				print(os.date() .. " [SERVER_LEVEL_SYSTEM] Player moved, client_id=" .. tostring(client_id))
 				
 				components.match_state:move_player(client_id, x, y)
-				components.level_deathmatch:decrease_movements()
-
-				if components.level_deathmatch:are_movements_finished() then
-					local step_events = components.match_state:get_events()
-					local new_game_event = game_events:step_simulated(step_events)
-					components.game_events:add_event(new_game_event)
-				end
 			end,
 			player_killed = function(instance, components, event)
 				local client_id = event.client_id

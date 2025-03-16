@@ -30,11 +30,6 @@ server_simulator_system = {
 				print(os.date() .. " [SERVER_SIMULATOR_SYSTEM] Level deleted, delete physics listener")
 				physics.set_listener(nil)
 			end,
-			step_simulated = function(instance, components, event)
-				print(os.date() .. " [SERVER_SIMULATOR_SYSTEM] Step simulated")
-				components.match_simulator:set_queueing_state()
-				components.match_simulator:reset_step_timer()
-			end,
 			update = function(instance, dt, components)
 				if components.match_simulator:is_queueing_state() then
 					components.match_simulator:update_step_timer(dt)
@@ -42,9 +37,23 @@ server_simulator_system = {
 					if components.match_simulator:is_step_over() then
 						local step_index = components.match_simulator:increase_step_index()
 						components.match_simulator:set_simulation_state()
+						components.match_simulator:reset_simulation_timer()
 
 						local new_event = game_events:step_over(step_index)
 						components.game_events:add_event(new_event)
+					end
+				end
+
+				if components.match_simulator:is_simulation_state() then
+					components.match_simulator:update_simulation_timer(dt)
+
+					if components.match_simulator:is_simulation_over() then
+						components.match_simulator:set_queueing_state()
+						components.match_simulator:reset_step_timer()
+
+						local step_events = components.match_state:get_events()
+						local new_game_event = game_events:step_simulated(step_events)
+						components.game_events:add_event(new_game_event)
 					end
 				end
 
