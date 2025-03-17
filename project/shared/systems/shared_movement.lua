@@ -2,9 +2,19 @@ local game_events = require("project.message.game_events")
 
 local shared_movement
 shared_movement = {
-	SPEED = 160,
+	PLAYER_SPEED = 160,
+	SERVER_SPEED = 480,
 	-- Methods
 	create = function(self)
+
+		local get_simulation_speed = function(components)
+			if not components.shared.bootstrap:is_server_mode() then
+				return shared_movement.PLAYER_SPEED
+			else
+				return shared_movement.SERVER_SPEED
+			end
+		end
+		
 		return {
 			qualifier = "shared_movement",
 			predicate = function(instance, components)
@@ -28,7 +38,7 @@ shared_movement = {
 						if current_distance_sqr >= total_distance_sqr then
 							print(os.date() .. " [SHARED_MOVEMENT] Player moved, client_id=" .. tostring(client_id))
 
-							-- set final position
+							-- Set final position
 							go.set_position(to_position, player_url)
 
 							local new_game_event = game_events:player_moved(client_id, current_possition.x, current_possition.y)
@@ -37,7 +47,8 @@ shared_movement = {
 							client_ids[#client_ids + 1] = client_id
 						else
 							local direction = vmath.normalize(to_position - from_position)
-							local new_position = current_possition + direction * (shared_movement.SPEED * dt)
+							local simulation_speed = get_simulation_speed(components)
+							local new_position = current_possition + direction * (simulation_speed * dt)
 							go.set_position(new_position, player_url)
 						end
 					end

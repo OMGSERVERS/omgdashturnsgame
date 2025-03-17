@@ -2,7 +2,7 @@ local server_simulator
 server_simulator = {
 	MATCH_LIFETIME = 256,
 	STEP_INTERVAL = 2,
-	SIMULATION_INTERVAL = 1,
+	SIMULATION_INTERVAL = 0.5,
 	QUEUEING_STATE = "queueing",
 	SIMULATION_STATE = "simulation",
 	-- Methods
