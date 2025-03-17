@@ -7,9 +7,9 @@ server_simulator = {
 	SIMULATION_STATE = "simulation",
 	-- Methods
 	create = function(self)
-		local enabled = false
 		local state = server_simulator.QUEUEING_STATE
 		local match_timer = 0
+		local shutting_down = false
 		local step_timer = 0
 		local step_index = 1
 		local simulation_timer = 0
@@ -21,18 +21,12 @@ server_simulator = {
 				return server_simulator.STEP_INTERVAL
 			end,
 			setup_simulator = function(instance)
-				enabled = true
 				state = server_simulator.QUEUEING_STATE
 				match_timer = 0
+				shutting_down = false
 				step_timer = 0
 				step_index = 1
 				simulation_timer = 0
-			end,
-			is_enabled = function(instance)
-				return enabled
-			end,
-			disable = function(instance)
-				enabled = false
 			end,
 			set_queueing_state = function(instance)
 				state = server_simulator.QUEUEING_STATE
@@ -56,6 +50,12 @@ server_simulator = {
 			end,
 			is_match_over = function(instance)
 				return match_timer > server_simulator.MATCH_LIFETIME
+			end,
+			is_shutting_down = function(instance)
+				return shutting_down
+			end,
+			shutdown = function(instance)
+				shutting_down = true
 			end,
 			get_step_timer = function(instance)
 				return step_timer

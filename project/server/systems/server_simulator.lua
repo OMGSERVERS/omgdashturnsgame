@@ -16,10 +16,6 @@ server_simulator = {
 					return
 				end
 
-				if not components.server.simulator:is_enabled() then
-					return
-				end
-
 				return true
 			end,
 			level_created = function(instance, components, event)
@@ -57,13 +53,16 @@ server_simulator = {
 					end
 				end
 
-				components.server.simulator:update_match_timer(dt)
-				if components.server.simulator:is_match_over() then
-					print(os.date() .. " [SERVER_SIMULATOR] Match is over")
-					components.server.simulator:disable()
+				if not components.server.simulator:is_shutting_down() then
+					components.server.simulator:update_match_timer(dt)
+					
+					if components.server.simulator:is_match_over() then
+						print(os.date() .. " [SERVER_SIMULATOR] Match is over, shutting down")
+						components.server.simulator:shutdown()
 
-					local new_event = game_events:match_over()
-					components.shared.events:add_event(new_event)
+						local new_event = game_events:match_over()
+						components.shared.events:add_event(new_event)
+					end
 				end
 			end
 		}
