@@ -38,6 +38,10 @@ player_wrapper = {
 			get_player_skin_url = function(instance)
 				return collection_ids["/skin"]
 			end,
+			get_player_skin_sprite_component_url = function(instance)
+				local player_skin = collection_ids["/skin"]
+				return msg.url(nil, player_skin, "sprite")
+			end,
 			get_weapon_left_hand_url = function(instance)
 				return collection_ids["/weapon_left_hand"]
 			end,

@@ -90,8 +90,6 @@ server_level = {
 				components.shared.state:set_step(step_index)
 				components.shared.state:reset_events()
 
-				components.shared.movements:reset_component()
-
 				local pulled_requests = components.server.match:pull_requests()
 				for request_index = 1,#pulled_requests do
 					local request = pulled_requests[request_index]

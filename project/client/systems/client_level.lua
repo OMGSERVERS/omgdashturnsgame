@@ -120,7 +120,6 @@ client_level = {
 				local client_id = event.client_id
 				local killer_id = event.killer_id
 				print(os.date() .. " [CLIENT_LEVEL] Player killed, client_id=" .. tostring(client_id) .. ", killer_id=" .. tostring(killer_id))
-				level_module:delete_player(components, client_id)
 				components.shared.state:kill_player(client_id, killer_id)
 
 				components.client.kills:delete_kill(killer_id)
