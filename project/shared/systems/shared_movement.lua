@@ -2,7 +2,7 @@ local game_events = require("project.message.game_events")
 
 local shared_movement
 shared_movement = {
-	PLAYER_SPEED = 160,
+	PLAYER_SPEED = 240,
 	SERVER_SPEED = 480,
 	-- Methods
 	create = function(self)

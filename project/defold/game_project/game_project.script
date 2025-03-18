@@ -30,5 +30,8 @@ function on_message(self, message_id, message, sender)
 		local y = message.y
 		local new_event = game_events:player_pointed(x, y)
 		self.game_components.shared.events:add_event(new_event)
+	elseif message_id == hash(game_project.SETUP_OBJECT) then
+		local new_event = game_events:setup_object(sender)
+		self.game_components.shared.events:add_event(new_event)
 	end
 end

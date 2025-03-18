@@ -109,8 +109,10 @@ server_level = {
 
 						local spawn_position = components.shared.level:get_random_spawn_position()
 						if spawn_position then
-							level_module:create_player(components, client_id, spawn_position)
-							components.shared.state:add_player(client_id, spawn_position.x, spawn_position.y)
+							local x = spawn_position.x
+							local y = spawn_position.y
+							level_module:create_player(components, client_id, x, y)
+							components.shared.state:add_player(client_id, x, y)
 						else
 							print(os.date() .. " [SERVER_LEVEL] Level bounds is not set to spawn player, client_id=" .. client_id)
 						end

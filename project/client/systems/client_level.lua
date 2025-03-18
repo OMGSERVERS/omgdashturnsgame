@@ -34,10 +34,17 @@ client_level = {
 				for client_id, player in pairs(players) do
 					local x = player.x
 					local y = player.y
-					local z = y
-					local position = vmath.vector3(x, y, z)
-					level_module:create_player(components, client_id, position)
+					level_module:create_player(components, client_id, x, y)
 				end
+			end,
+			setup_object = function(instance, components, event)
+				local object_url = event.object_url
+				print(os.date() .. " [CLIENT_LEVEL] Setup object, url=" .. tostring(object_url))
+				
+				local object_position = go.get_position(object_url)
+				object_position.z = level_module:get_z(object_position.y)
+				go.set_position(object_position, object_url)
+				go.set_parent(object_url)
 			end,
 			events_received = function(instance, components, event)
 				local events = event.events
@@ -67,9 +74,7 @@ client_level = {
 						local y = event.y
 						print(os.date() .. " [CLIENT_LEVEL] Create player, client_id=" .. client_id .. ", x=" .. x .. ", y=" .. y)
 
-						local z = y
-						local position = vmath.vector3(x, y, z)
-						level_module:create_player(components, client_id, position)
+						level_module:create_player(components, client_id, x, y)
 						components.shared.state:add_player(client_id, x, y)
 
 					elseif qualifier == match_events.PLAYER_MOVED then

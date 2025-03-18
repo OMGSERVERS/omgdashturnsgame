@@ -23,9 +23,9 @@ level_wrapper = {
 			get_camera_point_url = function(instance)
 				return collection_ids["/camera_point"]
 			end,
-			get_level_tilemap_component_url = function(instance)
-				local level_tilemap_url = collection_ids["/level_tilemap"]
-				return msg.url(nil, level_tilemap_url, "level_tilemap")
+			get_level_background_tilemap_component_url = function(instance)
+				local level_tilemap_url = collection_ids["/level_background"]
+				return msg.url(nil, level_tilemap_url, "tilemap")
 			end,
 			get_player_factory_component_url = function(instance)
 				local player_factory_url = collection_ids["/player_factory"]

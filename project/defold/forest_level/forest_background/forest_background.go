@@ -1,11 +1,11 @@
 components {
-  id: "level_tilemap"
-  component: "/project/defold/forest_level/forest_level/forest_tilemap.tilemap"
+  id: "tilemap"
+  component: "/project/defold/forest_level/forest_background/forest_tilemap.tilemap"
 }
 embedded_components {
   id: "collisionobject"
   type: "collisionobject"
-  data: "collision_shape: \"/project/defold/forest_level/forest_level/forest_tilemap.tilemap\"\n"
+  data: "collision_shape: \"/project/defold/forest_level/forest_background/forest_tilemap.tilemap\"\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\n"
   "mass: 0.0\n"
   "friction: 0.1\n"

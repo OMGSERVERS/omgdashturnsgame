@@ -4,6 +4,7 @@ game_project = {
 	JOIN_PRESSED = "join_pressed",
 	LEAVE_PRESSED = "leave_pressed",
 	PLAYER_POINTED = "player_pointed",
+	SETUP_OBJECT = "setup_object",
 	-- Methods
 	reset_pressed = function(self, receiver)
 		msg.post(receiver, game_project.RESET_PRESSED, {
@@ -24,6 +25,10 @@ game_project = {
 			y = y,
 		})
 	end,
+	setup_object = function(self, receiver)
+		msg.post(receiver, game_project.SETUP_OBJECT, {
+		})
+	end
 }
 
 return game_project

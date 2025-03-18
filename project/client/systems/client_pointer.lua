@@ -1,3 +1,4 @@
+local level_module = require("project.module.level_module")
 local game_events = require("project.message.game_events")
 
 local client_pointer
@@ -45,7 +46,7 @@ client_pointer = {
 				local y = event.y
 
 				local world_x, world_y = screen_to_world(components, x, y, 0)
-				local world_z = world_y
+				local world_z = level_module:get_z(world_y)
 				local match_pointer_url = components.client.screen:get_match_pointer_url()
 				-- -1 to ensure the pointer is below the player
 				local position = vmath.vector3(world_x, world_y - 1, world_z)

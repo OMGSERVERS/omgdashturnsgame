@@ -23,6 +23,7 @@ game_events = {
 	LEAVE_PRESSED = "leave_pressed",
 	PLAYER_POINTED = "player_pointed",
 	POINTER_PLACED = "pointer_placed",
+	SETUP_OBJECT = "setup_object",
 	-- Server
 	SERVER_STARTED = "server_started",
 	RUNTIME_STARTED = "runtime_started",
@@ -237,6 +238,12 @@ game_events = {
 			id = game_events.POINTER_PLACED,
 			x = x,
 			y = y,
+		}
+	end,
+	setup_object = function(self, object_url)
+		return {
+			id = game_events.SETUP_OBJECT,
+			object_url = object_url,
 		}
 	end,
 	movement_created = function(self, client_id, x, y)

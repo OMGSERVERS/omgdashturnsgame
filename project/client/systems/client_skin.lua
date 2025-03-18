@@ -76,12 +76,6 @@ client_skin = {
 					local player_skin_url = wrapped_player:get_player_skin_url(client_id)
 					go.animate(player_skin_url, "scale.x", go.PLAYBACK_LOOP_PINGPONG, 1.1, go.EASING_LINEAR, 1, 0)
 					go.animate(player_skin_url, "scale.y", go.PLAYBACK_LOOP_PINGPONG, 1.1, go.EASING_LINEAR, 1, 0)
-
-					local player_url = wrapped_player:get_player_url()
-					local player_position = go.get_position(player_url)
-					local z = player_position.y
-					local new_position = vmath.vector3(player_position.x, player_position.y, z)
-					go.set_position(new_position, player_url)
 					
 					setup_skin(components, client_id, false)
 				end
@@ -96,7 +90,6 @@ client_skin = {
 					
 					local player_url = wrapped_player:get_player_url()
 					local player_position = go.get_position(player_url)
-					-- local target_position = vmath.vector3(x, y, player_position.z)
 
 					local flip = x < player_position.x
 					local attack_angle = math.atan2(y - player_position.y, x - player_position.x) - math.pi * 0.5

@@ -3,12 +3,15 @@ local player_wrapper = require("project.module.player_wrapper")
 local level_wrapper = require("project.module.level_wrapper")
 local game_events = require("project.message.game_events")
 
-local level_utils
-level_utils = {
+local level_module
+level_module = {
 	LEVEL_FACTORY = "/level_factory",
 	TILE_W = 16,
 	TILE_H = 16,
 	-- Methods
+	get_z = function(self, y)
+		return 512 - y * 0.1
+	end,
 	delete_level = function(self, components)
 		local wrapped_level = components.shared.level:get_wrapped_level()
 		if wrapped_level then
@@ -26,35 +29,35 @@ level_utils = {
 		end
 	end,
 	create_level = function(self, components, level_qualifier)
-		level_utils:delete_level(components)
+		level_module:delete_level(components)
 
 		components.shared.level:reset_component()
 		components.shared.players:reset_component()
 		components.shared.movements:reset_component()
 
-		local level_factory_url = msg.url(nil, level_utils.LEVEL_FACTORY, level_qualifier)
+		local level_factory_url = msg.url(nil, level_module.LEVEL_FACTORY, level_qualifier)
 		local new_level_ids = collectionfactory.create(level_factory_url)
 		pprint(new_level_ids)
 
 		local wrapped_level = level_wrapper:create(new_level_ids)
 
-		local level_tilemap_component_url = wrapped_level:get_level_tilemap_component_url()
-		local x, y, w, h = tilemap.get_bounds(level_tilemap_component_url)
+		local level_background_tilemap_component_url = wrapped_level:get_level_background_tilemap_component_url()
+		local x, y, w, h = tilemap.get_bounds(level_background_tilemap_component_url)
 		local level_bounds = {
-			x = x * level_utils.TILE_W - level_utils.TILE_W,
-			y = y * level_utils.TILE_H - level_utils.TILE_H,
-			w = w * level_utils.TILE_W,
-			h = h * level_utils.TILE_H,
+			x = x * level_module.TILE_W - level_module.TILE_W,
+			y = y * level_module.TILE_H - level_module.TILE_H,
+			w = w * level_module.TILE_W,
+			h = h * level_module.TILE_H,
 		}
 
 		local spawn_points = {}
 		local spawn_point_index = 1
 		while true do
-			local collection_key = "/spawn_point" .. spawn_point_index
+			local collection_key = "/spawn_point_" .. spawn_point_index
 			local spawn_point_url = new_level_ids[collection_key]
 			if spawn_point_url then
 				local spawn_position = go.get_position(spawn_point_url)
-				spawn_position.z = spawn_position.y
+				spawn_position.z = level_module:get_z(spawn_position.y)
 				spawn_points[#spawn_points + 1] = spawn_position
 
 				msg.post(spawn_point_url, "disable")
@@ -69,9 +72,11 @@ level_utils = {
 		local new_event = game_events:level_created()
 		components.shared.events:add_event(new_event)
 	end,
-	create_player = function(self, components, client_id, position)
+	create_player = function(self, components, client_id, x, y)
 		local wrapped_level = components.shared.level:get_wrapped_level()
 		if wrapped_level then
+			local z = level_module:get_z(y)
+			local position = vmath.vector3(x, y, z)
 			print(os.date() .. " [LEVEL_UTILS] Create player, client_id=" .. client_id .. ", position=" .. position)
 			
 			local player_factory_component_url = wrapped_level:get_player_factory_component_url()
@@ -107,13 +112,13 @@ level_utils = {
 			local player_url = wrapped_player:get_player_url()
 			local from_position = go.get_position(player_url)
 
-			local z = y
+			local z = level_module:get_z(y)
 			local to_position = vmath.vector3(x, y, z)
 
-			local result = physics.raycast(from_position, to_position, { hash("level") })
+			local result = physics.raycast(from_position, to_position, { hash("level"), hash("obstacles") })
 			if result then
 				local hit_position = result.position
-				hit_position.z = hit_position.y
+				hit_position.z = level_module:get_z(hit_position.y)
 				local distance = vmath.length(hit_position - from_position)
 				if distance < 16 then
 					to_position = from_position
@@ -131,4 +136,4 @@ level_utils = {
 	end,
 }
 
-return level_utils
+return level_module

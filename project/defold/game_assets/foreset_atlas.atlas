@@ -1,0 +1,13 @@
+images {
+  image: "/project/defold/game_assets/forest_bush_1.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/project/defold/game_assets/forest_tree_1.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/project/defold/game_assets/forest_mushroom_1.png"
+  pivot_y: 1.0
+}
+extrude_borders: 2

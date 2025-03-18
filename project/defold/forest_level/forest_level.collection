@@ -2,121 +2,364 @@ name: "level"
 instances {
   id: "player_factory"
   prototype: "/project/defold/match_player/player_factory.go"
+  position {
+    y: 383.0
+  }
 }
 instances {
-  id: "level_tilemap"
-  prototype: "/project/defold/forest_level/forest_level/forest_level.go"
+  id: "level_background"
+  prototype: "/project/defold/forest_level/forest_background/forest_background.go"
+  position {
+    y: -1.0
+  }
 }
 instances {
   id: "camera_point"
   prototype: "/project/defold/camera_point/camera_point.go"
   position {
     x: 260.0
-    y: 200.0
+    y: 195.0
+    z: 1.0
   }
 }
 instances {
-  id: "spawn_point1"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 60.0
-    y: 73.0
-  }
-}
-instances {
-  id: "spawn_point2"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 187.0
-    y: 55.0
-  }
-}
-instances {
-  id: "spawn_point3"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 39.0
-    y: 198.0
-  }
-}
-instances {
-  id: "spawn_point4"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 58.0
-    y: 323.0
-  }
-}
-instances {
-  id: "spawn_point5"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 222.0
-    y: 340.0
-  }
-}
-instances {
-  id: "spawn_point6"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 389.0
-    y: 329.0
-  }
-}
-instances {
-  id: "spawn_point7"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 442.0
-    y: 280.0
-  }
-}
-instances {
-  id: "spawn_point8"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 475.0
-    y: 199.0
-  }
-}
-instances {
-  id: "spawn_point9"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 476.0
-    y: 88.0
-  }
-}
-instances {
-  id: "spawn_point10"
-  prototype: "/project/defold/spawn_point/spawn_point.go"
-  position {
-    x: 416.0
-    y: 33.0
-  }
-}
-instances {
-  id: "spawn_point11"
+  id: "spawn_point_11"
   prototype: "/project/defold/spawn_point/spawn_point.go"
   position {
     x: 306.0
-    y: 31.0
+    y: 28.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_1"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 60.0
+    y: 70.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_6"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 389.0
+    y: 326.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_10"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 416.0
+    y: 30.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_3"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 39.0
+    y: 195.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_5"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 222.0
+    y: 337.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_8"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 475.0
+    y: 196.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_2"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 187.0
+    y: 27.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_9"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 476.0
+    y: 85.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_4"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 58.0
+    y: 320.0
+    z: 1.0
+  }
+}
+instances {
+  id: "spawn_point_7"
+  prototype: "/project/defold/spawn_point/spawn_point.go"
+  position {
+    x: 442.0
+    y: 277.0
+    z: 1.0
+  }
+}
+instances {
+  id: "forest_tree_1"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 364.0
+    y: 311.0
+  }
+}
+instances {
+  id: "forest_tree_9"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 373.0
+    y: 300.0
+  }
+}
+instances {
+  id: "forest_tree_2"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 361.0
+    y: 296.0
+  }
+}
+instances {
+  id: "forest_tree_3"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 138.0
+    y: 279.0
+  }
+}
+instances {
+  id: "forest_tree_4"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 104.0
+    y: 107.0
+  }
+}
+instances {
+  id: "forest_tree_5"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 117.0
+    y: 100.0
+  }
+}
+instances {
+  id: "forest_tree_6"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 107.0
+    y: 94.0
+  }
+}
+instances {
+  id: "forest_tree_7"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 411.0
+    y: 93.0
+  }
+}
+instances {
+  id: "forest_tree_8"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 375.0
+    y: 157.0
+  }
+}
+instances {
+  id: "forest_bush_1"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 310.0
+    y: 108.0
+  }
+}
+instances {
+  id: "forest_bush_8"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 245.0
+    y: 70.0
+  }
+}
+instances {
+  id: "forest_bush_2"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 137.0
+    y: 146.0
+  }
+}
+instances {
+  id: "forest_bush_3"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 100.0
+    y: 206.0
+  }
+}
+instances {
+  id: "forest_bush_4"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 104.0
+    y: 247.0
+  }
+}
+instances {
+  id: "forest_bush_5"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 260.0
+    y: 274.0
+  }
+}
+instances {
+  id: "forest_bush_6"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 430.0
+    y: 236.0
+  }
+}
+instances {
+  id: "forest_bush_7"
+  prototype: "/project/defold/forest_level/forest_objects/forest_bush_1.go"
+  position {
+    x: 450.0
+    y: 142.0
+  }
+}
+instances {
+  id: "forest_mushroom_1"
+  prototype: "/project/defold/forest_level/forest_objects/forest_mushroom_1.go"
+  position {
+    x: 110.0
+    y: 39.0
+  }
+}
+instances {
+  id: "forest_mushroom_"
+  prototype: "/project/defold/forest_level/forest_objects/forest_mushroom_1.go"
+  position {
+    x: 458.0
+    y: 178.0
+  }
+}
+instances {
+  id: "forest_mushroom_2"
+  prototype: "/project/defold/forest_level/forest_objects/forest_mushroom_1.go"
+  position {
+    x: 340.0
+    y: 343.0
+  }
+}
+instances {
+  id: "forest_tree_"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 376.0
+    y: 312.0
+  }
+}
+instances {
+  id: "forest_tree_10"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 386.0
+    y: 301.0
+  }
+}
+instances {
+  id: "forest_tree_11"
+  prototype: "/project/defold/forest_level/forest_objects/forest_tree_1.go"
+  position {
+    x: 375.0
+    y: 289.0
   }
 }
 scale_along_z: 0
 embedded_instances {
   id: "spawn_points"
-  children: "spawn_point1"
-  children: "spawn_point10"
-  children: "spawn_point11"
-  children: "spawn_point2"
-  children: "spawn_point3"
-  children: "spawn_point4"
-  children: "spawn_point5"
-  children: "spawn_point6"
-  children: "spawn_point7"
-  children: "spawn_point8"
-  children: "spawn_point9"
+  children: "spawn_point_1"
+  children: "spawn_point_10"
+  children: "spawn_point_11"
+  children: "spawn_point_2"
+  children: "spawn_point_3"
+  children: "spawn_point_4"
+  children: "spawn_point_5"
+  children: "spawn_point_6"
+  children: "spawn_point_7"
+  children: "spawn_point_8"
+  children: "spawn_point_9"
+  data: ""
+}
+embedded_instances {
+  id: "level_trees"
+  children: "forest_tree_"
+  children: "forest_tree_1"
+  children: "forest_tree_10"
+  children: "forest_tree_11"
+  children: "forest_tree_2"
+  children: "forest_tree_3"
+  children: "forest_tree_4"
+  children: "forest_tree_5"
+  children: "forest_tree_6"
+  children: "forest_tree_7"
+  children: "forest_tree_8"
+  children: "forest_tree_9"
+  data: ""
+  position {
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "level_bushes"
+  children: "forest_bush_1"
+  children: "forest_bush_2"
+  children: "forest_bush_3"
+  children: "forest_bush_4"
+  children: "forest_bush_5"
+  children: "forest_bush_6"
+  children: "forest_bush_7"
+  children: "forest_bush_8"
+  data: ""
+  position {
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "level_mushrooms"
+  children: "forest_mushroom_"
+  children: "forest_mushroom_1"
+  children: "forest_mushroom_2"
   data: ""
   position {
     z: 1.0
