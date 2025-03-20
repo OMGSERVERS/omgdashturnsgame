@@ -38,9 +38,13 @@ omgruntime_factory = {
 			end,
 			debug_logging = true,
 			trace_logging = false,
-		}		
-		omgruntime:init(options)
-		omgruntime:start()
+		}
+
+		local runtime_qualifier = omgruntime:init(options)
+		print(runtime_qualifier)
+		local dispatched = runtime_qualifier == omgruntime.constants.MATCH
+		print(dispatched)
+		omgruntime:start(dispatched)
 
 		return omgruntime
 	end
